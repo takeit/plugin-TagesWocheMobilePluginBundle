@@ -13,7 +13,7 @@ services:
         arguments:
             - @translator
 
-    newscoop_tageswochemobile_plugin.article_helper:
-        class: Newscoop\TagesWocheMobilePluginBundle\Services\ArticleHelperService
-        arguments:
-            - @em
+#    newscoop_tageswochemobile_plugin.article_helper:
+#        class: Newscoop\TagesWocheMobilePluginBundle\Services\ArticleHelperService
+#        arguments:
+#            - @em
