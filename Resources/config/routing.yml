@@ -3,7 +3,7 @@ newscoop_tageswochemobile_plugin:
     type:     annotation
     prefix:   /api2
 
-newscoop_tageswochemobile_plugin:
-    resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ArticlesController.php"
-    type:     annotation
-    prefix:   /api2/articles
+#newscoop_tageswochemobile_plugin:
+#    resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ArticlesController.php"
+#    type:     annotation
+#    prefix:   /api2/articles
