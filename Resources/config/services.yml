@@ -1,0 +1,19 @@
+services:
+    newscoop_tageswochemobile_plugin.lifecyclesubscriber:
+        class: Newscoop\TagesWocheMobilePluginBundle\EventListener\LifecycleSubscriber
+        arguments:
+            - @em
+        tags:
+            - { name: kernel.event_subscriber}
+
+    newscoop_tageswochemobile_plugin.configure_menu_listener:
+        class: Newscoop\TagesWocheMobilePluginBundle\EventListener\ConfigureMenuListener
+        tags:
+            - { name: kernel.event_listener, event: newscoop_newscoop.menu_configure, method: onMenuConfigure }
+        arguments:
+            - @translator
+
+    newscoop_tageswochemobile_plugin.article_helper:
+        class: Newscoop\TagesWocheMobilePluginBundle\Services\ArticleHelperService
+        arguments:
+            - @em
