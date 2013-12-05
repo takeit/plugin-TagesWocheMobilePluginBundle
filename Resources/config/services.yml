@@ -1,0 +1,20 @@
+services:
+    newscoop_tageswochemobileplugin_plugin.lifecyclesubscriber:
+        class: Newscoop\TagesWocheMobilePluginBundle\EventListener\LifecycleSubscriber
+        arguments:
+            - @em
+        tags:
+            - { name: kernel.event_subscriber}
+
+    newscoop_tageswochemobileplugin_plugin.configure_menu_listener:
+        class: Newscoop\TagesWocheMobilePluginBundle\EventListener\ConfigureMenuListener
+        tags:
+            - { name: kernel.event_listener, event: newscoop_newscoop.menu_configure, method: onMenuConfigure }
+        arguments:
+            - @translator
+
+    newscoop_tageswochemobileplugin_plugin.hooks.listener:
+        class:     "Newscoop\TagesWocheMobilePluginBundle\EventListener\HooksListener"
+        arguments: ["@service_container"]
+        tags:
+            - { name: kernel.event_listener, event: newscoop_admin.interface.article.edit.sidebar, method: sidebar }

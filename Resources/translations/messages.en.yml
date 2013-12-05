@@ -1,0 +1,7 @@
+Plugins: Plugins
+plugin:
+  twmobile:
+    admin:
+      title: "TagesWoche Mobile"
+      titlecontent: "TagesWoche Mobile"
+      content: "TagesWoche Mobile content"

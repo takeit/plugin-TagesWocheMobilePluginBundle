@@ -1,0 +1,4 @@
+newscoop_tageswochemobileplugin_plugin:
+    resource: "@TagesWocheMobilePluginBundle/Controller/DefaultController.php"
+    type:     annotation
+    prefix:   /
