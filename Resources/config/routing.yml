@@ -1,9 +1,19 @@
 newscoop_tageswochemobile_plugin:
     resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/DefaultController.php"
     type:     annotation
-    prefix:   /api2
+    prefix:   /mapi
 
-#newscoop_tageswochemobile_plugin:
-#    resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ArticlesController.php"
-#    type:     annotation
-#    prefix:   /api2/articles
+newscoop_tageswochemobile_plugin:
+   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ArticlesController.php"
+   type:     annotation
+   prefix:   /mapi/articles
+
+newscoop_tageswochemobile_plugin:
+   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ArchiveController.php"
+   type:     annotation
+   prefix:   /mapi/archive
+
+newscoop_tageswochemobile_plugin:
+   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/BlogsController.php"
+   type:     annotation
+   prefix:   /mapi/blogs

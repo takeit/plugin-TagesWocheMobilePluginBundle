@@ -1,0 +1,216 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Tages Woche</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/themes/publication_1/theme_2/_css/tw2011/main.css">
+    <link rel="stylesheet" href="/themes/publication_1/theme_2/_css/tw2011/skin.css">
+</head>
+<body>
+<div id="fb-root"></div>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '204329636307540',
+      xfbml      : true  // parse XFBML
+    });
+  };
+
+  // Load the SDK Asynchronously
+  (function(d){
+     var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "//connect.facebook.net/en_US/all.js";
+     ref.parentNode.insertBefore(js, ref);
+   }(document));
+</script>
+<div>
+    <div class="content-box article-single clearfix">
+        <section>
+            <article class="article-main-back">
+                <header>
+                    <p>Informationen zum Artikel</p>
+                </header>
+
+                <p class="time">{{ data.published|date("d.m.y, H:i") }} Uhr</p>
+                <h2>{{ data.title|replace({'  ': '<br />'}) }}</h2>
+
+                <ul class="article-info">
+                    {% for topic in data.topics %}
+                        {% if loop.first %}
+                        <li>
+                            <h5>Themen</h5>
+                            <p>
+                        {% endif %}
+                                <a href="">{{ topic.name }}</a>{% if not loop.last %},{% endif %}
+                        {% if loop.last %}
+                                <span class="desktop-hide"><br /><a href="#theme-abonnieren-content"
+                                class="theme-subscribe theme-abonnieren-trigger follow-topics-link">Themen abonnieren</a></span>
+                            </p>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    <li>
+                        <h5>veröffentlicht</h5>
+                        <p>{{ data.published|date("d.m.y - H:i") }}</p>
+                    </li>
+                    <li>
+                        <h5>zuletzt geändert</h5>
+                        <p>{{ data.updated|date("d.m.y - H:i") }}</p>
+                    </li>
+
+                    {% if data.history is not defined and data.history is not null %}
+                    <li>
+                        <h5>Artikelgeschichte</h5>
+                        <p>{{ data.history }}</p>
+                    </li>
+                    {% endif %}
+
+                    {% for attachment in data.attachments %}
+                    {% if loop.first %}
+                    <li>
+                        <h5>Downloads</h5>
+                    {% endif %}
+                        <p>
+                            <a href="{{ Newscoop['WEBSITE_URL'] }}{{ attachment.getAttachmentUri() }}">
+                                {# {{ attachment.description.id }} #}Temporary description replacement
+                            </a>({{ attachment.extension|upper }}, {{ attachment.sizeinbytes }})
+                        </p>
+                    {% if loop.last %}
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if data.sources is not null %}
+                    <li>
+                        <h5>Quellen</h5>
+                        <p>{{ data.sources }}</p>
+                    </li>
+                    {% endif %}
+
+                    <li>
+                        <h5>Artikel-Webcode</h5>
+                        <p><a href="{{ Newscoop['WEBSITE_URL'] }}/{{ data.webcode }}">tageswoche.ch/{{ data.webcode }}</a></p>
+                    </li>
+                </ul>
+
+                <div id="social-bookmarks-placeholder-rear"></div>
+
+                {% for author in data.authors %}
+
+                    {% if author.user %}
+
+                        {% set attrs = author.user.getAttributes() %}
+
+                        <div class="author-box">
+                            <header class="desktop-hide">
+                                <div class="mobile-divider"></div>
+                                <p>
+                                    {% if author.type %}
+                                        {# TODO: should be author type for this article #}
+                                    {% endif %}
+                                </p>
+                            </header>
+                            <h4>{{ author.user.username }}</h4>
+                            <ul class="article-info">
+                                <li class="image">
+                                    {# {{* include file="_tpl/author-image.tpl" author=$gimme->author width=120 height=120 *}} #}
+                                    {% if attrs.bio is defined %}
+                                        <p>{{ attrs.bio }}</p>
+                                    {% endif %}
+                                </li>
+                                {% if attrs.facebook is defined or attrs.twitter is defined %}
+                                <li>
+                                    <h5>Social Networks</h5>
+                                    <p class="social">
+                                    {% if attrs.facebook is not empty %}
+                                        <div class="fb-subscribe" data-href="https://www.facebook.com/{{ attrs.facebook|trim }}" data-layout="button_count" data-show-faces="false" data-font="arial" data-width="160" style="margin-right: 8px"></div>
+                                    {% endif %}
+                                    {% if attrs.twitter is not empty %}
+                                        <div class="tw-follow" style="display: inline-block; position: relative; top: 2px">
+                                            <a href="http://twitter.com/{{ attrs.twitter|trim('@') }}" class="twitter-follow-button" data-show-count="false" data-lang="de" data-show-screen-name="false">@{{ attrs.twitter|trim('@') }} folgen</a>
+                                            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                                        </div>
+                                    {% endif %}
+                                    </p>
+                                </li>
+                                {% endif %}
+                            </ul>
+
+                            {% if author.user.username != 'sda' %}
+                            <div class="tabs article-related-tabs">
+                                <ul>
+                                    <li><a href="#author-1">Artikel</a></li>
+                                    <li class="mobile-hide"><a href="#author-2">Blogbeiträge</a></li>
+                                    <li><a href="#author-3">Kommentare</a></li>
+                                </ul>
+
+                                <div id="author-1">
+
+                                </div>
+
+                                <div id="author-3">
+
+                                </div>
+
+                                {% if author.user %}
+                                {# TODO: Fix url via ZEND #}
+                                    <p><a href="{# {{* $view->url(['username' => $gimme->author->user->uname], 'user') *}} #}">Weitere Texte im Autorenprofil</a></p>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+            </article>
+        </section>
+    </div>
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://tw-reloaded.lab.sourcefabric.org/themes/publication_1/theme_2/_js/libs/jquery.socialshareprivacy.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    // $.address.tracker(null); // disable google tracking via address
+    $('.social_bookmarks').each(function() {
+        $(this).socialSharePrivacy({
+            services: {
+                facebook: {
+                    'app_id': '204329636307540',
+                    'dummy_img': 'https://tw-reloaded.lab.sourcefabric.org/themes/publication_1/theme_2/_js/libs/socialshareprivacy/images/dummy_facebook.png'
+                },
+                twitter: {
+                    'dummy_img': 'https://tw-reloaded.lab.sourcefabric.org/themes/publication_1/theme_2/_js/libs/socialshareprivacy/images/dummy_twitter.png',
+                    // TODO: Fix related variable... what does it mean?
+                    'related': ''{# {* json_encode(implode(',', $related)) *} #}
+                },
+                gplus: {
+                    'display_name': 'Google Plus',
+                    'dummy_img': 'https://tw-reloaded.lab.sourcefabric.org/themes/publication_1/theme_2/_js/libs/socialshareprivacy/images/dummy_gplus.png'
+                }
+            },
+            'cookie_path': '/',
+            'cookie_domain': document.location.host,
+            'cookie_expires': 365,
+            'css_path' : 'https://tw-reloaded.lab.sourcefabric.org/themes/publication_1/theme_2/_js/libs/socialshareprivacy/socialshareprivacy.css',
+            'settings_perma': 'Button dauerhaft aktivieren',
+            'info_button': ' Die Sharing-Buttons können Benutzungsdaten an Facebook, Twitter oder Google übermitteln. Wir haben sie deshalb standardmässig deaktiviert. Bitte aktivieren Sie sie, um sie zu nutzen.'
+        });
+    });
+});
+</script>
+</body>
+</html>

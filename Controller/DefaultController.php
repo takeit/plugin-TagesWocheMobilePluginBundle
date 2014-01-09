@@ -15,6 +15,6 @@ class DefaultController extends Controller
      */
     public function adminAction(Request $request)
     {
-    	return array();
+    	// return array();
     }
 }

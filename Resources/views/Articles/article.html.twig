@@ -1,0 +1,48 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Tages Woche</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/themes/publication_1/theme_2/_css/tw2011/main.css">
+    <link rel="stylesheet" href="/themes/publication_1/theme_2/_css/tw2011/skin.css">
+</head>
+<body>
+        <div id="article-front">
+
+            <div class="content-box article-single clearfix">
+
+                <section>
+
+                    <article>
+                        <header>
+                            <p><a href="#">{{ data.dateline }}</a></p>
+                        </header>
+                        <h2><a href="#">{{ data.title }}</a></h2>
+                        <span class="time">{{ data.published|date('d-m-Y') }}</span>
+                        <h3>{{ data.teaser }}</h3>
+                        <figure>
+                            <a href="#"><img src="{{ data.image_url }}" rel="resizable" alt=""></a>
+                            <p></p>
+                        </figure>
+                        {{ data.body }}
+                    </article>
+
+                </section><!-- / Main Section -->
+
+            </div>
+
+        </div>
+</body>
+</html>
+

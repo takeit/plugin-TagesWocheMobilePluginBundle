@@ -13,7 +13,17 @@ services:
         arguments:
             - @translator
 
-#    newscoop_tageswochemobile_plugin.article_helper:
-#        class: Newscoop\TagesWocheMobilePluginBundle\Services\ArticleHelperService
-#        arguments:
-#            - @em
+    newscoop_tageswochemobile_plugin.api_helper:
+        class: Newscoop\TagesWocheMobilePluginBundle\Services\ApiHelper
+        arguments:
+            - @em
+            - @service_container
+
+    newscoop_tageswochemobile_plugin.render_slideshow_helper:
+        class: Newscoop\TagesWocheMobilePluginBundle\Services\RenderSlideshowHelper
+        arguments:
+            - @em
+            - @service_container
+
+    newscoop_tageswochemobile_plugin.cache_helper:
+        class: Newscoop\TagesWocheMobilePluginBundle\Services\CacehHelper
