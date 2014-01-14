@@ -20,7 +20,7 @@ use Newscoop\Entity\Article;
  *
  * Wheel Advertisement API service controller
  */
-class Api_WheelAdvertisementController extends Controller
+class WheelAdvertisementController extends Controller
 {
     const AD_TYPE = 'iPad_Ad';
     const AD_SECTION = 'ad_name';
