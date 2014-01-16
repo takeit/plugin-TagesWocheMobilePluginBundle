@@ -80,18 +80,20 @@ class ApiHelper
      */
     public function getUser()
     {
-        if ($this->_getParam(self::FACEBOOK_AUTH_TOKEN)) {
+        if ($this->request->request->get(self::FACEBOOK_AUTH_TOKEN)) {
             $user = $this->_helper->service('auth.adapter.facebook')->findByAuthToken($this->_getParam(self::FACEBOOK_AUTH_TOKEN));
             return $user !== null ? $user : $this->sendError('Invalid credentials', 412);
         }
 
-        $username = $this->_getParam('username');
-        $password = $this->_getParam('password');
+        $username = $this->request->request->get('username');
+        $password = $this->request->request->get('password');
+
         if (empty($username) || empty($password)) {
-            $this->sendError('Invalid credentials.', 401);
+            return $this->sendError('Invalid credentials.', 401);
         }
 
-        $user = $this->_helper->service('auth.adapter')->findByCredentials($username, $password);
+        $user = $this->container->get('auth.adapter')->findByCredentials($username, $password);
+
         return $user !== null ? $user : $this->sendError('Invalid credentials.', 401);
     }
 
@@ -319,7 +321,10 @@ class ApiHelper
      */
     public function getWebsiteUrl($article)
     {
-        return $this->serverUrl(Manager::getWebcoder('')->encode($article->getNumber()));
+        if ($article->hasWebcode()) {
+            return $this->serverUrl($article->getWebcode());
+        }
+        return null;
     }
 
     /**
@@ -542,6 +547,42 @@ class ApiHelper
     }
 
     /**
+     * Get body
+     *
+     * @param Newscoop\Entity\Article $article
+     * @return string
+     */
+    public function getBody($article)
+    {
+        try {
+            $field = isset($this->fields['body'][$article->getType()])
+                ? $this->fields['body'][$article->getType()]
+                : 'body';
+            return strip_tags(trim($article->getData($field)));
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Get sources
+     *
+     * @param Newscoop\Entity\Article $article
+     * @return string
+     */
+    public function getSources($article)
+    {
+        try {
+            $field = isset($this->fields['sources'][$article->getType()])
+                ? $this->fields['sources'][$article->getType()]
+                : 'sources';
+            return strip_tags(trim($article->getData($field)));
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
      * Test if client is iphone
      *
      * @return bool
@@ -670,16 +711,16 @@ class ApiHelper
      */
     public function getUserImageUrl($user, array $normalSizes, array $retinaSizes)
     {
-        $imageService = Zend_Registry::get('container')->getService('image');
-        list($width, $height) = $this->isRetinaClient() ? $retinaSizes : $normalSizes;
-
-        $src = Zend_Registry::get('view')->url(array('src' => $imageService->getUserImage($user, $width, $height)), 'image', true, false);
-
-        if ($src === null) {
+        if ($user->getImage() === null) {
             return null;
         }
 
-        return $this->view->serverUrl($src);
+        list($width, $height) = $this->isRetinaClient() ? $retinaSizes : $normalSizes;
+        $imageUrl = $this->container->get('zend_router')->assemble(array(
+            'src' => $this->container->get('image')->getSrc('images/'.$user->getImage(), $width, $height, 'fit'),
+        ), 'image', true, false);
+
+        return $this->serverUrl($imageUrl);
     }
 
     /**
@@ -750,6 +791,15 @@ class ApiHelper
             'name' => $client,
             'type' => $type,
         );
+    }
+
+    /**
+     * Get ip address of client
+     *
+     * @return string ip addres
+     */
+    public function getIp() {
+        return $_SERVER['REMOTE_ADDR'];
     }
 
     public function absoluteUrl($relativeUrl)
