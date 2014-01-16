@@ -1,19 +1,24 @@
-newscoop_tageswochemobile_plugin:
-    resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/DefaultController.php"
-    type:     annotation
-    prefix:   /mapi
+newscoop_tageswochemobile_plugin.default:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/DefaultController.php"
+  type:     annotation
+  prefix:   /mapi
 
-newscoop_tageswochemobile_plugin:
-   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ArticlesController.php"
-   type:     annotation
-   prefix:   /mapi/articles
+newscoop_tageswochemobile_plugin.articles:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ArticlesController.php"
+  type:     annotation
+  prefix:   /mapi/articles
 
-newscoop_tageswochemobile_plugin:
-   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ArchiveController.php"
-   type:     annotation
-   prefix:   /mapi/archive
+newscoop_tageswochemobile_plugin.archive:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ArchiveController.php"
+  type:     annotation
+  prefix:   /mapi/archive
 
-newscoop_tageswochemobile_plugin:
-   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/BlogsController.php"
-   type:     annotation
-   prefix:   /mapi/blogs
+newscoop_tageswochemobile_plugin.blogs:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/BlogsController.php"
+  type:     annotation
+  prefix:   /mapi/blogs
+
+newscoop_tageswochemobile_plugin.comments:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/CommentsController.php"
+  type:     annotation
+  prefix:   /mapi/comments
