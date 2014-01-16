@@ -51,7 +51,6 @@ class WheelAdvertisementController extends Controller
      */
     public function listAction()
     {
-        $this->getHelper('contextSwitch')->addActionContext('list', 'json')->initContext();
         $response = array();
 
         $wheelAds = $this->getWheelAds();
@@ -187,7 +186,6 @@ class WheelAdvertisementController extends Controller
     {
         $em = $this->container->get('em');
         $wheelAds = array();
-        //$ads = $this->_helper->service('article')->findBy(array('type' => self::AD_TYPE), array('articleOrder' => 'asc'));
 
         $ads = $em->getRepository('Newscoop\Entity\Article')
             ->findBy(array('type' => self::AD_TYPE), array('articleOrder' => 'asc'));
