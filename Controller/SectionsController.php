@@ -18,7 +18,7 @@ use Newscoop\Entity\Article;
  *Route('/sections')
  *
  */
-class SectionsController extends AbstractController
+class SectionsController extends Controller
 {
     const API_VERSION = 1;
 
