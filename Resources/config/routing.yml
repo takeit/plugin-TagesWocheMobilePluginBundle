@@ -22,3 +22,8 @@ newscoop_tageswochemobile_plugin.comments:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/CommentsController.php"
   type:     annotation
   prefix:   /mapi/comments
+
+newscoop_tageswochemobile_plugin.wheel-advertisement:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ WheelAdvertisementController.php"
+  type:     annotation
+  prefix:   /mapi/wheel-advertisement
