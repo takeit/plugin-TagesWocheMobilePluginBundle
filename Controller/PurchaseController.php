@@ -37,7 +37,7 @@ class PurchaseController extends Controller
         }
 
         try {
-            $data = $this->_helper->service('mobile.purchase')->validate($receipt);
+            $data = $this->container->get('mobile.purchase')->validate($receipt);
         } catch (Exception $e) {
             return $apiHelperService->sendError('Can not validate ticket', 403);
         }
@@ -50,7 +50,7 @@ class PurchaseController extends Controller
             $user = $apiHelperService->getUser();
             if ($data['receipt_valid']) {
                 try {
-                    $this->_helper->service('user_subscription')->upgrade($user);
+                    $this->container->get('user_subscription')->upgrade($user);
                 } catch (DmproException $e) {
                     return $apiHelperService->sendError('Dmpro service error.', 500);
                 } catch (TageswocheException $e) {
