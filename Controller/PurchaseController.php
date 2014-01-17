@@ -37,7 +37,7 @@ class PurchaseController extends Controller
         }
 
         try {
-            $data = $this->container->get('mobile.purchase')->validate($receipt);
+            $data = $this->container->get('newscoop_tageswochemobile_plugin.mobile.purchase')->validate($receipt);
         } catch (Exception $e) {
             return $apiHelperService->sendError('Can not validate ticket', 403);
         }
@@ -50,7 +50,7 @@ class PurchaseController extends Controller
             $user = $apiHelperService->getUser();
             if ($data['receipt_valid']) {
                 try {
-                    $this->container->get('user_subscription')->upgrade($user);
+                    $this->container->get('newscoop_tageswochemobile_plugin.user_subscription')->upgrade($user);
                 } catch (DmproException $e) {
                     return $apiHelperService->sendError('Dmpro service error.', 500);
                 } catch (TageswocheException $e) {
@@ -73,7 +73,7 @@ class PurchaseController extends Controller
 
         try {
             $user = $apiHelperService->getUser();
-            $this->container->get('user_subscription')->freeUpgrade($user);
+            $this->container->get('newscoop_tageswochemobile_plugin.user_subscription')->freeUpgrade($user);
             return $apiHelperService->sendError('OK', 200);
         } catch (DmproException $e) {
             return $apiHelperService->sendError('Dmpro service error.', 500);
