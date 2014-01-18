@@ -16,7 +16,7 @@ use Newscoop\Entity\Article;
 
 
 /**
- * Route('/wheel')
+ * Route('/wheel-advertisement')
  *
  * Wheel Advertisement API service controller
  */
