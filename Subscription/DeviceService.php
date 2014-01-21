@@ -5,12 +5,12 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Subscription;
+namespace Newscoop\TagesWocheMobilePluginBundle\Subscription;
 
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Newscoop\Entity\User;
-use Tageswoche\Entity\Device;
+use Newscoop\TagesWocheMobilePluginBundle\Entity\Device;
 
 /**
  */

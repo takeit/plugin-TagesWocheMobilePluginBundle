@@ -5,10 +5,10 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Subscription;
+namespace Newscoop\TagesWocheMobilePluginBundle\Subscription;
 
 use Doctrine\ORM\EntityManager;
-use Tageswoche\Entity\Promocode;
+use Newscoop\TagesWocheMobilePluginBundle\Entity\Promocode;
 use Newscoop\RandomService;
 
 /**
