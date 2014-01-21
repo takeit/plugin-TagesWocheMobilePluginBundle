@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Newscoop\Entity\Article;
 
 /**
  * Route('/articles')
@@ -65,12 +66,8 @@ class ArticlesController extends Controller
     public function listAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-
-        //$this->getHelper('contextSwitch')->addActionContext('list', 'json')->initContext();
         $em = $this->container->get('em');
 
-        // $criteria = array();
-        // $criteria[] = new ComparisonOperation('workflow_status', new Operator('is'), 'published');
         $params = $request->query->all();
 
         if (!empty($params['section_id'])) {
@@ -85,21 +82,34 @@ class ArticlesController extends Controller
             $articles = $em->getRepository('Newscoop\Entity\Playlist')
                 ->articles($playlist, null, false, self::LIST_LIMIT_DEFAULT);
         } else {
-            if (!empty($params['type'])) {
-                $criteria[] = new ComparisonOperation('type', new Operator('is'), (string) $params['type']);
-            }
-            if (!empty($params['topic_id'])) {
-                /** @todo */
-                $criteria[] = new ComparisonOperation('topic', new Operator('is'), $params['topic_id']);
-            }
 
-            $articles = \Article::GetList($criteria, null, 0, self::LIST_LIMIT_BYTOPIC, $count = 0, false, false);
+            $qb = $em
+                ->getRepository('Newscoop\Entity\Article')
+                ->createQueryBuilder('a')
+                ->where('a.workflowStatus = :published')
+                ->setParameter('published', Article::STATUS_PUBLISHED);
+
+            if (!empty($params['type'])) {
+                $qb = $qb->andWhere($qb->expr()->eq('a.type', ':type'))
+                    ->setParameter('type', $params['type']);
+            }
+            // if (!empty($params['topic_id'])) {
+            //     //$criteria[] = new ComparisonOperation('topic', new Operator('is'), $params['topic_id']);
+            //     $qb = $qb->andWhere($qb->expr()->gte('a.type', ':topic_id'))
+            //         ->setParameter('topic_id', $params['topic_id']);
+            // }
+
+            $articles = $qb
+                ->setMaxResults(self::LIST_LIMIT_BYTOPIC)
+                ->getQuery()
+                ->getResult();
         }
 
         $listAds = $apiHelperService->getArticleListAds('sectionlists');
 
         $rank = 1;
         $ad = 0;
+        $response = array();
         foreach ($articles as $item) {
             // inject sectionlists ads
             if (in_array($rank, $this->adRanks)) {
@@ -113,7 +123,7 @@ class ArticlesController extends Controller
                 }
             }
 
-            $articleNumber = isset($playlist) ? $item['articleId'] : $item['number'];
+            $articleNumber = isset($playlist) ? $item['articleId'] : $item->getNumber();
             $article = $em->getRepository('Newscoop\Entity\Article')
                 ->findOneByNumber($articleNumber);
 
@@ -127,13 +137,13 @@ class ArticlesController extends Controller
                     //}
                 }
 
-                $this->response[] = $articleResponse;
+                $response[] = $articleResponse;
                 $rank++;
             }
             //break;
         }
 
-        return new JsonResponse($this->response);
+        return new JsonResponse($response);
     }
 
     /**
@@ -172,7 +182,7 @@ class ArticlesController extends Controller
 
             $templateName = 'article-backside';
             $data = array('data' => array(
-                'dateline' => $article->getData('dateline'),
+                'dateline' => $apiHelperService->getDateLine($article),
                 'published'  => $article->getPublished(),
                 'title' => $article->getTitle(),
                 'updated' => $article->getUpdated(),
@@ -180,9 +190,10 @@ class ArticlesController extends Controller
                 'history' => '',
                 'attachments' => $article->getAttachments(),
 
-                'sources' => $article->getData('sources'),
-                'webcode' => $article->getWebcode(),
+                'sources' => $apiHelperService->getSources($article),
+                'webcode' => ($article->hasWebcode()) ? $article->getWebcode() : null,
                 'authors' => $article->getArticleAuthors(),
+                // TODO: figure out if related articles from author or from this article
                 'related' => '',
             ));
 
@@ -190,13 +201,12 @@ class ArticlesController extends Controller
 
             $templateName = 'article';
             $data = array('data' => array(
-                'dateline' => $article->getData('dateline'),
+                'dateline' => $apiHelperService->getDateLine($article),
                 'published'  => $article->getPublished(),
-                'teaser' => $article->getData('teaser'),
+                'teaser' => $apiHelperService->getTeaser($article),
                 'title' => $article->getTitle(),
-                //TODO: check what image_url should be
-                'image_url' => $article->getData('teaser'),
-                'body' => $article->getData('body'),
+                'image_url' => $apiHelperService->getImageUrl($article),
+                'body' => $apiHelperService->getBody($article),
             ));
         }
 
