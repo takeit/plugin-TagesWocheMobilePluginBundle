@@ -4,14 +4,13 @@
  * @copyright 2012 Sourcefabric o.p.s.
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
-
-namespace Tageswoche\Debate;
+namespace Newscoop\TagesWocheMobilePluginBundle\Debate;
 
 use InvalidArgumentException;
 use Doctrine\ORM\EntityManager;
 use Newscoop\Entity\Article;
 use Newscoop\Entity\User;
-use Tageswoche\Entity\Vote;
+use Newscoop\TagesWocheMobilePluginBundle\Entity\Vote;
 
 /**
  */
@@ -29,7 +28,7 @@ class DebateService
         'type' => 'deb_moderator',
         'publication' => 1,
         'language' => 5,
-        'sectionId' => 81,
+        'section' => 81,
         'workflowStatus' => Article::STATUS_PUBLISHED,
     );
 
@@ -100,8 +99,8 @@ class DebateService
     {
         $criteria = array_merge($this->criteria, array(
             'type' => 'deb_statement',
-            'sectionId' => $debate->getSectionNumber(),
-            'issue' => $debate->getIssueNumber(),
+            'section' => $debate->getSectionId(),
+            'issue' => $debate->getIssueId(),
         ));
 
         $statements = $this->getArticleRepository()
@@ -148,7 +147,7 @@ class DebateService
     /**
      * Cast a vote
      *
-     * @param Tageswoche\Debate\VoteDebateCommand $command
+     * @param Newscoop\TagesWocheMobilePluginBundle\Debate\VoteDebateCommand $command
      * @return void
      */
     public function vote(VoteDebateCommand $command)
@@ -191,10 +190,12 @@ class DebateService
      * Find debate
      *
      * @param Newscoop\Entity\Article|int $article
-     * @return Tageswoche\Entity\Debate
+     * @return Newscoop\TagesWocheMobilePluginBundle\Entity\Debate
      */
     private function findDebate($article)
     {
+        //echo '$article->getNumber: '.$article->getNumber().'<br>'; exit;
+
         $debateQuery = $this->getDebateRepository()
             ->createQueryBuilder('d')
             ->join('d.articles', 'a')
@@ -212,7 +213,7 @@ class DebateService
      * @param int $article
      * @param string $deviceId
      * @param int $userId
-     * @return Tageswoche\Entity\Vote
+     * @return Newscoop\TagesWocheMobilePluginBundle\Entity\Vote
      */
     private function findVote($article, $deviceId, $userId = null)
     {
@@ -247,7 +248,7 @@ class DebateService
      */
     private function getDebateRepository()
     {
-        return $this->em->getRepository('Tageswoche\Entity\Debate');
+        return $this->em->getRepository('Newscoop\TagesWocheMobilePluginBundle\Entity\Debate');
     }
 
     /**
@@ -257,7 +258,7 @@ class DebateService
      */
     private function getVoteRepository()
     {
-        return $this->em->getRepository('Tageswoche\Entity\Vote');
+        return $this->em->getRepository('Newscoop\TagesWocheMobilePluginBundle\Entity\Vote');
     }
 
     /**

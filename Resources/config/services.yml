@@ -27,3 +27,8 @@ services:
 
     newscoop_tageswochemobile_plugin.cache_helper:
         class: Newscoop\TagesWocheMobilePluginBundle\Services\CacehHelper
+
+    newscoop_tageswochemobile_plugin.debate:
+        class: Newscoop\TagesWocheMobilePluginBundle\Debate\DebateService
+        arguments:
+            - @em

@@ -23,10 +23,10 @@ newscoop_tageswochemobile_plugin.comments:
   type:     annotation
   prefix:   /mapi/comments
 
-newscoop_tageswochemobile_plugin.wheel-advertisement:
-  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/WheelAdvertisementController.php"
+newscoop_tageswochemobile_plugin.debates:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/DebatesController.php"
   type:     annotation
-  prefix:   /mapi/wheel-advertisement
+  prefix:   /mapi/debates
 
 newscoop_tageswochemobile_plugin.topics:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/TopicsController.php"
@@ -42,3 +42,8 @@ newscoop_tageswochemobile_plugin.purchase:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/PurchaseController.php"
   type:     annotation
   prefix:   /mapi/purchase
+
+newscoop_tageswochemobile_plugin.wheel-advertisement:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/WheelAdvertisementController.php"
+  type:     annotation
+  prefix:   /mapi/wheel-advertisement
