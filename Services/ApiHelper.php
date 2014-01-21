@@ -81,7 +81,8 @@ class ApiHelper
     public function getUser()
     {
         if ($this->request->request->get(self::FACEBOOK_AUTH_TOKEN)) {
-            $user = $this->_helper->service('auth.adapter.facebook')->findByAuthToken($this->_getParam(self::FACEBOOK_AUTH_TOKEN));
+            $user = $this->container->get('auth.adapter.facebook')
+                ->findByAuthToken($this->request->request->get(self::FACEBOOK_AUTH_TOKEN));
             return $user !== null ? $user : $this->sendError('Invalid credentials', 412);
         }
 
@@ -208,7 +209,7 @@ class ApiHelper
      */
     public function hasAuthInfo()
     {
-        return $this->_getParam('username') || $this->_getParam(self::FACEBOOK_AUTH_TOKEN);
+        return $this->request->request->get('username') || $this->request->request->get(self::FACEBOOK_AUTH_TOKEN);
     }
 
     /**
@@ -261,20 +262,13 @@ class ApiHelper
      */
     public function getCommentsUrl($article)
     {
-        return '';
-        //TODO: uncomment and check
-        // return $this->router
-        //     ->generate('newscoop_tageswochemobileplugin_comments_list', array(
-        //     'article_id' => $article->getNumber(),
-        // ));
-
-        // return $this->view->serverUrl($this->view->url(array(
-        //     'module' => 'mapi',
-        //     'controller' => 'comments',
-        //     'action' => 'list',
-        // ), 'default') . $this->getApiQueryString(array(
-        //     'article_id' => $article->getNumber(),
-        // )));
+        return $this->serverUrl($this->container->get('zend_router')->assemble(array(
+            'module' => 'mapi',
+            'controller' => 'comments',
+            'action' => 'list',
+        ), 'default') . $this->getApiQueryString(array(
+            'article_id' => $article->getNumber(),
+        )));
     }
 
     /**
@@ -430,11 +424,24 @@ class ApiHelper
     {
         if ($image === null) {
             return null;
+        } elseif (is_string($image)) {
+            if (strpos($image, '.jpg') !== false ){
+                $src = $image;
+            } else {
+                $image = $this->em->getRepository('Newscoop\Image\LocalImage')
+                    ->findOneById($image);
+                if ($image === null) {
+                    return null;
+                }
+                $src = $image->getPath();
+            }
+        } else {
+            $src = $image->getPath();
         }
 
         list($width, $height) = $this->isRetinaClient() ? $retinaSizes : $normalSizes;
         $imageUrl = $this->container->get('zend_router')->assemble(array(
-            'src' => $this->container->get('image')->getSrc($image->getPath(), $width, $height, 'fit'),
+            'src' => $this->container->get('image')->getSrc($src, $width, $height, 'fit'),
         ), 'image', false, false);
 
         return $this->serverUrl($imageUrl);
@@ -692,13 +699,17 @@ class ApiHelper
     public function getRenditionUrl($article, $rendition, array $normalSizes, array $retinaSizes)
     {
         list($width, $height) = $this->isRetinaClient() ? $retinaSizes : $normalSizes;
-        $image = $this->_helper->service('image.rendition')->getArticleRenditionImage($article->getNumber(), $rendition, $width, $height);
+        $image = $this->container->get('image.rendition')->getArticleRenditionImage($article->getNumber(), $rendition, $width, $height);
         if (empty($image['src'])) {
             return null;
         }
 
-        $src = Zend_Registry::get('view')->url(array('src' => $image['src']), 'image', true, false);
-        return $this->view->serverUrl($src);
+        $src = $this->container->get('zend_router')->assemble(
+            array('src' => $image['src']), 'image', true, false
+        );
+
+        //$src = Zend_Registry::get('view')->url(array('src' => $image['src']), 'image', true, false);
+        return $this->serverUrl($src);
     }
 
     /**
