@@ -5,17 +5,17 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Entity;
+namespace Newscoop\TagesWocheMobilePluginBundle\Entity;
 
 use DateTime;
 use DateInterval;
 use Doctrine\ORM\Mapping AS ORM;
 use Newscoop\Entity\User;
-use Tageswoche\Subscription\PromocodeView;
-use Tageswoche\Subscription\PromocodeUsedException;
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\PromocodeView;
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\PromocodeUsedException;
 
 /**
- * @ORM\Entity(repositoryClass="Tageswoche\Repository\PromocodeRepository")
+ * @ORM\Entity(repositoryClass="Newscoop\TagesWocheMobilePluginBundle\Repository\PromocodeRepository")
  * @ORM\Table(name="tw_promocode")
  */
 class Promocode
@@ -71,7 +71,7 @@ class Promocode
     /**
      * Get promocode view
      *
-     * @return Tageswoche\Subscription\PromocodeView
+     * @return Newscoop\TagesWocheMobilePluginBundle\Subscription\PromocodeView
      */
     public function getView()
     {

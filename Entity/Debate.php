@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Entity;
+namespace Newscoop\TagesWocheMobilePluginBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping AS ORM;
@@ -38,7 +38,7 @@ class Debate
     private $articles;
 
     /**
-     * @ORM\OneToMany(targetEntity="Tageswoche\Entity\Vote", mappedBy="debate")
+     * @ORM\OneToMany(targetEntity="Newscoop\TagesWocheMobilePluginBundle\Entity\Vote", mappedBy="debate")
      * @var Doctrine\Common\Collections\Collection
      */
     private $votes;

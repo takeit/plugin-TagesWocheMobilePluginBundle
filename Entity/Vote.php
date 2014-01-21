@@ -5,13 +5,14 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Entity;
+namespace Newscoop\TagesWocheMobilePluginBundle\Entity;
 
 use InvalidArgumentException;
 use DateTime;
 use Doctrine\ORM\Mapping AS ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Newscoop\Entity\User;
+use Newscoop\TagesWocheMobilePluginBundle\Entity\Debate;
 
 /**
  * @ORM\Entity
@@ -27,7 +28,7 @@ class Vote
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Tageswoche\Entity\Debate", inversedBy="votes")
+     * @ORM\ManyToOne(targetEntity="Newscoop\TagesWocheMobilePluginBundle\Entity\Debate", inversedBy="votes")
      * @ORM\JoinColumn(name="fk_debate_nr", referencedColumnName="debate_nr")
      * @var Tageswoche\Entity\Debate
      */
@@ -47,7 +48,7 @@ class Vote
     private $user;
 
     /**
-     * @ORM\Column(type="string", length=80, name="device_id")
+     * @ORM\Column(type="string", length=80, name="device_id", nullable=true)
      * @var string
      */
     private $device;
@@ -88,7 +89,7 @@ class Vote
     /**
      * Cast vote
      *
-     * @param Tageswoche\Entity\Debate $debate
+     * @param Newscoop\TagesWocheMobilePluginBundle\Entity\Debate $debate
      * @param int $answer
      * @param string $deviceId
      * @param Newscoop\Entity\User $user

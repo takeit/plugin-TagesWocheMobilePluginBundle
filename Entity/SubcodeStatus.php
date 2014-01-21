@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Entity;
+namespace Newscoop\TagesWocheMobilePluginBundle\Entity;
 
 use DateTime;
 use Newscoop\Entity\User;

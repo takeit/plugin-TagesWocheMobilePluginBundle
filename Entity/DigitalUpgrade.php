@@ -5,14 +5,14 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Entity;
+namespace Newscoop\TagesWocheMobilePluginBundle\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping AS ORM;
 use Newscoop\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
-use Tageswoche\Subscription\UpgradeView;
-use Tageswoche\Subscription\DeviceLimitException;
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\UpgradeView;
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\DeviceLimitException;
 
 /**
  * @ORM\Entity

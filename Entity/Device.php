@@ -5,14 +5,14 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Entity;
+namespace Newscoop\TagesWocheMobilePluginBundle\Entity;
 
 use DateTime;
 use Newscoop\Entity\User;
 use Doctrine\ORM\Mapping AS ORM;
 
 /**
- * @ORM\Entity(repositoryClass="Tageswoche\Repository\DeviceRepository")
+ * @ORM\Entity(repositoryClass="Newscoop\TagesWocheMobilePluginBundle\Repository\DeviceRepository")
  * @ORM\Table(name="tw_upgrade_device",
  *      uniqueConstraints={@ORM\UniqueConstraint(columns={"device", "user_id", "valid_until"})}
  *  )
