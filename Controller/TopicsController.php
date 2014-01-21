@@ -28,14 +28,6 @@ class TopicsController extends Controller
     private $request;
 
     /**
-     * Default action controller.
-     */
-    public function indexAction()
-    {
-        $this->_forward('list');
-    }
-
-    /**
      * @Route("/index")
      * @Route("/list")
      */
@@ -66,9 +58,7 @@ class TopicsController extends Controller
     }
     
     /**
-     * Subscribe to a topic.
-     *
-     * @return void
+     * @Route("/subscribe")
      */
     public function subscribeAction()
     {
@@ -82,9 +72,7 @@ class TopicsController extends Controller
     }
 
     /**
-     * Unsubscribe from a topic.
-     *
-     * @return void
+     * @Route("/unsubscribe")
      */
     public function unsubscribeAction()
     {
@@ -98,9 +86,7 @@ class TopicsController extends Controller
     }
 
     /**
-     * Get user topics
-     *
-     * @return void
+     * @Route("/mytopics")
      */
     public function mytopicsAction()
     {

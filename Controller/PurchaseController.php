@@ -23,7 +23,7 @@ use Tageswoche\Subscription\DmproException;
 class PurchaseController extends Controller
 {
     /**
-     * Validate purchase
+     * Route("/validate")
      */
     public function validateAction()
     {
@@ -63,7 +63,7 @@ class PurchaseController extends Controller
     }
 
     /**
-     * Check free upgrade status
+     * Route("/freeupgrade")
      */
     public function freeupgradeAction()
     {
