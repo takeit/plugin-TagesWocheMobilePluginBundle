@@ -62,8 +62,9 @@ class TopicsController extends Controller
      */
     public function subscribeAction()
     {
-        $this->assertIsSecure();
-        $this->assertIsPost();
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+        $apiHelperService->assertIsSecure();
+        $apiHelperService->assertIsPost();
 
         $this->container->get('user.topic')->followTopic($this->getUser(), $this->getTopic());
         return new JsonResponse(array(
@@ -76,8 +77,9 @@ class TopicsController extends Controller
      */
     public function unsubscribeAction()
     {
-        $this->assertIsSecure();
-        $this->assertIsPost();
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+        $apiHelperService->assertIsSecure();
+        $apiHelperService->assertIsPost();
 
         $this->container->get('user.topic')->unfollowTopic($this->getUser(), $this->getTopic());
         return new JsonResponse(array(
