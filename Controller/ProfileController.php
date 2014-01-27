@@ -42,7 +42,7 @@ class ProfileController extends Controller
     /**
      * @Route("/index")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
@@ -97,8 +97,8 @@ class ProfileController extends Controller
                     'member_since' => $user->getCreated()->format('Y-m-d') ?: null,
                     'account_type' => $this->getUserType($user) ?: null,
                     'profile_image_url' => $this->getUserImageUrl($user, array(125, 125), array(250, 250)),
-                    'public_profile_url' => $this->view->serverUrl(
-                        $this->view->url(
+                    'public_profile_url' => $apiHelperService->serverUrl(
+                        $this->container->get('zend_router')->assemble(
                             array(
                                 'module' => 'api',
                                 'controller' => 'profile',
@@ -129,7 +129,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Route("/subscriptioninfo")
+     * @Route("/subscriptioninfo")
      */
     public function subscriptioninfoAction()
     {
@@ -142,17 +142,17 @@ class ProfileController extends Controller
     }
 
     /**
-     * Route("/create")
+     * @Route("/create")
+     * @Method("POST")
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $apiHelperService->assertIsSecure();
-        $apiHelperService->assertIsPost();
 
         try {
             $command = new RegisterUserCommand();
-            $command->email = $this->_getParam('email');
+            $command->email = $request->request('email');
 
             if (empty($command->email)) {
                 return $apiHelperService->sendError("Parameter 'email' not set");
@@ -164,9 +164,7 @@ class ProfileController extends Controller
             }
 
             $this->container->get('user.register')->register($command);
-            $this->getResponse()->setHttpResponseCode(200);
-            $this->getResponse()->sendResponse();
-            exit;
+            return new JsonResponse(array(), 200);
         } catch (Exception $e) {
             return $apiHelperService->sendError($e->getMessage(), 409);
         }
@@ -175,11 +173,11 @@ class ProfileController extends Controller
     /**
      * Route("/public")
      */
-    public function publicAction()
+    public function publicAction(Request $request)
     {
         $user = $this->userService->findOneBy(
             array(
-                'id' => $this->_getParam('user'),
+                'id' => $request->query->get('user');
             )
         );
 
@@ -195,13 +193,13 @@ class ProfileController extends Controller
     }
 
     /**
-     * Route("/reset")
+     * @Route("/reset")
+     * @Method("POST")
      */
-    public function resetAction()
+    public function resetAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $apiHelperService->assertIsSecure();
-        $apiHelperService->assertIsPost();
 
         $user = $this->getUser();
         $this->container->get('promocode')->removeUserPromocode($user);
@@ -213,38 +211,38 @@ class ProfileController extends Controller
             )
         );
 
-        $this->container->get('mobile.free_upgrade')->reset($user, $this->_getParam('free_upgrade', false));
-         return newJsonResponse(array('code' => 200));
+        $this->container->get('mobile.free_upgrade')->reset($user, $request->request->get('free_upgrade'));
+        return newJsonResponse(array('code' => 200));
     }
 
     /**
-     * Route("/facebookcreate")
+     * @Route("/facebookcreate")
+     * @Method("POST")
      */
-    public function facebookcreateAction()
+    public function facebookcreateAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $apiHelperService->assertIsSecure();
-        $apiHelperService->assertIsPost();
 
         try {
-            $token = $this->_getParam(self::FACEBOOK_AUTH_TOKEN);
+            $token = $request->request->get(self::FACEBOOK_AUTH_TOKEN);
             $command = ConfirmCommand::createByFacebook($this->container->get('facebook')->me($token));
             $this->container->get('user.confirm')->confirm($command);
             $this->getResponse()->setHttpResponseCode(201);
-            $this->_forward('index');
+            return $this->forward('NewscoopTagesWocheMobilePluginBundle:Profile:index', array('request' => $request));
         } catch (Exception $e) {
             return $apiHelperService->sendError('Duplicate', 500);
         }
     }
 
     /**
-     * Route("/resetpassword")
+     * @Route("/resetpassword")
      */
-    public function resetpasswordAction()
+    public function resetpasswordAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
-        $email = $this->_getParam('email');
+        $email = $request->request('email');
         if (empty($email)) {
             return $apiHelperService->sendError('No email', 400);
         }
@@ -256,11 +254,7 @@ class ProfileController extends Controller
 
         $this->container->get('email')->sendPasswordRestoreToken($users[0]);
 
-        $this->getResponse()
-            ->setHttpResponseCode(200)
-            ->sendResponse();
-
-        exit;
+        return newJsonResponse(array('code' => 200));
     }
 
     /**
@@ -291,7 +285,9 @@ class ProfileController extends Controller
     private function getUserImage(User $user)
     {
         $image = $this->container->get('image')->getUserImage($user);
-        return $image ? $this->view->serverUrl($this->view->url(array('src' => $image), 'image', false, false)) : null;
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
+        return $image ? $apiHelperService->serverUrl($this->container->get('zend_router')->assemble(array('src' => $image), 'image', false, false)) : null;
     }
 
     /**
