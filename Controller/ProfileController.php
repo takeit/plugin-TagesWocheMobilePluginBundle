@@ -68,15 +68,15 @@ class ProfileController extends Controller
                     : null;
                 $this->container->get('user.profile')->updateProfile($command);
             } catch (UserIsCustomerException $e) {
-                $apiHelperService->sendError(get_class($e), 403);
+                return $apiHelperService->sendError(get_class($e), 403);
             } catch (PromocodeUsedException $e) {
-                $apiHelperService->sendError(get_class($e), 409);
+                return $apiHelperService->sendError(get_class($e), 409);
             } catch (CustomerIdUsedException $e) {
-                $apiHelperService->sendError(get_class($e), 409);
+                return $apiHelperService->sendError(get_class($e), 409);
             } catch (DmproException $e) {
-                $apiHelperService->sendError(get_class($e), 500);
+                return $apiHelperService->sendError(get_class($e), 500);
             } catch (\Exception $e) {
-                $apiHelperService->sendError(get_class($e) . ': ' . $e->getMessage());
+                return $apiHelperService->sendError(get_class($e) . ': ' . $e->getMessage());
             }
         } elseif ($this->getRequest()->isPost()) {
             return new JsonResponse($form->getErrors());
@@ -155,12 +155,12 @@ class ProfileController extends Controller
             $command->email = $this->_getParam('email');
 
             if (empty($command->email)) {
-                $apiHelperService->sendError("Parameter 'email' not set");
+                return $apiHelperService->sendError("Parameter 'email' not set");
             }
 
             $validator = new Zend_Validate_EmailAddress();
             if (!$validator->isValid($command->email)) {
-                $apiHelperService->sendError("Email '{$command->email}' is not valid");
+                return $apiHelperService->sendError("Email '{$command->email}' is not valid");
             }
 
             $this->container->get('user.register')->register($command);
@@ -168,7 +168,7 @@ class ProfileController extends Controller
             $this->getResponse()->sendResponse();
             exit;
         } catch (Exception $e) {
-            $apiHelperService->sendError($e->getMessage(), 409);
+            return $apiHelperService->sendError($e->getMessage(), 409);
         }
     }
 
@@ -233,7 +233,7 @@ class ProfileController extends Controller
             $this->getResponse()->setHttpResponseCode(201);
             $this->_forward('index');
         } catch (Exception $e) {
-            $apiHelperService->sendError('Duplicate', 500);
+            return $apiHelperService->sendError('Duplicate', 500);
         }
     }
 
@@ -246,12 +246,12 @@ class ProfileController extends Controller
 
         $email = $this->_getParam('email');
         if (empty($email)) {
-            $apiHelperService->sendError('No email', 400);
+            return $apiHelperService->sendError('No email', 400);
         }
 
         $users = $this->container->get('user')->findBy(array('email' => $email));
         if (empty($users) || !$users[0]->isActive()) {
-            $apiHelperService->sendError('Not found', 412);
+            return $apiHelperService->sendError('Not found', 412);
         }
 
         $this->container->get('email')->sendPasswordRestoreToken($users[0]);
