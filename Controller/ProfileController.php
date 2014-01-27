@@ -36,17 +36,12 @@ class ProfileController extends Controller
     const TYPE_BLOGGER = 'blogger';
     const TYPE_MEMBER = 'community_member';
 
-    /** @var Newscoop\Services\UserService */
-    private $userService;
-
     /**
      * @Route("/index")
      */
     public function indexAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-
-        $this->userService = $this->container->get('user');
 
         $user = $apiHelperService->getUser();
         if ($user === null) {
@@ -95,8 +90,8 @@ class ProfileController extends Controller
                     'bio' => $user->getAttribute('bio') ?: null,
                     'email_public' => (bool) $user->getAttribute('email_public'),
                     'member_since' => $user->getCreated()->format('Y-m-d') ?: null,
-                    'account_type' => $this->getUserType($user) ?: null,
-                    'profile_image_url' => $this->getUserImageUrl($user, array(125, 125), array(250, 250)),
+                    'account_type' => $apiHelperService->getUserType($user) ?: null,
+                    'profile_image_url' => $apiHelperService->getUserImageUrl($user, array(125, 125), array(250, 250)),
                     'public_profile_url' => $apiHelperService->serverUrl(
                         $this->container->get('zend_router')->assemble(
                             array(
@@ -123,7 +118,7 @@ class ProfileController extends Controller
                         $this->container->get('user.topic')->getTopics($user)
                     ),
                 ),
-                $this->getUserSubscriptionInfo($user)
+                $apiHelperService->getUserSubscriptionInfo($user)
             )
         );
     }
@@ -136,7 +131,7 @@ class ProfileController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $apiHelperService->assertIsSecure();
         return new JsonResponse(array_merge(
-            $this->hasAuthInfo() ? $this->getUserSubscriptionInfo($this->getUser()) : array(),
+            $apiHelperService->hasAuthInfo() ? $apiHelperService->getUserSubscriptionInfo($apiHelperService->getUser()) : array(),
             $this->getAvailableSubscriptions()
         ));
     }
@@ -175,7 +170,8 @@ class ProfileController extends Controller
      */
     public function publicAction(Request $request)
     {
-        $user = $this->userService->findOneBy(
+        $userService = $this->container->get('user');
+        $user = $userService->findOneBy(
             array(
                 'id' => $request->query->get('user');
             )
@@ -185,6 +181,7 @@ class ProfileController extends Controller
             return new JsonResponse();
         }
 
+        // TODO: convert to twig, or plugin user_profile smarty
         $this->_helper->smarty->setSmartyView();
         $this->view->user = new MetaUser($user);
         $this->view->profile = $user->getAttributes();
@@ -201,7 +198,7 @@ class ProfileController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $apiHelperService->assertIsSecure();
 
-        $user = $this->getUser();
+        $user = $apiHelperService->getUser();
         $this->container->get('promocode')->removeUserPromocode($user);
         $this->container->get('user_attributes')->removeAttributes(
             $user,
@@ -258,87 +255,20 @@ class ProfileController extends Controller
     }
 
     /**
-     * Get user type
-     *
-     * @param Newscoop\Entity\User $user
-     * @return string
-     */
-    private function getUserType(User $user)
-    {
-        if ($this->container->get('user')->isEditor($user)) {
-            return self::TYPE_EDITOR;
-        }
-
-        if ($this->container->get('blog')->isBlogger($user)) {
-            return self::TYPE_BLOGGER;
-        }
-
-        return self::TYPE_MEMBER;
-    }
-
-    /**
-     * Get user image
-     *
-     * @param Newscoop\Entity\User $user
-     * @return string
-     */
-    private function getUserImage(User $user)
-    {
-        $image = $this->container->get('image')->getUserImage($user);
-        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-
-        return $image ? $apiHelperService->serverUrl($this->container->get('zend_router')->assemble(array('src' => $image), 'image', false, false)) : null;
-    }
-
-    /**
      * Get available subscriptions
      *
      * @return array
      */
     private function getAvailableSubscriptions()
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
         $config = new Zend_Config_Xml(APPLICATION_PATH . '/configs/subscriptions.xml');
         $array = $config->toArray();
-        $array['single_issue_product']['product_id'] = $this->getCurrentIssueProductId();
+        $array['single_issue_product']['product_id'] = $apiHelperService->getCurrentIssueProductId();
         $array['digital_subscriptions'] = array_values($array['digital_subscriptions']['subscription']);
         return $array;
     }
 
-    /**
-     * Get user subscription info
-     *
-     * @param Newscoop\Entity\User $user
-     * @return array
-     */
-    private function getUserSubscriptionInfo($user)
-    {
-        $view = $this->container->get('user_subscription')->getView($user);
-
-        foreach ($view as $key => $val) {
-            if ($val instanceof DateTime) {
-                $view->$key = $val->format('Y-m-d');
-            }
-        }
-
-        return (array) $view;
-    }
-
-    /**
-     * Get current issue product id
-     *
-     * @return string
-     */
-    private function getCurrentIssueProductId()
-    {
-        $issue = $this->container->get('mobile.issue')->findCurrent();
-        $date = $this->getArticleField($issue, 'issuedate')
-            ? new DateTime($this->getArticleField($issue, 'issuedate'))
-            : $issue->getPublished();
-        return sprintf(
-            'ch.tageswoche.issue.%d.%02d',
-            $date->format('Y'),
-            $this->getArticleField($issue, 'issue_number')
-        );
-    }
 }
 
