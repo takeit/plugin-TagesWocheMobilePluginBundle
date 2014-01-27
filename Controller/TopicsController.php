@@ -114,7 +114,7 @@ class TopicsController extends Controller
      */
     private function getTopic($topicId)
     {
-        $topic = $this->container->get('user.topic')->findTopic($topicId));
+        $topic = $this->container->get('user.topic')->findTopic($topicId);
         if (!$topic) {
             return $apiHelperService->sendError('Topic not found.', 404);
         }
