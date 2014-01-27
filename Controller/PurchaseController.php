@@ -63,7 +63,7 @@ class PurchaseController extends Controller
     }
 
     /**
-     * Route("/freeupgrade")
+     * @Route("/freeupgrade")
      */
     public function freeupgradeAction()
     {
