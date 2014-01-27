@@ -18,12 +18,11 @@ use Newscoop\User\RegisterUserCommand;
 use Newscoop\User\UpdateProfileCommand;
 use Newscoop\User\ConfirmCommand;
 
-use Tageswoche\Mobile\UserDeviceService;
-use Tageswoche\Subscription\SubscriptionFacade;
-use Tageswoche\Promocode\PromocodeUsedException;
-use Tageswoche\Subscription\CustomerIdUsedException;
-use Tageswoche\Subscription\UserIsCustomerException;
-use Tageswoche\Subscription\DmproException;
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade;
+use Newscoop\TagesWocheMobilePluginBundle\Promocode\PromocodeUsedException;
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\CustomerIdUsedException;
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\UserIsCustomerException;
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproException;
 
 /**
  * Route('/profile')
