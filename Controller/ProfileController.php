@@ -47,12 +47,6 @@ class ProfileController extends Controller
             return;
         }
 
-        $form = new Api_Form_Profile();
-
-        if (empty($_FILES['profile_image_data'])) {
-            $form->removeElement('profile_image_data'); // disable maxsize error
-        }
-
         if ($this->getRequest()->isPost()) {
             try {
                 $command = new UpdateProfileCommand($form->getValues());
