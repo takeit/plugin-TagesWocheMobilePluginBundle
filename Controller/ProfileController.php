@@ -174,7 +174,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Route("/public")
+     * @Route("/public")
      */
     public function publicAction(Request $request)
     {
