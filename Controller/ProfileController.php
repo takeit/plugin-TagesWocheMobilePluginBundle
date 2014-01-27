@@ -15,9 +15,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Newscoop\Entity\User;
 use Newscoop\User\RegisterUserCommand;
-use Newscoop\User\UpdateProfileCommand;
 use Newscoop\User\ConfirmCommand;
 
+use Newscoop\TagesWocheMobilePluginBundle\Profile\UpdateProfileCommand;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade;
 use Newscoop\TagesWocheMobilePluginBundle\Promocode\PromocodeUsedException;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\CustomerIdUsedException;
@@ -53,14 +53,25 @@ class ProfileController extends Controller
             $form->removeElement('profile_image_data'); // disable maxsize error
         }
 
-        if ($this->getRequest()->isPost() && $form->isValid($this->getRequest()->getPost())) {
+        if ($this->getRequest()->isPost()) {
             try {
                 $command = new UpdateProfileCommand($form->getValues());
                 $command->user = $user;
+                $command->first_name = $user->getFirstName();
+                $command->last_name = $user->getLastName();
+                $command->username = $user->getUsername();
+                $command->attributes = $user->getAttributes();
                 $command->image = !empty($_FILES['profile_image_data'])
                     ? $form->profile_image_data->getFileInfo()
                     : null;
-                $this->container->get('user.profile')->updateProfile($command);
+                
+                $errors = $this->container->get('validator')->validate($command);
+                if (count($errors) === 0) {
+                    $this->container->get('user.profile')->updateProfile($command);
+                } else {
+                    $response = $apiHelperService->sendError($errors[0]->getMessage(), 500);
+                }
+
             } catch (UserIsCustomerException $e) {
                 return $apiHelperService->sendError(get_class($e), 403);
             } catch (PromocodeUsedException $e) {
@@ -72,8 +83,6 @@ class ProfileController extends Controller
             } catch (\Exception $e) {
                 return $apiHelperService->sendError(get_class($e) . ': ' . $e->getMessage());
             }
-        } elseif ($this->getRequest()->isPost()) {
-            return new JsonResponse($form->getErrors());
         }
 
         return new JsonResponse(
@@ -172,7 +181,7 @@ class ProfileController extends Controller
         $userService = $this->container->get('user');
         $user = $userService->findOneBy(
             array(
-                'id' => $request->query->get('user');
+                'id' => $request->query->get('user')
             )
         );
 
