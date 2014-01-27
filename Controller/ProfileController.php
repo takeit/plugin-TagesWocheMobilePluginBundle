@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+
 use Newscoop\Entity\User;
 use Newscoop\User\RegisterUserCommand;
 use Newscoop\User\UpdateProfileCommand;
@@ -43,9 +44,11 @@ class ProfileController extends Controller
      */
     public function indexAction()
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
         $this->userService = $this->container->get('user');
 
-        $user = $this->getUser();
+        $user = $apiHelperService->getUser();
         if ($user === null) {
             return;
         }
@@ -65,21 +68,21 @@ class ProfileController extends Controller
                     : null;
                 $this->container->get('user.profile')->updateProfile($command);
             } catch (UserIsCustomerException $e) {
-                $this->sendError(get_class($e), 403);
+                $apiHelperService->sendError(get_class($e), 403);
             } catch (PromocodeUsedException $e) {
-                $this->sendError(get_class($e), 409);
+                $apiHelperService->sendError(get_class($e), 409);
             } catch (CustomerIdUsedException $e) {
-                $this->sendError(get_class($e), 409);
+                $apiHelperService->sendError(get_class($e), 409);
             } catch (DmproException $e) {
-                $this->sendError(get_class($e), 500);
+                $apiHelperService->sendError(get_class($e), 500);
             } catch (\Exception $e) {
-                $this->sendError(get_class($e) . ': ' . $e->getMessage());
+                $apiHelperService->sendError(get_class($e) . ': ' . $e->getMessage());
             }
         } elseif ($this->getRequest()->isPost()) {
-            $this->_helper->json($form->getErrors());
+            return new JsonResponse($form->getErrors());
         }
 
-        $this->_helper->json(
+        return new JsonResponse(
             array_merge(
                 array(
                     'first_name' => $user->getFirstName() ?: null,
@@ -91,7 +94,6 @@ class ProfileController extends Controller
                     'website' => $user->getAttribute('website') ?: null,
                     'bio' => $user->getAttribute('bio') ?: null,
                     'email_public' => (bool) $user->getAttribute('email_public'),
-
                     'member_since' => $user->getCreated()->format('Y-m-d') ?: null,
                     'account_type' => $this->getUserType($user) ?: null,
                     'profile_image_url' => $this->getUserImageUrl($user, array(125, 125), array(250, 250)),
@@ -103,7 +105,7 @@ class ProfileController extends Controller
                                 'action' => 'public',
                             ),
                             'default'
-                        ) . $this->getApiQueryString(
+                        ) . $apiHelperService->getApiQueryString(
                             array(
                                 'user' => $user->getId(),
                             )
@@ -153,12 +155,12 @@ class ProfileController extends Controller
             $command->email = $this->_getParam('email');
 
             if (empty($command->email)) {
-                $this->sendError("Parameter 'email' not set");
+                $apiHelperService->sendError("Parameter 'email' not set");
             }
 
             $validator = new Zend_Validate_EmailAddress();
             if (!$validator->isValid($command->email)) {
-                $this->sendError("Email '{$command->email}' is not valid");
+                $apiHelperService->sendError("Email '{$command->email}' is not valid");
             }
 
             $this->container->get('user.register')->register($command);
@@ -166,7 +168,7 @@ class ProfileController extends Controller
             $this->getResponse()->sendResponse();
             exit;
         } catch (Exception $e) {
-            $this->sendError($e->getMessage(), 409);
+            $apiHelperService->sendError($e->getMessage(), 409);
         }
     }
 
@@ -231,7 +233,7 @@ class ProfileController extends Controller
             $this->getResponse()->setHttpResponseCode(201);
             $this->_forward('index');
         } catch (Exception $e) {
-            $this->sendError('Duplicate', 500);
+            $apiHelperService->sendError('Duplicate', 500);
         }
     }
 
@@ -240,14 +242,16 @@ class ProfileController extends Controller
      */
     public function resetpasswordAction()
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
         $email = $this->_getParam('email');
         if (empty($email)) {
-            $this->sendError('No email', 400);
+            $apiHelperService->sendError('No email', 400);
         }
 
         $users = $this->container->get('user')->findBy(array('email' => $email));
         if (empty($users) || !$users[0]->isActive()) {
-            $this->sendError('Not found', 412);
+            $apiHelperService->sendError('Not found', 412);
         }
 
         $this->container->get('email')->sendPasswordRestoreToken($users[0]);
