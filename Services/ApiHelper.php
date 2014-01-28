@@ -139,7 +139,7 @@ class ApiHelper
      */
     public function assertIsPost()
     {
-        if (!$this->getRequest()->isPost()) {
+        if ($this->request->getMethod() != 'POST') {
             $this->sendError('POST required.');
         }
     }
