@@ -82,7 +82,7 @@ class TopicsController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $apiHelperService->assertIsSecure();
 
-        $this->container->get('user.topic')->unfollowTopic($apiHelperService->getUser(), $this->getTopic($request->request->get('topic_id')));
+        $this->container->get('user.topic')->unfollowTopic($apiHelperService->getUser(), $apiHelperService->getTopic($request->request->get('topic_id')));
         return new JsonResponse(array(
             'status' => 200,
         ));

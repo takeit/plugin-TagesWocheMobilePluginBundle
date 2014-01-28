@@ -321,6 +321,24 @@ class ApiHelper
         return null;
     }
 
+    /**                                                               
+     * Get topic
+     *
+     * @return Newscoop\Entity\UserTopic                              
+     */                                                               
+    private function getTopic($topicId)
+    {
+        if (!$topicId) {
+            $topicId = $this->request->query->get('topic_id');
+        }
+        $topic = $this->_helper->service('user.topic')->findTopic($topicId);
+        if (!$topic) {
+            $this->sendError('Topic not found.', 404);                
+        }                                                             
+        
+        return $topic;                                                
+    }
+
     /**
      * Get topics
      *
