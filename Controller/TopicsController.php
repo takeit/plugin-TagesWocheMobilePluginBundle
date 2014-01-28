@@ -35,7 +35,6 @@ class TopicsController extends Controller
     public function listAction()
     {
         $response = array();
-        $parameters = $this->request->getParams();
         
         if ($this->hasAuthInfo()) {
             $user = $this->getUser();
