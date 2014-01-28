@@ -169,6 +169,7 @@ class ProfileController extends Controller
      */
     public function publicAction(Request $request)
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $userService = $this->container->get('user');
         $user = $userService->findOneBy(
             array(
@@ -176,8 +177,8 @@ class ProfileController extends Controller
             )
         );
 
-        if (empty($user)) {
-            return new JsonResponse();
+        if (!($user instanceof User)) {
+            return $user !== null ? $user : $apiHelperService->sendError('Invalid user.', 401);
         }
 
         // TODO: convert to twig, or plugin user_profile smarty
