@@ -93,11 +93,13 @@ class TopicsController extends Controller
      */
     public function mytopicsAction()
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
         $user = $this->getUser();
         $articles = new ArrayCollection();
         foreach ($this->container->get('user.topic')->getTopics($user) as $topic) {
             foreach ($this->container->get('article')->findByTopic($topic, 3) as $article) {
-                $articles->add(array_merge($this->formatArticle($article), array(
+                $articles->add(array_merge($apiHelperService->formatArticle($article), array(
                     'topic_id' => (int) $topic->getTopicId(),
                     'topic_name' => $topic->getName(),
                     'topic_url' => $this->getTopicUrl($topic),
