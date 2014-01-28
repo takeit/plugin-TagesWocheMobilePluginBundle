@@ -155,7 +155,7 @@ class ProfileController extends Controller
             if (count($errors) === 0) {
                 $this->container->get('user.register')->register($command);
                 return new JsonResponse(array(), 200);
-            } else
+            } else {
                 return $apiHelperService->sendError($errors[0]->getMessage(), 500);
             }
         } catch (Exception $e) {
