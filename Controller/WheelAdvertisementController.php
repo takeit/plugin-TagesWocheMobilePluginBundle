@@ -51,12 +51,14 @@ class WheelAdvertisementController extends Controller
      */
     public function listAction()
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
         $response = array();
 
         $wheelAds = $this->getWheelAds();
         foreach ($wheelAds as $article) {
             $rank = $this->getRank($article);
-            $response[] = array_merge(parent::formatArticle($article), array(
+            $response[] = array_merge($apiHelperService->formatArticle($article), array(
                 'rank' => $rank,
                 'iphone_image_url' => $this->getWheelAdImageUrl($article, 'iphone'),
                 'iphone5_image_url' => $this->getWheelAdImageUrl($article, 'iphone5'),

@@ -34,9 +34,10 @@ class TopicsController extends Controller
      */
     public function listAction()
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $response = array();
         
-        if ($this->hasAuthInfo()) {
+        if ($apiHelperService->hasAuthInfo()) {
             $user = $this->getUser();
             $topicsTemp = $this->container->get('user.topic')->getTopics($user);
             $topics = array();
