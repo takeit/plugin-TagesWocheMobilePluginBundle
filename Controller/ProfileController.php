@@ -187,7 +187,7 @@ class ProfileController extends Controller
         //$this->view->profile = $user->getAttributes();
         //$this->render('user_profile');
 
-        return $this->render('TagesWocheMobilePluginBundle:profile:user_profile.html.smarty', array(
+        return $this->render('NewscoopTagesWocheMobilePluginBundle:profile:user_profile.html.smarty', array(
             'user' => new MetaUser($user),
             'profile' => $user->getAttributes()
         ));
