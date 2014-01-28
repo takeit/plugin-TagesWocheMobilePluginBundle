@@ -14,8 +14,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\Entity\Article;
+use Newscoop\Entity\ArticleTopic;
 use Doctrine\Common\Collections\ArrayCollection;
-
 
 /**
  * Route('/topics')
@@ -45,7 +45,7 @@ class TopicsController extends Controller
                 $topics[] = new Topic($item->getTopicId());
             }
         } else {
-            $topics = ArticleTopic::GetArticleTopics(self::ARTICLE_TOPICS);
+            $topics = \ArticleTopic::GetArticleTopics(self::ARTICLE_TOPICS);
         }
         
         foreach ($topics as $topic) {
