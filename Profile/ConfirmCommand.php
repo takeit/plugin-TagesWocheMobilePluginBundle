@@ -37,6 +37,11 @@ class ConfirmCommand
      * @Assert\NotBlank(message="password_confirm is required")
      */
     public password_confirm;
+    /**
+     * @Assert\GreaterThan(
+     *     value = 0 
+     * )
+     */
     public terms_of_use;
     
 }
