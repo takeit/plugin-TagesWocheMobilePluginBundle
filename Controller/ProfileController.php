@@ -14,9 +14,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Newscoop\Entity\User;
-use Newscoop\User\RegisterUserCommand;
 use Newscoop\User\ConfirmCommand;
 
+use Newscoop\TagesWocheMobilePluginBundle\Profile\RegisterUserCommand;
 use Newscoop\TagesWocheMobilePluginBundle\Profile\UpdateProfileCommand;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade;
 use Newscoop\TagesWocheMobilePluginBundle\Promocode\PromocodeUsedException;
@@ -63,7 +63,7 @@ class ProfileController extends Controller
                 if (count($errors) === 0) {
                     $this->container->get('user.profile')->updateProfile($command);
                 } else {
-                    $response = $apiHelperService->sendError($errors[0]->getMessage(), 500);
+                    return $apiHelperService->sendError($errors[0]->getMessage(), 500);
                 }
 
             } catch (UserIsCustomerException $e) {
@@ -151,17 +151,13 @@ class ProfileController extends Controller
             $command = new RegisterUserCommand();
             $command->email = $request->request('email');
 
-            if (empty($command->email)) {
-                return $apiHelperService->sendError("Parameter 'email' not set");
+            $errors = $this->container->get('validator')->validate($command);
+            if (count($errors) === 0) {
+                $this->container->get('user.register')->register($command);
+                return new JsonResponse(array(), 200);
+            } else
+                return $apiHelperService->sendError($errors[0]->getMessage(), 500);
             }
-
-            $validator = new Zend_Validate_EmailAddress();
-            if (!$validator->isValid($command->email)) {
-                return $apiHelperService->sendError("Email '{$command->email}' is not valid");
-            }
-
-            $this->container->get('user.register')->register($command);
-            return new JsonResponse(array(), 200);
         } catch (Exception $e) {
             return $apiHelperService->sendError($e->getMessage(), 409);
         }
