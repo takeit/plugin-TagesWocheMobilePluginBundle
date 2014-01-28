@@ -39,6 +39,9 @@ class TopicsController extends Controller
         
         if ($apiHelperService->hasAuthInfo()) {
             $user = $apiHelperService->getUser();
+            if (!($user instanceof User)) {                               
+                return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
+            }
             $topicsTemp = $this->container->get('user.topic')->getTopics($user);
             $topics = array();
             foreach ($topicsTemp as $item) {
@@ -96,6 +99,9 @@ class TopicsController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         $user = $apiHelperService->getUser();
+        if (!($user instanceof User)) {
+                return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
+        }
         $articles = new ArrayCollection();
         foreach ($this->container->get('user.topic')->getTopics($user) as $topic) {
             foreach ($this->container->get('article')->findByTopic($topic, 3) as $article) {
