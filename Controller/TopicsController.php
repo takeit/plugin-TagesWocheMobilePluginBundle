@@ -38,7 +38,7 @@ class TopicsController extends Controller
         $response = array();
         
         if ($apiHelperService->hasAuthInfo()) {
-            $user = $this->getUser();
+            $user = $apiHelperService->getUser();
             $topicsTemp = $this->container->get('user.topic')->getTopics($user);
             $topics = array();
             foreach ($topicsTemp as $item) {
@@ -67,7 +67,7 @@ class TopicsController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $apiHelperService->assertIsSecure();
 
-        $this->container->get('user.topic')->followTopic($this->getUser(), $this->getTopic($request->request->get('topic_id')));
+        $this->container->get('user.topic')->followTopic($apiHelperService->getUser(), $this->getTopic($request->request->get('topic_id')));
         return new JsonResponse(array(
             'status' => 200,
         ));
@@ -82,7 +82,7 @@ class TopicsController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $apiHelperService->assertIsSecure();
 
-        $this->container->get('user.topic')->unfollowTopic($this->getUser(), $this->getTopic($request->request->get('topic_id')));
+        $this->container->get('user.topic')->unfollowTopic($apiHelperService->getUser(), $this->getTopic($request->request->get('topic_id')));
         return new JsonResponse(array(
             'status' => 200,
         ));
@@ -95,7 +95,7 @@ class TopicsController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
-        $user = $this->getUser();
+        $user = $apiHelperService->getUser();
         $articles = new ArrayCollection();
         foreach ($this->container->get('user.topic')->getTopics($user) as $topic) {
             foreach ($this->container->get('article')->findByTopic($topic, 3) as $article) {
