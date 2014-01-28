@@ -182,11 +182,15 @@ class ProfileController extends Controller
         }
 
         // TODO: convert to twig, or plugin user_profile smarty
-        $this->_helper->smarty->setSmartyView();
-        $this->view->user = new MetaUser($user);
-        $this->view->profile = $user->getAttributes();
+        //$this->_helper->smarty->setSmartyView();
+        //$this->view->user = new MetaUser($user);
+        //$this->view->profile = $user->getAttributes();
+        //$this->render('user_profile');
 
-        $this->render('user_profile');
+        return $this->render('TagesWocheMobilePluginBundle:profile:user_profile.html.smarty', array(
+            'user' => new MetaUser($user),
+            'profile' => $user->getAttributes()
+        ));
     }
 
     /**
