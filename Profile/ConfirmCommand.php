@@ -9,30 +9,34 @@ namespace Newscoop\TagesWocheMobilePluginBundle\Profile;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class UpdateProfileCommand
+class ConfirmCommand
 {
-    public $user;
-    /**
-     * @Assert\NotBlank(message="username is required")
-     */
-    public $username;
-    /**
-     * @Assert\NotBlank(message="password is required")
-     */
-    public $password;
     /**
      * @Assert\NotBlank(message="first_name is required")
      */
-    public $first_name;
+    public first_name;
     /**
      * @Assert\NotBlank(message="last_name is required")
      */
-    public $last_name;
+    public last_name;
+    /**
+     * @Assert\NotBlank(message="username is required")
+     */
+    public username;
     /**
      * @Assert\Image(
      *     maxSize = "1024k"
      * )
      */
-    public $image;
-    public $attributes;
+    public image;
+    /**
+     * @Assert\NotBlank(message="password is required")
+     */
+    public password;
+    /**
+     * @Assert\NotBlank(message="password_confirm is required")
+     */
+    public password_confirm;
+    public terms_of_use;
+    
 }
