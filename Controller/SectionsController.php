@@ -29,17 +29,18 @@ class SectionsController extends Controller
     /** @var Zend_Controller_Request_Http */
     private $request;
 
+    private $url;
+
     /**
      * @Route("/index")
      * @Route("/list")
      *
      * Serve list of sections.
      */
-    public function listAction()
+    public function listAction(Request $request)
     {
-        $params = $request->query->all();
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-
+        $apiHelperService->initClient($request->request->get('client'));
         $apiHelperService->client = array_merge($apiHelperService->client, array(
             'image_width' => self::IMAGE_STANDARD_WIDTH,
             'image_height' => self::IMAGE_STANDARD_HEIGHT,
@@ -49,6 +50,8 @@ class SectionsController extends Controller
             $apiHelperService->client['image_width'] = $apiHelperService->client['image_width'] * self::IMAGE_RETINA_FACTOR;
             $apiHelperService->client['image_height'] = $apiHelperService->client['image_height'] * self::IMAGE_RETINA_FACTOR;
         }
+
+        $this->url = $this->getRequest()->getSchemeAndHttpHost();
 
         $sections = array(
             0 => array('name' => 'Front page',
