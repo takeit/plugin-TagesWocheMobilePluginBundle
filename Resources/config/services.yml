@@ -28,6 +28,37 @@ services:
     newscoop_tageswochemobile_plugin.cache_helper:
         class: Newscoop\TagesWocheMobilePluginBundle\Services\CacehHelper
 
+    newscoop_tageswochemobile_plugin.promocode_service:
+        class: Newscoop\TagesWocheMobilePluginBundle\Subscription\PromocodeService
+        arguments:
+            - @em
+
+    newscoop_tageswochemobile_plugin.client_factory:
+        class: Newscoop\Http\ClientFactory
+
+    newscoop_tageswochemobile_plugin.dmpro_service:
+        class: Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproService
+        arguments:
+            - @newscoop_tageswochemobile_plugin.client_factory
+
+    newscoop_tageswochemobile_plugin.digital_upgrade_service:
+        class: Newscoop\TagesWocheMobilePluginBundle\Subscription\DigitalUpgradeService
+        arguments:
+            - @em
+
+    newscoop_tageswochemobile_plugin.user_service:
+        class: Newscoop\TagesWocheMobilePluginBundle\Subscription\UserService
+        arguments:
+            - @em
+            
+    newscoop_tageswochemobile_plugin.user_subscription:
+        class: Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade
+        arguments:
+            - @newscoop_tageswochemobile_plugin.promocode_service
+            - @newscoop_tageswochemobile_plugin.dmpro_service
+            - @newscoop_tageswochemobile_plugin.digital_upgrade_service
+            - @newscoop_tageswochemobile_plugin.user_service
+
     newscoop_tageswochemobile_plugin.debate:
         class: Newscoop\TagesWocheMobilePluginBundle\Debate\DebateService
         arguments:
