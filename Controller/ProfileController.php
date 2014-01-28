@@ -44,11 +44,11 @@ class ProfileController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         $user = $apiHelperService->getUser();
-        if ($user === null) {
-            return;
+        if (!($user instanceof User)) {
+                return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
         }
 
-        if ($this->getRequest()->isPost()) {
+        if ($request->getMethod() == 'POST') {
             try {
                 $command = new UpdateProfileCommand($form->getValues());
                 $command->user = $user;
