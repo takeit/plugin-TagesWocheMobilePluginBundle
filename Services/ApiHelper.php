@@ -672,6 +672,24 @@ class ApiHelper
     }
 
     /**
+     * Get current issue product id
+     *
+     * @return string
+     */
+    private function getCurrentIssueProductId()
+    {
+        $issue = $this->container->get('mobile.issue')->findCurrent();
+        $date = $this->getArticleField($issue, 'issuedate')
+            ? new DateTime($this->getArticleField($issue, 'issuedate'))
+            : $issue->getPublished();
+        return sprintf(
+            'ch.tageswoche.issue.%d.%02d',
+            $date->format('Y'),
+            $this->getArticleField($issue, 'issue_number')
+        );
+    }
+
+    /**
      * Get article field
      *
      * @param Article $article
@@ -710,6 +728,44 @@ class ApiHelper
 
         //$src = Zend_Registry::get('view')->url(array('src' => $image['src']), 'image', true, false);
         return $this->serverUrl($src);
+    }
+
+    /**
+     * Get user subscription info
+     *
+     * @param Newscoop\Entity\User $user
+     * @return array
+     */
+    private function getUserSubscriptionInfo($user)
+    {
+        $view = $this->container->get('user_subscription')->getView($user);
+
+        foreach ($view as $key => $val) {
+            if ($val instanceof DateTime) {
+                $view->$key = $val->format('Y-m-d');
+            }
+        }
+
+        return (array) $view;
+    }
+
+    /**
+     * Get user type
+     *
+     * @param Newscoop\Entity\User $user
+     * @return string
+     */
+    private function getUserType(User $user)
+    {
+        if ($this->container->get('user')->isEditor($user)) {
+            return self::TYPE_EDITOR;
+        }
+
+        if ($this->container->get('blog')->isBlogger($user)) {
+            return self::TYPE_BLOGGER;
+        }
+
+        return self::TYPE_MEMBER;
     }
 
     /**

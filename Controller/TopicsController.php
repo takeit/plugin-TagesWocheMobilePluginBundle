@@ -28,14 +28,6 @@ class TopicsController extends Controller
     private $request;
 
     /**
-     * Default action controller.
-     */
-    public function indexAction()
-    {
-        $this->_forward('list');
-    }
-
-    /**
      * @Route("/index")
      * @Route("/list")
      */
@@ -66,41 +58,37 @@ class TopicsController extends Controller
     }
     
     /**
-     * Subscribe to a topic.
-     *
-     * @return void
+     * @Route("/subscribe")
+     * @Method("POST")
      */
-    public function subscribeAction()
+    public function subscribeAction(Request $request)
     {
-        $this->assertIsSecure();
-        $this->assertIsPost();
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+        $apiHelperService->assertIsSecure();
 
-        $this->container->get('user.topic')->followTopic($this->getUser(), $this->getTopic());
+        $this->container->get('user.topic')->followTopic($this->getUser(), $this->getTopic($request->request->get('topic_id')));
         return new JsonResponse(array(
             'status' => 200,
         ));
     }
 
     /**
-     * Unsubscribe from a topic.
-     *
-     * @return void
+     * @Route("/unsubscribe")
+     * @Method("POST")
      */
-    public function unsubscribeAction()
+    public function unsubscribeAction(Request $request)
     {
-        $this->assertIsSecure();
-        $this->assertIsPost();
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+        $apiHelperService->assertIsSecure();
 
-        $this->container->get('user.topic')->unfollowTopic($this->getUser(), $this->getTopic());
+        $this->container->get('user.topic')->unfollowTopic($this->getUser(), $this->getTopic($request->request->get('topic_id')));
         return new JsonResponse(array(
             'status' => 200,
         ));
     }
 
     /**
-     * Get user topics
-     *
-     * @return void
+     * @Route("/mytopics")
      */
     public function mytopicsAction()
     {
@@ -124,9 +112,9 @@ class TopicsController extends Controller
      *
      * @return Newscoop\Entity\UserTopic
      */
-    private function getTopic()
+    private function getTopic($topicId)
     {
-        $topic = $this->container->get('user.topic')->findTopic($this->_getParam('topic_id'));
+        $topic = $this->container->get('user.topic')->findTopic($topicId);
         if (!$topic) {
             return $apiHelperService->sendError('Topic not found.', 404);
         }
