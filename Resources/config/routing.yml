@@ -48,6 +48,11 @@ newscoop_tageswochemobile_plugin.purchase:
   type:     annotation
   prefix:   /mapi/purchase
 
+newscoop_tageswochemobile_plugin.online:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/OnlineController.php"
+  type:     annotation
+  prefix:   /mapi/online
+
 newscoop_tageswochemobile_plugin.wheel-advertisement:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/WheelAdvertisementController.php"
   type:     annotation
