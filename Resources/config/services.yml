@@ -50,6 +50,11 @@ services:
         class: Newscoop\TagesWocheMobilePluginBundle\Subscription\UserService
         arguments:
             - @em
+
+    newscoop_tageswochemobile_plugin.mobile.issue:
+        class: Newscoop\TagesWocheMobilePluginBundle\Mobile\IssueFacade
+        arguments:
+            - @em
             
     newscoop_tageswochemobile_plugin.user_subscription:
         class: Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade
