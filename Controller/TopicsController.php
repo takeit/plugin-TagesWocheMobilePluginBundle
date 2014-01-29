@@ -13,6 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Newscoop\Entity\User;
 use Newscoop\Entity\Article;
 use Newscoop\Entity\ArticleTopic;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -102,6 +103,7 @@ class TopicsController extends Controller
         if (!($user instanceof User)) {
                 return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
         }
+
         $articles = new ArrayCollection();
         foreach ($this->container->get('user.topic')->getTopics($user) as $topic) {
             foreach ($this->container->get('article')->findByTopic($topic, 3) as $article) {
