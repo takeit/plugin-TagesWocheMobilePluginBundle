@@ -10,6 +10,7 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\Webcode\Manager;
 use Newscoop\Entity\Article;
+use Newscoop\Entity\User;
 
 /**
  * Configuration service for article type
@@ -86,8 +87,8 @@ class ApiHelper
             return $user !== null ? $user : $this->sendError('Invalid credentials', 412);
         }
 
-        $username = $this->request->request->get('username');
-        $password = $this->request->request->get('password');
+        $username = $this->_getParam('username');
+        $password = $this->_getParam('password');
 
         if (empty($username) || empty($password)) {
             return $this->sendError('Invalid credentials.', 401);
@@ -903,5 +904,15 @@ class ApiHelper
     {
         $relativeUrl = '/mapi/' . $relativeUrl;
         return ($makeAbsolute) ? absoluteUrl($relativeUrl) : $relativeUrl;
+    }
+    
+    public function _getParam($param)
+    {
+        if ($this->request->request->get($param))
+            return $this->request->request->get($param);
+        if ($this->request->query->get($param))
+            return $this->request->query->get($param);
+
+        return null;
     }
 }

@@ -181,12 +181,6 @@ class ProfileController extends Controller
             return $user !== null ? $user : $apiHelperService->sendError('Invalid user.', 401);
         }
 
-        // TODO: convert to twig, or plugin user_profile smarty
-        //$this->_helper->smarty->setSmartyView();
-        //$this->view->user = new MetaUser($user);
-        //$this->view->profile = $user->getAttributes();
-        //$this->render('user_profile');
-
         return $this->render('NewscoopTagesWocheMobilePluginBundle:profile:user_profile.html.smarty', array(
             'user' => new \MetaUser($user),
             'profile' => $user->getAttributes()
