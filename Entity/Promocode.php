@@ -13,9 +13,10 @@ use Doctrine\ORM\Mapping AS ORM;
 use Newscoop\Entity\User;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\PromocodeView;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\PromocodeUsedException;
+use Newscoop\TagesWocheMobilePluginBundle\Entity\Repository\PromocodeRepository;
 
 /**
- * @ORM\Entity(repositoryClass="Newscoop\TagesWocheMobilePluginBundle\Repository\PromocodeRepository")
+ * @ORM\Entity(repositoryClass="Newscoop\TagesWocheMobilePluginBundle\Entity\Repository\PromocodeRepository")
  * @ORM\Table(name="tw_promocode")
  */
 class Promocode

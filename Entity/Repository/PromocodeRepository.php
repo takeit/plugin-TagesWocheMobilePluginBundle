@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Repository;
+namespace Newscoop\TagesWocheMobilePluginBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 

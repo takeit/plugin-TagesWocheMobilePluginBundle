@@ -10,6 +10,7 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\Webcode\Manager;
 use Newscoop\Entity\Article;
+use Newscoop\Entity\User;
 
 /**
  * Configuration service for article type
@@ -38,6 +39,10 @@ class ApiHelper
     const FACEBOOK_AUTH_TOKEN = 'fb_access_token';
 
     const AD_TYPE = 'iPad_Ad';
+
+    const TYPE_EDITOR = 'editor';
+    const TYPE_BLOGGER = 'blogger';
+    const TYPE_MEMBER = 'community_member';
 
     /** @var int */
     private $rank = 1;
@@ -86,8 +91,8 @@ class ApiHelper
             return $user !== null ? $user : $this->sendError('Invalid credentials', 412);
         }
 
-        $username = $this->request->request->get('username');
-        $password = $this->request->request->get('password');
+        $username = $this->_getParam('username');
+        $password = $this->_getParam('password');
 
         if (empty($username) || empty($password)) {
             return $this->sendError('Invalid credentials.', 401);
@@ -754,9 +759,9 @@ class ApiHelper
      * @param Newscoop\Entity\User $user
      * @return array
      */
-    private function getUserSubscriptionInfo($user)
+    public function getUserSubscriptionInfo($user)
     {
-        $view = $this->container->get('user_subscription')->getView($user);
+        $view = $this->container->get('newscoop_tageswochemobile_plugin.user_subscription')->getView($user);
 
         foreach ($view as $key => $val) {
             if ($val instanceof DateTime) {
@@ -773,16 +778,19 @@ class ApiHelper
      * @param Newscoop\Entity\User $user
      * @return string
      */
-    private function getUserType(User $user)
+    public function getUserType(User $user)
     {
-        if ($this->container->get('user')->isEditor($user)) {
-            return self::TYPE_EDITOR;
+        foreach($this->container->get('user.list')->findEditors() as $editor) {
+            if ($editor->getId() == $user->getId()) {
+                return self::TYPE_EDITOR;
+            }
         }
 
+        // TODO: figure out how to do this with latest version
         if ($this->container->get('blog')->isBlogger($user)) {
             return self::TYPE_BLOGGER;
         }
-
+        
         return self::TYPE_MEMBER;
     }
 
@@ -903,5 +911,15 @@ class ApiHelper
     {
         $relativeUrl = '/mapi/' . $relativeUrl;
         return ($makeAbsolute) ? absoluteUrl($relativeUrl) : $relativeUrl;
+    }
+    
+    public function _getParam($param)
+    {
+        if ($this->request->request->get($param))
+            return $this->request->request->get($param);
+        if ($this->request->query->get($param))
+            return $this->request->query->get($param);
+
+        return null;
     }
 }

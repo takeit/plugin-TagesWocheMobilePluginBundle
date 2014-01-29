@@ -32,9 +32,6 @@ use Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproException;
  */
 class ProfileController extends Controller
 {
-    const TYPE_EDITOR = 'editor';
-    const TYPE_BLOGGER = 'blogger';
-    const TYPE_MEMBER = 'community_member';
 
     /**
      * @Route("/index")
@@ -180,12 +177,6 @@ class ProfileController extends Controller
         if (!($user instanceof User)) {
             return $user !== null ? $user : $apiHelperService->sendError('Invalid user.', 401);
         }
-
-        // TODO: convert to twig, or plugin user_profile smarty
-        //$this->_helper->smarty->setSmartyView();
-        //$this->view->user = new MetaUser($user);
-        //$this->view->profile = $user->getAttributes();
-        //$this->render('user_profile');
 
         return $this->render('NewscoopTagesWocheMobilePluginBundle:profile:user_profile.html.smarty', array(
             'user' => new \MetaUser($user),

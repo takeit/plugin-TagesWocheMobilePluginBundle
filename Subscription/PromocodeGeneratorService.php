@@ -45,7 +45,7 @@ class PromocodeGeneratorService
      */
     public function generate($count)
     {
-        $codes = $this->em->getRepository('Tageswoche\Entity\Promocode')->getCodes();
+        $codes = $this->em->getRepository('Newscoop\TagesWocheMobilePluginBundle\Entity\Promocode')->getCodes();
         $codes = array_flip($codes);
 
         for ($i = count($codes); $i < $count; $i++) {
