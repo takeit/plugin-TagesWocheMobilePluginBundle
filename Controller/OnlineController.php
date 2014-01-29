@@ -135,11 +135,7 @@ class OnlineController extends Controller
         return array(
             'issue_id' => $issue->getNumber(),
             // TODO add apiHelperService function to format this url
-            'url' => $this->view->serverUrl($this->view->url(array(
-                'controller' => 'online',
-                'action' => 'toc',
-                'id' => $issue->getNumber(),
-            ), 'api')) . $this->getClientVersionParams(),
+            'url' => $apiHelperService->serverUrl('online/toc?id=' . $issue->getNumber() . '&api=' . $this->getClientVersionParams()),
             'cover_url' => $this->getCoverUrl($issue),
             'title' => $issue->getTitle(),
             'description' => $apiHelperService->getArticleField($issue, 'shortdescription'),
@@ -157,33 +153,17 @@ class OnlineController extends Controller
      */
     private function getCoverUrl(Article $issue)
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
         $image = $issue->getImage();
         if ($image) {
-            // TODO add apiHelperService function to format this url
-            return $this->view->serverUrl($this->view->url(array(
-                'src' => $this->container->get('image')->getSrc($image->getPath(), $this->getCoverImageWidth(), $this->getCoverImageHeight(), 'crop'),
-            ), 'image', false, false));
+            return $apiHelperService->serverUrl(
+                $apiHelperServer->getLocalImageUrl(
+                    $this->container->get('image')->getSrc($image->getPath(),
+                    array(145, 201),
+                    array(290, 402)
+            )));
         }
-    }
-
-    /**
-     * Get cover image width
-     *
-     * @return int
-     */
-    private function getCoverImageWidth()
-    {
-        return $this->isRetinaClient() ? 290 : 145;
-    }
-
-    /**
-     * Get cover image height
-     *
-     * @return int
-     */
-    private function getCoverImageHeight()
-    {
-        return $this->isRetinaClient() ? 402 : 201;
     }
 
     /**
@@ -204,12 +184,7 @@ class OnlineController extends Controller
         $toc = array(
             'issue_id' => $issue->getNumber(),
             // TODO add apiHelperService function to format this url
-            'offline_url' => $this->view->serverUrl($this->view->url(array(
-                'module' => 'api',
-                'controller' => 'offline',
-                'action' => 'issues',
-                'id' => $issue->getNumber(),
-            ))) . $this->getApiQueryString(),
+            'offline_url' => $apiHelperService->serverUrl('offline/issues/' . $issue->getNumber() . $this->getApiQueryString()),
             'cover_url' => $this->getCoverUrl($issue),
             'single_issue_product_id' => sprintf('ch.tageswoche.issue.%d.%s', $issue->getPublishDate()->format('Y'), trim($apiHelperService->getArticleField($issue, 'issue_number'))),
             'title' => $issue->getTitle(),
@@ -234,15 +209,12 @@ class OnlineController extends Controller
      */
     protected function formatArticle(Article $article)
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $sectionId = $this->getSectionId($article);
         $storyId = $this->getStoryName($article) ? $sectionId . $this->getStoryName($article) : null;
         return array_merge(parent::formatArticle($article), array(
             // TODO add apiHelperService function to format this url
-            'url' => $this->view->serverUrl($this->view->url(array(
-                'controller' => 'online',
-                'action' => 'articles',
-                'id' => $article->getNumber(),
-            ), 'api')) . $this->getClientVersionParams(),
+            'url' => $apiHelperService->serverUrl('online/articles?id=' . $article->getNumber() . '&api=' . $this->getClientVersionParams()),
             'section_id' => $sectionId,
             'section_name' => $this->getSectionName($article),
             'section_rank' => $this->getSectionRank($sectionId),
