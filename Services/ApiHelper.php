@@ -787,9 +787,9 @@ class ApiHelper
         }
 
         // TODO: figure out how to do this with latest version
-        //if ($this->container->get('blog')->isBlogger($user)) {
-        //    return self::TYPE_BLOGGER;
-        //}
+        if ($this->container->get('blog')->isBlogger($user)) {
+            return self::TYPE_BLOGGER;
+        }
         
         return self::TYPE_MEMBER;
     }
