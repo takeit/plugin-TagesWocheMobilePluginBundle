@@ -62,7 +62,7 @@ class OnlineController extends Controller
 
         $issues = $mobileService->findAll();
         array_shift($issues); // all but current
-        return new JsonReponse(array_map(array($this, 'formatIndexIssue'), $issues));
+        return new JsonResponse(array_map(array($this, 'formatIndexIssue'), $issues));
     }
 
     /**
@@ -86,7 +86,7 @@ class OnlineController extends Controller
             return $apiHelperService->sendError('Issue not found.', 404);
         }
 
-        return new JsonReponse($this->formatTocIssue($this->issue));
+        return new JsonResponse($this->formatTocIssue($this->issue));
     }
 
     /**
