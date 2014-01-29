@@ -86,7 +86,7 @@ class PromocodeService
      */
     private function findByUser(User $user)
     {
-        return $this->em->getRepository('Tageswoche\Entity\Promocode')->findOneByUser($user->getId());
+        return $this->em->getRepository('Newscoop\TagesWocheMobilePluginBundle\Entity\Promocode')->findOneByUser($user->getId());
     }
 
     /**
@@ -129,6 +129,6 @@ class PromocodeService
      */
     private function getRepository()
     {
-        return $this->em->getRepository('Tageswoche\Entity\Promocode');
+        return $this->em->getRepository('Newscoop\TagesWocheMobilePluginBundle\Entity\Promocode');
     }
 }

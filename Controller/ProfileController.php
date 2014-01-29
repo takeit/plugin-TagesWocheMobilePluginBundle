@@ -32,9 +32,6 @@ use Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproException;
  */
 class ProfileController extends Controller
 {
-    const TYPE_EDITOR = 'editor';
-    const TYPE_BLOGGER = 'blogger';
-    const TYPE_MEMBER = 'community_member';
 
     /**
      * @Route("/index")
