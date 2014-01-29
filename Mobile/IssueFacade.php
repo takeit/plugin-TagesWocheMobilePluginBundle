@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Mobile;
+namespace Newscoop\TagesWocheMobilePluginBundle\Mobile;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
@@ -146,7 +146,7 @@ class IssueFacade
     {
         $qb = $this->em->createQueryBuilder();
         $qb->select('i, a')
-            ->from('Tageswoche\Entity\MobileIssueArticle', 'i')
+            ->from('Newscoop\TagesWocheMobilePluginBundle\Entity\MobileIssueArticle', 'i')
             ->innerJoin('i.article', 'a')
             ->where('a.workflowStatus = :published')
             ->orderBy('i.date', 'DESC')
