@@ -58,7 +58,7 @@ class OnlineController extends Controller
      */
     public function issuesAction()
     {
-        $mobileService = $this->container->get('mobile.issue');
+        $mobileService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue');
 
         $issues = $mobileService->findAll();
         array_shift($issues); // all but current
@@ -71,7 +71,7 @@ class OnlineController extends Controller
     public function tocAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-        $mobileService = $this->container->get('mobile.issue');
+        $mobileService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue');
 
         if (in_array($request->query->get('id'), array(IssueFacade::CURRENT_ISSUE, $mobileService->getCurrentIssueId()))) {
             return $apiHelperService->assertIsSecure();
@@ -104,7 +104,7 @@ class OnlineController extends Controller
         $cacheHelper = $this->container->get('newscoop_tageswochemobile_plugin.cache_helper');
         $cacheHelper->validateBrowserCache($article->getUpdated(), $request);
 
-        if ($this->container->get('mobile.issue')->isInCurrentIssue($article)) {
+        if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->isInCurrentIssue($article)) {
             $apiHelperService->assertIsSecure();
             $apiHelperService->assertIsSubscriber($article);
         }
@@ -135,7 +135,7 @@ class OnlineController extends Controller
         return array(
             'issue_id' => $issue->getNumber(),
             // TODO add apiHelperService function to format this url
-            'url' => $apiHelperService->serverUrl('online/toc?id=' . $issue->getNumber() . '&api=' . $this->getClientVersionParams()),
+            'url' => $apiHelperService->serverUrl('online/toc?id=' . $issue->getNumber() . '&api=' . $apiHelperService->getClientVersionParams()),
             'cover_url' => $this->getCoverUrl($issue),
             'title' => $issue->getTitle(),
             'description' => $apiHelperService->getArticleField($issue, 'shortdescription'),
@@ -155,14 +155,11 @@ class OnlineController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
-        $image = $issue->getImage();
+        $image = $apiHelperService->getImageUrl($issue);
         if ($image) {
             return $apiHelperService->serverUrl(
-                $apiHelperServer->getLocalImageUrl(
-                    $this->container->get('image')->getSrc($image->getPath(),
-                    array(145, 201),
-                    array(290, 402)
-            )));
+                $apiHelperService->getLocalImageUrl($image, array(145, 201), array(290, 402))
+            );
         }
     }
 
@@ -214,7 +211,7 @@ class OnlineController extends Controller
         $storyId = $this->getStoryName($article) ? $sectionId . $this->getStoryName($article) : null;
         return array_merge(parent::formatArticle($article), array(
             // TODO add apiHelperService function to format this url
-            'url' => $apiHelperService->serverUrl('online/articles?id=' . $article->getNumber() . '&api=' . $this->getClientVersionParams()),
+            'url' => $apiHelperService->serverUrl('online/articles?id=' . $article->getNumber() . '&api=' . $apiHelperService->getClientVersionParams()),
             'section_id' => $sectionId,
             'section_name' => $this->getSectionName($article),
             'section_rank' => $this->getSectionRank($sectionId),
