@@ -9,6 +9,7 @@ namespace Newscoop\TagesWocheMobilePluginBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -43,11 +44,11 @@ class ProfileController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         $user = $apiHelperService->getUser();
-        if ($user === null) {
-            return;
+        if (!($user instanceof User)) {
+                return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
         }
 
-        if ($this->getRequest()->isPost()) {
+        if ($request->getMethod() == 'POST') {
             try {
                 $command = new UpdateProfileCommand($form->getValues());
                 $command->user = $user;
@@ -168,6 +169,7 @@ class ProfileController extends Controller
      */
     public function publicAction(Request $request)
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $userService = $this->container->get('user');
         $user = $userService->findOneBy(
             array(
@@ -175,16 +177,20 @@ class ProfileController extends Controller
             )
         );
 
-        if (empty($user)) {
-            return new JsonResponse();
+        if (!($user instanceof User)) {
+            return $user !== null ? $user : $apiHelperService->sendError('Invalid user.', 401);
         }
 
         // TODO: convert to twig, or plugin user_profile smarty
-        $this->_helper->smarty->setSmartyView();
-        $this->view->user = new MetaUser($user);
-        $this->view->profile = $user->getAttributes();
+        //$this->_helper->smarty->setSmartyView();
+        //$this->view->user = new MetaUser($user);
+        //$this->view->profile = $user->getAttributes();
+        //$this->render('user_profile');
 
-        $this->render('user_profile');
+        return $this->render('NewscoopTagesWocheMobilePluginBundle:profile:user_profile.html.smarty', array(
+            'user' => new \MetaUser($user),
+            'profile' => $user->getAttributes()
+        ));
     }
 
     /**

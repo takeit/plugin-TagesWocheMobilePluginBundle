@@ -9,12 +9,13 @@ namespace Newscoop\TagesWocheMobilePluginBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\Entity\Article;
+use Newscoop\Entity\ArticleTopic;
 use Doctrine\Common\Collections\ArrayCollection;
-
 
 /**
  * Route('/topics')
@@ -33,18 +34,21 @@ class TopicsController extends Controller
      */
     public function listAction()
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $response = array();
-        $parameters = $this->request->getParams();
         
-        if ($this->hasAuthInfo()) {
-            $user = $this->getUser();
+        if ($apiHelperService->hasAuthInfo()) {
+            $user = $apiHelperService->getUser();
+            if (!($user instanceof User)) {                               
+                return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
+            }
             $topicsTemp = $this->container->get('user.topic')->getTopics($user);
             $topics = array();
             foreach ($topicsTemp as $item) {
                 $topics[] = new Topic($item->getTopicId());
             }
         } else {
-            $topics = ArticleTopic::GetArticleTopics(self::ARTICLE_TOPICS);
+            $topics = \ArticleTopic::GetArticleTopics(self::ARTICLE_TOPICS);
         }
         
         foreach ($topics as $topic) {
@@ -66,7 +70,7 @@ class TopicsController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $apiHelperService->assertIsSecure();
 
-        $this->container->get('user.topic')->followTopic($this->getUser(), $this->getTopic($request->request->get('topic_id')));
+        $this->container->get('user.topic')->followTopic($apiHelperService->getUser(), $this->getTopic($request->request->get('topic_id')));
         return new JsonResponse(array(
             'status' => 200,
         ));
@@ -81,7 +85,7 @@ class TopicsController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $apiHelperService->assertIsSecure();
 
-        $this->container->get('user.topic')->unfollowTopic($this->getUser(), $this->getTopic($request->request->get('topic_id')));
+        $this->container->get('user.topic')->unfollowTopic($apiHelperService->getUser(), $apiHelperService->getTopic($request->request->get('topic_id')));
         return new JsonResponse(array(
             'status' => 200,
         ));
@@ -92,11 +96,16 @@ class TopicsController extends Controller
      */
     public function mytopicsAction()
     {
-        $user = $this->getUser();
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
+        $user = $apiHelperService->getUser();
+        if (!($user instanceof User)) {
+                return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
+        }
         $articles = new ArrayCollection();
         foreach ($this->container->get('user.topic')->getTopics($user) as $topic) {
             foreach ($this->container->get('article')->findByTopic($topic, 3) as $article) {
-                $articles->add(array_merge($this->formatArticle($article), array(
+                $articles->add(array_merge($apiHelperService->formatArticle($article), array(
                     'topic_id' => (int) $topic->getTopicId(),
                     'topic_name' => $topic->getName(),
                     'topic_url' => $this->getTopicUrl($topic),

@@ -51,12 +51,14 @@ class WheelAdvertisementController extends Controller
      */
     public function listAction()
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
         $response = array();
 
         $wheelAds = $this->getWheelAds();
         foreach ($wheelAds as $article) {
             $rank = $this->getRank($article);
-            $response[] = array_merge(parent::formatArticle($article), array(
+            $response[] = array_merge($apiHelperService->formatArticle($article), array(
                 'rank' => $rank,
                 'iphone_image_url' => $this->getWheelAdImageUrl($article, 'iphone'),
                 'iphone5_image_url' => $this->getWheelAdImageUrl($article, 'iphone5'),
@@ -97,21 +99,23 @@ class WheelAdvertisementController extends Controller
     private function getWheelAdImageUrl($article, $device)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
+        $baseUrl = $this->getRequest()->getSchemeAndHttpHost();
         
         $images = $this->container->get('image')->findByArticle($article->getNumber());
         foreach ($images as $image) {
             if ($image->getWidth() == $this->getAdWidth($device) && $image->getHeight() == $this->getAdHeight($device)) {
-                return $this->view->serverUrl() . '/' .$image->getPath();
+                return $baseUrl . '/' .$image->getPath();
             }
             // if no standard image exists, check for larger retina image
             if ($image->getWidth() == ($this->getAdWidth($device) * self::IMAGE_RETINA_FACTOR) && 
                 $image->getHeight() == ($this->getAdHeight($device) * self::IMAGE_RETINA_FACTOR)) {
-                return $this->view->serverUrl() . '/' .$image->getPath();
+                return $baseUrl . '/' .$image->getPath();
             }
             // if this is a retina client and no retina width images were found, take the normal instead
             if ($apiHelperService->isRetinaClient()) {
                 if ($image->getWidth() == self::AD_STANDARD_WIDTH && $image->getHeight() == $this->getAdHeight($device, true)) {
-                    return $this->view->serverUrl() . '/' .$image->getPath();
+                    return $baseUrl . '/' .$image->getPath();
                 }
             }
         }

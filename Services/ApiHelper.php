@@ -139,7 +139,7 @@ class ApiHelper
      */
     public function assertIsPost()
     {
-        if (!$this->getRequest()->isPost()) {
+        if ($this->request->getMethod() != 'POST') {
             $this->sendError('POST required.');
         }
     }
@@ -321,6 +321,24 @@ class ApiHelper
         return null;
     }
 
+    /**                                                               
+     * Get topic
+     *
+     * @return Newscoop\Entity\UserTopic                              
+     */                                                               
+    private function getTopic($topicId)
+    {
+        if (!$topicId) {
+            $topicId = $this->request->query->get('topic_id');
+        }
+        $topic = $this->_helper->service('user.topic')->findTopic($topicId);
+        if (!$topic) {
+            $this->sendError('Topic not found.', 404);                
+        }                                                             
+        
+        return $topic;                                                
+    }
+
     /**
      * Get topics
      *
@@ -482,11 +500,11 @@ class ApiHelper
             'backside_url' => $this->getArticleUrl($article, 'back'),
             'dateline' => $this->getDateline($article),
             'short_name' => $this->getShortname($article),
-            'published' => $this->formatDate($article->getPublished()),
+            'published' => $this->formatDate($article->getPublishDate()),
             'rank' => $this->rank++,
             'website_url' => $this->getWebsiteUrl($article),
             'image_url' => $this->getImageUrl($article),
-            'comments_enabled' => $article->commentsEnabled() && !$article->commentsLocked(),
+            'comments_enabled' => $article->commentsEnabled(),
             'comment_count' => $this->getCommentsCount($article),
             'recommended_comment_count' => $this->getCommentsCount($article, true),
             'comment_url' => $this->getCommentsUrl($article),

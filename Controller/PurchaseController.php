@@ -48,6 +48,10 @@ class PurchaseController extends Controller
 
         if ($apiHelperService->hasAuthInfo()) {
             $user = $apiHelperService->getUser();
+            if (!($user instanceof User)) {
+                return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
+            }
+
             if ($data['receipt_valid']) {
                 try {
                     $this->container->get('newscoop_tageswochemobile_plugin.user_subscription')->upgrade($user);
@@ -73,6 +77,10 @@ class PurchaseController extends Controller
 
         try {
             $user = $apiHelperService->getUser();
+            if (!($user instanceof User)) {
+                return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
+            }
+
             $this->container->get('newscoop_tageswochemobile_plugin.user_subscription')->freeUpgrade($user);
             return $apiHelperService->sendError('OK', 200);
         } catch (DmproException $e) {
