@@ -102,6 +102,7 @@ class IssueFacade
      */
     public function getArticles(Article $issue)
     {
+        // TODO: figure out how this works in latest version
         $articleList = $this->em->getRepository('Newscoop\Entity\RelatedArticleList')
             ->findOneBy(array(
                 'number' => $issue->getNumber(),

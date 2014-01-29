@@ -97,7 +97,7 @@ class OnlineController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         $article = $this->container->get('article')->findOneByNumber($request->query->get('id'));
-        if (!$article || !$article->isPublished()) {
+        if (!$article || !$article->isPublishDate()) {
             return $apiHelperService->sendError('Article not found.', 404);
         }
 
@@ -130,8 +130,11 @@ class OnlineController extends Controller
      */
     private function formatIndexIssue(Article $issue)
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
         return array(
             'issue_id' => $issue->getNumber(),
+            // TODO add apiHelperService function to format this url
             'url' => $this->view->serverUrl($this->view->url(array(
                 'controller' => 'online',
                 'action' => 'toc',
@@ -139,9 +142,9 @@ class OnlineController extends Controller
             ), 'api')) . $this->getClientVersionParams(),
             'cover_url' => $this->getCoverUrl($issue),
             'title' => $issue->getTitle(),
-            'description' => $this->getArticleField($issue, 'shortdescription'),
-            'year' => (int) $issue->getPublished()->format('Y'),
-            'month' => (int) $issue->getPublished()->format('m'),
+            'description' => $apiHelperService->getArticleField($issue, 'shortdescription'),
+            'year' => (int) $issue->getPublishDate()->format('Y'),
+            'month' => (int) $issue->getPublishDate()->format('m'),
             'rank' => $this->rank++,
         );
     }
@@ -156,6 +159,7 @@ class OnlineController extends Controller
     {
         $image = $issue->getImage();
         if ($image) {
+            // TODO add apiHelperService function to format this url
             return $this->view->serverUrl($this->view->url(array(
                 'src' => $this->container->get('image')->getSrc($image->getPath(), $this->getCoverImageWidth(), $this->getCoverImageHeight(), 'crop'),
             ), 'image', false, false));
@@ -190,8 +194,8 @@ class OnlineController extends Controller
      */
     private function formatTocIssue(Article $issue)
     {
-        $mobileService = $this->container->get('mobile.issue');
-
+        $mobileService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue');
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $articles = $mobileService->getArticles($issue);
         $this->commentStats = $this->container->get('comment')->getArticleStats(array_map(function($article) {
             return $article->getNumber();
@@ -199,6 +203,7 @@ class OnlineController extends Controller
 
         $toc = array(
             'issue_id' => $issue->getNumber(),
+            // TODO add apiHelperService function to format this url
             'offline_url' => $this->view->serverUrl($this->view->url(array(
                 'module' => 'api',
                 'controller' => 'offline',
@@ -206,10 +211,10 @@ class OnlineController extends Controller
                 'id' => $issue->getNumber(),
             ))) . $this->getApiQueryString(),
             'cover_url' => $this->getCoverUrl($issue),
-            'single_issue_product_id' => sprintf('ch.tageswoche.issue.%d.%s', $issue->getPublished()->format('Y'), trim($this->getArticleField($issue, 'issue_number'))),
+            'single_issue_product_id' => sprintf('ch.tageswoche.issue.%d.%s', $issue->getPublishDate()->format('Y'), trim($apiHelperService->getArticleField($issue, 'issue_number'))),
             'title' => $issue->getTitle(),
-            'description' => $this->getArticleField($issue, 'shortdescription'),
-            'publication_date' => $issue->getPublished()->format('Y-m-d'),
+            'description' => $apiHelperService->getArticleField($issue, 'shortdescription'),
+            'publication_date' => $issue->getPublishDate()->format('Y-m-d'),
             'last_modified' => $issue->getUpdated()->format(self::DATE_FORMAT),
             'articles' => array_map(array($this, 'formatArticle'), $articles),
         );
@@ -232,6 +237,7 @@ class OnlineController extends Controller
         $sectionId = $this->getSectionId($article);
         $storyId = $this->getStoryName($article) ? $sectionId . $this->getStoryName($article) : null;
         return array_merge(parent::formatArticle($article), array(
+            // TODO add apiHelperService function to format this url
             'url' => $this->view->serverUrl($this->view->url(array(
                 'controller' => 'online',
                 'action' => 'articles',
@@ -243,7 +249,7 @@ class OnlineController extends Controller
             'image_url' => $this->getArticleImageUrl($article),
             'article_quality' => $this->isProminent($article) ? 'prominent' : 'companion',
             'last_modified' => $article->getUpdated()->format(self::DATE_FORMAT),
-            'published' => $article->getPublished()->format(self::DATE_FORMAT),
+            'published' => $article->getPublishDate()->format(self::DATE_FORMAT),
             'story_name' => $this->getStoryName($article) ?: null,
             'story_id' => $storyId ?: null,
             'teaser_short' => $this->getTeaserShort($article),
