@@ -102,7 +102,7 @@ class OnlineController extends Controller
         }
 
         $cacheHelper = $this->container->get('newscoop_tageswochemobile_plugin.cache_helper');
-        $cacheHelper->validateBrowserCache($article->getUpdated(), $request);
+        $cacheHelper->validateBrowserCache($article->getDate(), $request);
 
         if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->isInCurrentIssue($article)) {
             $apiHelperService->assertIsSecure();
@@ -181,13 +181,13 @@ class OnlineController extends Controller
         $toc = array(
             'issue_id' => $issue->getNumber(),
             // TODO add apiHelperService function to format this url
-            'offline_url' => $apiHelperService->serverUrl('offline/issues/' . $issue->getNumber() . $this->getApiQueryString()),
+            'offline_url' => $apiHelperService->serverUrl('offline/issues/' . $issue->getNumber() . $apiHelperService->getApiQueryString()),
             'cover_url' => $this->getCoverUrl($issue),
             'single_issue_product_id' => sprintf('ch.tageswoche.issue.%d.%s', $issue->getPublishDate()->format('Y'), trim($apiHelperService->getArticleField($issue, 'issue_number'))),
             'title' => $issue->getTitle(),
             'description' => $apiHelperService->getArticleField($issue, 'shortdescription'),
             'publication_date' => $issue->getPublishDate()->format('Y-m-d'),
-            'last_modified' => $issue->getUpdated()->format(self::DATE_FORMAT),
+            'last_modified' => $issue->getDate()->format($apiHelperService::DATE_FORMAT),
             'articles' => array_map(array($this, 'formatArticle'), $articles),
         );
 
@@ -217,8 +217,8 @@ class OnlineController extends Controller
             'section_rank' => $this->getSectionRank($sectionId),
             'image_url' => $this->getArticleImageUrl($article),
             'article_quality' => $this->isProminent($article) ? 'prominent' : 'companion',
-            'last_modified' => $article->getUpdated()->format(self::DATE_FORMAT),
-            'published' => $article->getPublishDate()->format(self::DATE_FORMAT),
+            'last_modified' => $article->getDate()->format($apiHelperService::DATE_FORMAT),
+            'published' => $article->getPublishDate()->format($apiHelperService::DATE_FORMAT),
             'story_name' => $this->getStoryName($article) ?: null,
             'story_id' => $storyId ?: null,
             'teaser_short' => $this->getTeaserShort($article),
