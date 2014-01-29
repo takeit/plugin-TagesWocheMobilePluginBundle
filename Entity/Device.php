@@ -12,7 +12,7 @@ use Newscoop\Entity\User;
 use Doctrine\ORM\Mapping AS ORM;
 
 /**
- * @ORM\Entity(repositoryClass="Newscoop\TagesWocheMobilePluginBundle\Repository\DeviceRepository")
+ * @ORM\Entity(repositoryClass="Newscoop\TagesWocheMobilePluginBundle\Entity\Repository\DeviceRepository")
  * @ORM\Table(name="tw_upgrade_device",
  *      uniqueConstraints={@ORM\UniqueConstraint(columns={"device", "user_id", "valid_until"})}
  *  )
