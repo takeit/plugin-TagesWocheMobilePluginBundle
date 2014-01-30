@@ -42,9 +42,13 @@ class LegalController extends Controller
             'body' => $apiHelper->getBody($article),
         ));
 
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/plain');
+
         return $this->render(
             'NewscoopTagesWocheMobilePluginBundle:legal:'.$template.'.txt.twig',
-            $data
+            $data,
+            $response
         );
     }
 }
