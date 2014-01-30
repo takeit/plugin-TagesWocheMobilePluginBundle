@@ -5,9 +5,8 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Mobile;
+namespace  Newscoop\TagesWocheMobilePluginBundle\Mobile;
 
-use Zend_View;
 use Newscoop\Entity\Article;
 use Newscoop\Http\ClientFactory;
 
@@ -21,11 +20,6 @@ class OfflineIssueService
      * @var Newscoop\Http\ClientFactory
      */
     private $clientFactory;
-
-    /**
-     * @var Zend_View
-     */
-    private $view;
 
     /**
      * @var array
@@ -44,14 +38,10 @@ class OfflineIssueService
 
     /**
      * @param Newscoop\Http\ClientFactory $clientFactory
-     * @param Zend_View $view
-     * @param array $config
      */
-    public function __construct(ClientFactory $clientFactory, Zend_View $view, array $config = array())
+    public function __construct(ClientFactory $clientFactory)
     {
         $this->clientFactory = $clientFactory;
-        $this->view = $view;
-        $this->config = array_merge($this->config, $config);
     }
 
     /**
@@ -341,19 +331,4 @@ class OfflineIssueService
         ), $client));
     }
 
-    /**
-     * Get api url
-     *
-     * @param array $params
-     * @param array $queryData
-     * @return string
-     */
-    private function getApiUrl(array $params, array $queryData = array())
-    {
-        return sprintf('%s/%s?%s',
-            rtrim($this->config['site_url'], '/'),
-            ltrim($this->view->url($params, 'api'), '/'),
-            http_build_query($queryData)
-        );
-    }
 }
