@@ -62,3 +62,8 @@ newscoop_tageswochemobile_plugin.wheel-advertisement:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/WheelAdvertisementController.php"
   type:     annotation
   prefix:   /mapi/wheel-advertisement
+
+newscoop_tageswochemobile_plugin.legal:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/LegalController.php"
+  type:     annotation
+  prefix:   /mapi/legal
