@@ -99,7 +99,7 @@ class OnlineController extends Controller
         $article = $this->container->get('em')
             ->getRepository('Newscoop\Entity\Article')
             ->findOneByNumber($request->query->get('id'));
-        if (!$article || !$article->isPublished()) {
+        if (!$article || !$article->isPublishDate()) {
             return $apiHelperService->sendError('Article not found.', 404);
         }
 
