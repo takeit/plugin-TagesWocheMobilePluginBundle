@@ -77,15 +77,15 @@ class OfflineController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         if (!file_exists($zip)) {
-            $this->sendError(self::NOT_FOUND, self::NOT_FOUND_CODE);
+            return $apiHelperService->sendError(self::NOT_FOUND, self::NOT_FOUND_CODE);
         }
 
-        $this->getResponse()->setHeader('Content-Type', 'application/zip', true);
-        $this->getResponse()->setHeader('Content-Disposition', sprintf('attachment; filename=%s', basename($zip)));
-        $this->getResponse()->setHeader('Content-Length', filesize($zip));
-        $this->getResponse()->sendHeaders();
+        $response = new Response(file_get_contents($zip));
 
-        readfile($zip);
-        exit;
+        $response->headers->set('Content-Type', 'application/zip', true);
+        $response->headers->set('Content-Disposition', sprintf('attachment; filename=%s', basename($zip)));
+        $response->headers->set('Content-Length', filesize($zip));
+
+         return $response;
     }
 }
