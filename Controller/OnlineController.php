@@ -96,7 +96,9 @@ class OnlineController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
-        $article = $this->container->get('article')->findOneByNumber($request->query->get('id'));
+        $article = $this->container->get('em')
+            ->getRepository('Newscoop\Entity\Article')
+            ->findOneByNumber($request->query->get('id'));
         if (!$article || !$article->isPublishDate()) {
             return $apiHelperService->sendError('Article not found.', 404);
         }
@@ -115,6 +117,7 @@ class OnlineController extends Controller
         //$this->view->height = $apiHelperService->getClientHeight();
         //$this->render('article');
 
+        // TODO: find out how to do the getGimme() thing as above and what that does
         return $this->render('NewscoopTagesWocheMobilePluginBundle:online:article.html.smarty', array(
             'article' => new \MetaArticle($article->getLanguageId(), $article->getNumber()),
             'width' => $apiHelperService->getClientWidth(),
