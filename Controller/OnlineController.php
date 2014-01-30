@@ -78,7 +78,7 @@ class OnlineController extends Controller
         }
 
         if (!$request->query->get('id')) {
-            return $apiHelperService->sendError();
+            return $apiHelperService->sendError('Missing id', 400);
         }
 
         $this->issue = $mobileService->find($request->query->get('id'));
