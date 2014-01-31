@@ -74,7 +74,9 @@ class OnlineController extends Controller
         $mobileService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue');
 
         if (in_array($request->query->get('id'), array(IssueFacade::CURRENT_ISSUE, $mobileService->getCurrentIssueId()))) {
-            return $apiHelperService->assertIsSecure();
+            if (!$apiHelperService->isSecure()) {
+                $apiHelperService->sendError('Secure connection required', 400);
+            }
         }
 
         if (!$request->query->get('id')) {
@@ -107,8 +109,12 @@ class OnlineController extends Controller
         $cacheHelper->validateBrowserCache($article->getDate(), $request);
 
         if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->isInCurrentIssue($article)) {
-            $apiHelperService->assertIsSecure();
-            $apiHelperService->assertIsSubscriber($article);
+            if (!$apiHelperService->isSecure()) {
+                $apiHelperService->sendError('Secure connection required', 400);
+            }
+            if (!$apiHelperService->isSubscriber($article)) {
+                $apiHelperService->sendError('Unathorized', 401);
+            }
         }
 
         //$this->_helper->smarty->setSmartyView();

@@ -126,14 +126,14 @@ class ApiHelper
      *
      * @return void
      */
-    public function assertIsSecure()
+    public function isSecure()
     {
         if (APPLICATION_ENV === 'development' || $this->isAuthorized()) {
-            return;
+            return true;
         }
 
         if (!$this->request->isSecure()) {
-            $this->sendError('Secure connection required.');
+            return false;
         }
     }
 
@@ -142,11 +142,12 @@ class ApiHelper
      *
      * @return void
      */
-    public function assertIsPost()
+    public function isPost()
     {
         if ($this->request->getMethod() != 'POST') {
-            $this->sendError('POST required.');
+            return false;
         }
+        return true;
     }
 
     /**
@@ -166,40 +167,38 @@ class ApiHelper
      * @param Newscoop\Entity\Article $article
      * @return void
      */
-    public function assertIsSubscriber($article = null)
+    public function isSubscriber($article = null)
     {
 
         // user is accessing from a authorized server
         // no auth required
         if ($this->isAuthorized()) {
-            return;
+            return true;
         }
 
         // user has included DMPro device data
         if ($this->_getParam('receipt_data') && $this->_getParam('device_id')) {
             if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.purchase')->isValid($this->_getParam('receipt_data'))) {
-                return;
+                return true;
             }
         }
 
-        // user has provided username and password in the request
+        // user provided login details and has device upgrade
         if ($this->hasAuthInfo() && ($user = $this->getUser())) {
-            if ($this->container->get('newscoop_tageswochemobile_plugin.subscription.device')->hasDeviceUpgrade($user, $this->_getParam('device_id'))) {
-                return;
-            } else {
-                return $this->sendError('Device limit reached', 409);
+            if ($this->_helper->service('subscription.device')->hasDeviceUpgrade($user, $this->_getParam('device_id'))) {
+                return true;
             }
         }
-    
+
         // reqeusted article is in the current issue or is requesting an ad
         // no auth required
         if ($article !== null && ! $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->isInCurrentIssue($article)) {
-            return;
+            return true;
         } elseif ($article !== null && $this->isAd($article)) {
-            return;
+            return true;
         }
 
-        return $this->sendError('Unauthorized.', 401);
+        return false;
     }
 
     /**
