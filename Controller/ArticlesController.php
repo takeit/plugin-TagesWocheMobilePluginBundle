@@ -176,7 +176,7 @@ class ArticlesController extends Controller
         $cacheHelper = $this->container
             ->get('newscoop_tageswochemobile_plugin.cache_helper');
 
-        $cacheHelper->validateBrowserCache($article->getUpdated(), $request);
+        $cacheHelper->validateBrowserCache($article->getDate(), $request);
 
         if ($request->get('side') == 'back') {
 
@@ -202,7 +202,7 @@ class ArticlesController extends Controller
             $templateName = 'article';
             $data = array('data' => array(
                 'dateline' => $apiHelperService->getDateLine($article),
-                'published'  => $article->getPublished(),
+                'published'  => $article->getPublishDate(),
                 'teaser' => $apiHelperService->getTeaser($article),
                 'title' => $article->getTitle(),
                 'image_url' => $apiHelperService->getImageUrl($article),

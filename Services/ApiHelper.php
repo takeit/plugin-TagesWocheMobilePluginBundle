@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\Webcode\Manager;
 use Newscoop\Entity\Article;
 use Newscoop\Entity\User;
-
+use Newscoop\TagesWocheMobilePluginBundle\Mobile\OfflineIssueService;
 /**
  * Configuration service for article type
  */
@@ -132,7 +132,7 @@ class ApiHelper
             return;
         }
 
-        if (!$this->getRequest()->isSecure()) {
+        if (!$this->request->isSecure()) {
             $this->sendError('Secure connection required.');
         }
     }
@@ -168,31 +168,38 @@ class ApiHelper
      */
     public function assertIsSubscriber($article = null)
     {
+
+        // user is accessing from a authorized server
+        // no auth required
         if ($this->isAuthorized()) {
             return;
         }
 
+        // user has included DMPro device data
         if ($this->_getParam('receipt_data') && $this->_getParam('device_id')) {
-            if ($this->_helper->service('mobile.purchase')->isValid($this->_getParam('receipt_data'))) {
+            if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.purchase')->isValid($this->_getParam('receipt_data'))) {
                 return;
             }
         }
 
+        // user has provided username and password in the request
         if ($this->hasAuthInfo() && ($user = $this->getUser())) {
-            if ($this->_helper->service('subscription.device')->hasDeviceUpgrade($user, $this->_getParam('device_id'))) {
+            if ($this->container->get('newscoop_tageswochemobile_plugin.subscription.device')->hasDeviceUpgrade($user, $this->_getParam('device_id'))) {
                 return;
             } else {
-                $this->sendError('Device limit reached', 409);
+                return $this->sendError('Device limit reached', 409);
             }
         }
-
-        if ($article !== null && ! $this->_helper->service('mobile.issue')->isInCurrentIssue($article)) {
+    
+        // reqeusted article is in the current issue or is requesting an ad
+        // no auth required
+        if ($article !== null && ! $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->isInCurrentIssue($article)) {
             return;
         } elseif ($article !== null && $this->isAd($article)) {
             return;
         }
 
-        $this->sendError('Unauthorized.', 401);
+        return $this->sendError('Unauthorized.', 401);
     }
 
     /**
@@ -202,9 +209,13 @@ class ApiHelper
      */
     public function isAuthorized()
     {
-        $request = $this->getRequest();
-        $options = $this->getInvokeArg('bootstrap')->getOption('offline');
-        return !empty($options['secret']) && $request->getHeader(OfflineIssueService::OFFLINE_HEADER) === $options['secret'];
+        $options = $this->container->getParameter('offline');
+        if (!empty($options['secret']) && 
+            $this->request->headers->get(OfflineIssueService::OFFLINE_HEADER) === $options['secret']) {
+            return;
+        } 
+
+        return $this->sendError('Unauthorized.', 401);
     }
 
     /**
@@ -701,7 +712,7 @@ class ApiHelper
      */
     private function getCurrentIssueProductId()
     {
-        $issue = $this->container->get('mobile.issue')->findCurrent();
+        $issue = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->findCurrent();
         $date = $this->getArticleField($issue, 'issuedate')
             ? new DateTime($this->getArticleField($issue, 'issuedate'))
             : $issue->getPublished();
