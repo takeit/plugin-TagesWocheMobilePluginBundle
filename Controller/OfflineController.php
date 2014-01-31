@@ -39,7 +39,7 @@ class OfflineController extends Controller
         $offlineService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue.offline');
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
-        $this->assertIsSubscriber();
+        $apiHelperService->assertIsSubscriber();
 
         if (!$request->query->get('id') || !is_numeric($request->query->get('id'))) {
             return $apiHelperService->sendError(self::NOT_FOUND, self::NOT_FOUND_CODE);
@@ -56,7 +56,7 @@ class OfflineController extends Controller
         $offlineService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue.offline');
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
-        $this->assertIsSubscriber();
+        $apiHelperService->assertIsSubscriber();
 
         $issue = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->find($request->query->get('id'));
         if (!$issue) {

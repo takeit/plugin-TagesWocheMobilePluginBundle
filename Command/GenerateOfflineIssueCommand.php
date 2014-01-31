@@ -5,15 +5,20 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Console\Command;
+namespace Newscoop\TagesWocheMobilePluginBundle\Console\Command;
 
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use DateTime;
 use Newscoop\Entity\Article;
 
 /**
  */
-class GenerateOfflineIssueCommand extends Console\Command\Command
+class GenerateOfflineIssueCommand extends ContainerAwareCommand
 {
     /**
      */
@@ -29,11 +34,11 @@ class GenerateOfflineIssueCommand extends Console\Command\Command
     protected function execute($input, $output)
     {
         if ($input->getArgument('issue') === 'all') {
-            foreach ($this->getHelper('container')->getService('mobile.issue')->findAll() as $issue) {
+            foreach ($this->getHelper('container')->getService('newscoop_tageswochemobile_plugin.mobile.issue')->findAll() as $issue) {
                 $this->generateIssue($issue);
             }
         } else {
-            $issue = $this->getHelper('container')->getService('mobile.issue')->find($input->getArgument('issue'));
+            $issue = $this->getHelper('container')->getService('newscoop_tageswochemobile_plugin.mobile.issue')->find($input->getArgument('issue'));
             if ($issue !== null) {
                 $this->generateIssue($issue);
             } else {
@@ -51,7 +56,7 @@ class GenerateOfflineIssueCommand extends Console\Command\Command
     private function generateIssue(Article $issue)
     {
         try {
-            $this->getHelper('container')->getService('mobile.issue.offline')->generateIssue($issue);
+            $this->getHelper('container')->getService('newscoop_tageswochemobile_plugin.mobile.issue.offline')->generateIssue($issue);
         } catch (\Exception $e) {
             print_r($e->getMessage());
             print_r($e->getTraceAsString());
