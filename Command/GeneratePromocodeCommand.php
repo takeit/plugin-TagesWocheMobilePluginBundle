@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Console\Command;
+namespace Newscoop\TagesWocheMobilePluginBundle\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console;
