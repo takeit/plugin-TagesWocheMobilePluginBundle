@@ -185,7 +185,7 @@ class ApiHelper
 
         // user provided login details and has device upgrade
         if ($this->hasAuthInfo() && ($user = $this->getUser())) {
-            if ($this->_helper->service('subscription.device')->hasDeviceUpgrade($user, $this->_getParam('device_id'))) {
+            if ($this->_helper->service('newscoop_tageswochemobile_plugin.subscription.device')->hasDeviceUpgrade($user, $this->_getParam('device_id'))) {
                 return true;
             }
         }
