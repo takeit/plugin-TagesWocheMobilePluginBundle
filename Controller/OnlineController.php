@@ -66,24 +66,24 @@ class OnlineController extends Controller
     }
 
     /**
-     * @Route("/toc")
+     * @Route("/toc/{id}", requirements={"id" = "\d+"})
      */
-    public function tocAction(Request $request)
+    public function tocAction($id)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $mobileService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue');
 
-        if (in_array($request->query->get('id'), array(IssueFacade::CURRENT_ISSUE, $mobileService->getCurrentIssueId()))) {
+        if (in_array($id, array(IssueFacade::CURRENT_ISSUE, $mobileService->getCurrentIssueId()))) {
             if (!$apiHelperService->isSecure()) {
                 return $apiHelperService->sendError('Secure connection required', 400);
             }
         }
 
-        if (!$request->query->get('id')) {
+        if (!$id) {
             return $apiHelperService->sendError('Missing id', 400);
         }
 
-        $this->issue = $mobileService->find($request->query->get('id'));
+        $this->issue = $mobileService->find($id);
         if (empty($this->issue)) {
             return $apiHelperService->sendError('Issue not found.', 404);
         }
@@ -92,21 +92,21 @@ class OnlineController extends Controller
     }
 
     /**
-     * @Route("/articles")
+     * @Route("/articles/{id}", requirements={"id" = "\d+"})
      */
-    public function articlesAction(Request $request)
+    public function articlesAction($id)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         $article = $this->container->get('em')
             ->getRepository('Newscoop\Entity\Article')
-            ->findOneByNumber($request->query->get('id'));
-        if (!$article || !$article->isPublishDate()) {
+            ->findOneByNumber($id);
+        if (!$article || !$article->isPublished()) {
             return $apiHelperService->sendError('Article not found.', 404);
         }
 
         $cacheHelper = $this->container->get('newscoop_tageswochemobile_plugin.cache_helper');
-        $cacheHelper->validateBrowserCache($article->getDate(), $request);
+        $cacheHelper->validateBrowserCache($article->getDate(), $this->getRequest());
 
         if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->isInCurrentIssue($article)) {
             if (!$apiHelperService->isSecure()) {
