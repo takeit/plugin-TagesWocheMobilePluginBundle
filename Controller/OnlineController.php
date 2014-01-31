@@ -75,7 +75,7 @@ class OnlineController extends Controller
 
         if (in_array($request->query->get('id'), array(IssueFacade::CURRENT_ISSUE, $mobileService->getCurrentIssueId()))) {
             if (!$apiHelperService->isSecure()) {
-                $apiHelperService->sendError('Secure connection required', 400);
+                return $apiHelperService->sendError('Secure connection required', 400);
             }
         }
 
@@ -110,10 +110,10 @@ class OnlineController extends Controller
 
         if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->isInCurrentIssue($article)) {
             if (!$apiHelperService->isSecure()) {
-                $apiHelperService->sendError('Secure connection required', 400);
+                return $apiHelperService->sendError('Secure connection required', 400);
             }
             if (!$apiHelperService->isSubscriber($article)) {
-                $apiHelperService->sendError('Unathorized', 401);
+                return $apiHelperService->sendError('Unathorized', 401);
             }
         }
 

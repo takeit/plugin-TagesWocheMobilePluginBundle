@@ -70,7 +70,7 @@ class TopicsController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         if (!$apiHelperService->isSecure()) {
-            $apiHelperService->sendError('Secure connection required', 400);
+            return $apiHelperService->sendError('Secure connection required', 400);
         }
 
         $this->container->get('user.topic')->followTopic($apiHelperService->getUser(), $this->getTopic($request->request->get('topic_id')));
@@ -87,7 +87,7 @@ class TopicsController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         if (!$apiHelperService->isSecure()) {
-            $apiHelperService->sendError('Secure connection required', 400);
+            return $apiHelperService->sendError('Secure connection required', 400);
         }
 
         $this->container->get('user.topic')->unfollowTopic($apiHelperService->getUser(), $apiHelperService->getTopic($request->request->get('topic_id')));

@@ -30,7 +30,7 @@ class PurchaseController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         if (!$apiHelperService->isSecure()) {
-            $apiHelperService->sendError('Secure connection required', 400);
+            return $apiHelperService->sendError('Secure connection required', 400);
         }
 
         $receipt = $request->query->get('receipt_data');
@@ -76,7 +76,7 @@ class PurchaseController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         if (!$apiHelperService->isSecure()) {
-            $apiHelperService->sendError('Secure connection required', 400);
+            return $apiHelperService->sendError('Secure connection required', 400);
         }
 
         try {

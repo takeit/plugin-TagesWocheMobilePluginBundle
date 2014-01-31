@@ -40,7 +40,7 @@ class OfflineController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         if (!$apiHelperService->isSubscriber()) {
-            $apiHelperService->sendError('Unathorized', 401); 
+            return $apiHelperService->sendError('Unathorized', 401); 
         }
 
         if (!$request->query->get('id') || !is_numeric($request->query->get('id'))) {
@@ -59,7 +59,7 @@ class OfflineController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         if (!$apiHelperService->isSubscriber()) {
-            $apiHelperService->sendError('Unathorized', 401); 
+            return $apiHelperService->sendError('Unathorized', 401); 
         }
 
         $issue = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->find($request->query->get('id'));

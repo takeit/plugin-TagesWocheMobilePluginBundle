@@ -130,7 +130,7 @@ class ProfileController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         if (!$apiHelperService->isSecure()) {
-            $apiHelperService->sendError('Secure connection required', 400);
+            return $apiHelperService->sendError('Secure connection required', 400);
         }
         return new JsonResponse(array_merge(
             $apiHelperService->hasAuthInfo() ? $apiHelperService->getUserSubscriptionInfo($apiHelperService->getUser()) : array(),
@@ -146,7 +146,7 @@ class ProfileController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         if (!$apiHelperService->isSecure()) {
-            $apiHelperService->sendError('Secure connection required', 400);
+            return $apiHelperService->sendError('Secure connection required', 400);
         }
 
         try {
@@ -196,7 +196,7 @@ class ProfileController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         if (!$apiHelperService->isSecure()) {
-            $apiHelperService->sendError('Secure connection required', 400);
+            return $apiHelperService->sendError('Secure connection required', 400);
         }
 
         $user = $apiHelperService->getUser();
@@ -221,7 +221,7 @@ class ProfileController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         if (!$apiHelperService->isSecure()) {
-            $apiHelperService->sendError('Secure connection required', 400);
+            return $apiHelperService->sendError('Secure connection required', 400);
         }
 
         try {
