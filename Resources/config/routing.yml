@@ -1,64 +1,64 @@
 newscoop_tageswochemobile_plugin.default:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/DefaultController.php"
   type:     annotation
-  prefix:   /mapi
+  prefix:   /api
 
 newscoop_tageswochemobile_plugin.articles:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ArticlesController.php"
   type:     annotation
-  prefix:   /mapi/articles
+  prefix:   /api/articles
 
 newscoop_tageswochemobile_plugin.archive:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ArchiveController.php"
   type:     annotation
-  prefix:   /mapi/archive
+  prefix:   /api/archive
 
 newscoop_tageswochemobile_plugin.blogs:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/BlogsController.php"
   type:     annotation
-  prefix:   /mapi/blogs
+  prefix:   /api/blogs
 
 newscoop_tageswochemobile_plugin.comments:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/CommentsController.php"
   type:     annotation
-  prefix:   /mapi/comments
+  prefix:   /api/comments
 
 newscoop_tageswochemobile_plugin.debates:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/DebatesController.php"
   type:     annotation
-  prefix:   /mapi/debates
+  prefix:   /api/debates
 
 newscoop_tageswochemobile_plugin.topics:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/TopicsController.php"
   type:     annotation
-  prefix:   /mapi/topics
+  prefix:   /api/topics
 
 newscoop_tageswochemobile_plugin.sections:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/SectionsController.php"
   type:     annotation
-  prefix:   /mapi/sections
+  prefix:   /api/sections
 
 newscoop_tageswochemobile_plugin.profile:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ProfileController.php"
   type:     annotation
-  prefix:   /mapi/profile
+  prefix:   /api/profile
 
 newscoop_tageswochemobile_plugin.purchase:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/PurchaseController.php"
   type:     annotation
-  prefix:   /mapi/purchase
+  prefix:   /api/purchase
 
 newscoop_tageswochemobile_plugin.online:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/OnlineController.php"
   type:     annotation
-  prefix:   /mapi/online
+  prefix:   /api/online
 
 newscoop_tageswochemobile_plugin.offline:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/OfflineController.php"
   type:     annotation
-  prefix:   /mapi/offline
+  prefix:   /api/offline
 
 newscoop_tageswochemobile_plugin.wheel-advertisement:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/WheelAdvertisementController.php"
   type:     annotation
-  prefix:   /mapi/wheel-advertisement
+  prefix:   /api/wheel-advertisement

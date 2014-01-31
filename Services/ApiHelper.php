@@ -226,7 +226,7 @@ class ApiHelper
     public function getTopicUrl($topic)
     {
         return $this->view->serverUrl($this->view->url(array(
-            'module' => 'mapi',
+            'module' => 'api',
             'controller' => 'articles',
             'action' => 'list',
         ), 'default') . $this->getApiQueryString(array(
@@ -252,7 +252,7 @@ class ApiHelper
 
         return $this->serverUrl(
             $this->container->get('zend_router')->assemble(array(
-                'module' => 'mapi',
+                'module' => 'api',
                 'controller' => 'articles',
                 'action' => 'item',
             ), 'default') . $this->getApiQueryString($params)
@@ -268,7 +268,7 @@ class ApiHelper
     public function getCommentsUrl($article)
     {
         return $this->serverUrl($this->container->get('zend_router')->assemble(array(
-            'module' => 'mapi',
+            'module' => 'api',
             'controller' => 'comments',
             'action' => 'list',
         ), 'default') . $this->getApiQueryString(array(
@@ -326,11 +326,11 @@ class ApiHelper
         return null;
     }
 
-    /**                                                               
+    /**
      * Get topic
      *
-     * @return Newscoop\Entity\UserTopic                              
-     */                                                               
+     * @return Newscoop\Entity\UserTopic
+     */
     private function getTopic($topicId)
     {
         if (!$topicId) {
@@ -338,10 +338,10 @@ class ApiHelper
         }
         $topic = $this->_helper->service('user.topic')->findTopic($topicId);
         if (!$topic) {
-            $this->sendError('Topic not found.', 404);                
-        }                                                             
-        
-        return $topic;                                                
+            $this->sendError('Topic not found.', 404);
+        }
+
+        return $topic;
     }
 
     /**
@@ -790,7 +790,7 @@ class ApiHelper
         if ($this->container->get('blog')->isBlogger($user)) {
             return self::TYPE_BLOGGER;
         }
-        
+
         return self::TYPE_MEMBER;
     }
 
@@ -909,10 +909,10 @@ class ApiHelper
 
     public function apiUrl($relativeUrl, $makeAbsolute=true)
     {
-        $relativeUrl = '/mapi/' . $relativeUrl;
+        $relativeUrl = '/api/' . $relativeUrl;
         return ($makeAbsolute) ? absoluteUrl($relativeUrl) : $relativeUrl;
     }
-    
+
     public function _getParam($param)
     {
         if ($this->request->request->get($param))

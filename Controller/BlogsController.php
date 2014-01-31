@@ -198,7 +198,7 @@ class BlogsController extends Controller
                     'blogpost_id' => $post->getNumber(),
                     'url' => $apiHelperService->serverUrl(
                         $this->container->get('zend_router')->assemble(array(
-                            'module' => 'mapi',
+                            'module' => 'api',
                             'controller' => 'blogs',
                             'action' => 'posts',
                         ), 'default') . sprintf('?post_id=%d', $post->getNumber()) . $apiHelperService->getClientVersionParams(false)

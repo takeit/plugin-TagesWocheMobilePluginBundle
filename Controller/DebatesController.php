@@ -70,7 +70,7 @@ class DebatesController extends Controller
                 'debate_id' => $debate->getNumber(),
                 'url' => $apiHelperService->serverurl(
                     $this->container->get('zend_router')->assemble(array(
-                        'module' => 'mapi',
+                        'module' => 'api',
                         'controller' => 'debates',
                         'action' => 'index',
                     )) . $apiHelperService->getApiQueryString(array(
