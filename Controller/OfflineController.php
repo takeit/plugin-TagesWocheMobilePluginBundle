@@ -32,33 +32,37 @@ class OfflineController extends Controller
     private $service;
 
     /**
-     * @Route("/articles")
+     * @Route("/articles/{id}", requirements={"id" = "\d+"})
      */
-    public function articlesAction(Request $request)
+    public function articlesAction($id, Request $request)
     {
         $offlineService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue.offline');
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
-        $apiHelperService->assertIsSubscriber();
+        if (!$apiHelperService->isSubscriber()) {
+            return $apiHelperService->sendError('Unathorized', 401); 
+        }
 
-        if (!$request->query->get('id') || !is_numeric($request->query->get('id'))) {
+        if (!$id) {
             return $apiHelperService->sendError(self::NOT_FOUND, self::NOT_FOUND_CODE);
         }
 
-        $this->sendZip($offlineService->getArticleZipPath($request->query->get('id'), $apiHelperService->getClient()));
+        $this->sendZip($offlineService->getArticleZipPath($id, $apiHelperService->getClient()));
     }
 
     /**
-     * @Route("/issues")
+     * @Route("/issues/{id}", requirements={"id" = "\d+"})
      */
-    public function issuesAction(Request $request)
+    public function issuesAction($id, Request $request)
     {
         $offlineService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue.offline');
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
-        $apiHelperService->assertIsSubscriber();
+        if (!$apiHelperService->isSubscriber()) {
+            return $apiHelperService->sendError('Unathorized', 401); 
+        }
 
-        $issue = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->find($request->query->get('id'));
+        $issue = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->find($id);
         if (!$issue) {
             return $apiHelperService->sendError(self::NOT_FOUND, self::NOT_FOUND_CODE);
         }

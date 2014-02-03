@@ -129,7 +129,9 @@ class ProfileController extends Controller
     public function subscriptioninfoAction()
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-        $apiHelperService->assertIsSecure();
+        if (!$apiHelperService->isSecure()) {
+            return $apiHelperService->sendError('Secure connection required', 400);
+        }
         return new JsonResponse(array_merge(
             $apiHelperService->hasAuthInfo() ? $apiHelperService->getUserSubscriptionInfo($apiHelperService->getUser()) : array(),
             $this->getAvailableSubscriptions()
@@ -143,7 +145,9 @@ class ProfileController extends Controller
     public function createAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-        $apiHelperService->assertIsSecure();
+        if (!$apiHelperService->isSecure()) {
+            return $apiHelperService->sendError('Secure connection required', 400);
+        }
 
         try {
             $command = new RegisterUserCommand();
@@ -191,7 +195,9 @@ class ProfileController extends Controller
     public function resetAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-        $apiHelperService->assertIsSecure();
+        if (!$apiHelperService->isSecure()) {
+            return $apiHelperService->sendError('Secure connection required', 400);
+        }
 
         $user = $apiHelperService->getUser();
         $this->container->get('promocode')->removeUserPromocode($user);
@@ -214,7 +220,9 @@ class ProfileController extends Controller
     public function facebookcreateAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-        $apiHelperService->assertIsSecure();
+        if (!$apiHelperService->isSecure()) {
+            return $apiHelperService->sendError('Secure connection required', 400);
+        }
 
         try {
             $token = $request->request->get(self::FACEBOOK_AUTH_TOKEN);

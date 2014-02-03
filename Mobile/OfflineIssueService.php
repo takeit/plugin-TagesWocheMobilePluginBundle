@@ -21,6 +21,8 @@ class OfflineIssueService
      */
     private $clientFactory;
 
+    private $container;
+
     /**
      * @var array
      */
@@ -39,9 +41,10 @@ class OfflineIssueService
     /**
      * @param Newscoop\Http\ClientFactory $clientFactory
      */
-    public function __construct(ClientFactory $clientFactory)
+    public function __construct(ClientFactory $clientFactory, Container $container)
     {
         $this->clientFactory = $clientFactory;
+        $this->container = $container;
     }
 
     /**
@@ -89,7 +92,7 @@ class OfflineIssueService
     public function generateIssue(Article $issue)
     {
         foreach ($this->config['clients'] as $client) {
-            $toc = $this->fetchJson($this->getApiUrl(array(
+            $toc = $this->fetchJson($this->container->get('zend_router')->assemble(array(
                 'controller' => 'online',
                 'action' => 'toc',
                 'id' => $issue->getNumber(),

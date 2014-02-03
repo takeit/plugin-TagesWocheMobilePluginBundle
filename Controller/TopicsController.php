@@ -69,7 +69,9 @@ class TopicsController extends Controller
     public function subscribeAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-        $apiHelperService->assertIsSecure();
+        if (!$apiHelperService->isSecure()) {
+            return $apiHelperService->sendError('Secure connection required', 400);
+        }
 
         $this->container->get('user.topic')->followTopic($apiHelperService->getUser(), $this->getTopic($request->request->get('topic_id')));
         return new JsonResponse(array(
@@ -84,7 +86,9 @@ class TopicsController extends Controller
     public function unsubscribeAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-        $apiHelperService->assertIsSecure();
+        if (!$apiHelperService->isSecure()) {
+            return $apiHelperService->sendError('Secure connection required', 400);
+        }
 
         $this->container->get('user.topic')->unfollowTopic($apiHelperService->getUser(), $apiHelperService->getTopic($request->request->get('topic_id')));
         return new JsonResponse(array(
