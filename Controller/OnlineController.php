@@ -25,9 +25,6 @@ use Newscoop\TagesWocheMobilePluginBundle\Mobile\IssueFacade;
  */
 class OnlineController extends Controller
 {
-    const LANGUAGE_ID = 1;
-    const AD_SECTION = 'ad_name';
-    const PROMINENT_SWITCH = 'iPad_prominent';
 
     /**
      * @var int
@@ -44,15 +41,6 @@ class OnlineController extends Controller
      */
     private $commentStats = array();
 
-    /** @var array */
-    private $sections = array();
-
-    /** @var array */
-    private $sectionRanks = array();
-
-    /** @var array */
-    private $ids = array();
-
     /**
      * @Route("/issues")
      */
@@ -66,7 +54,7 @@ class OnlineController extends Controller
     }
 
     /**
-     * @Route("/toc/{id}", requirements={"id" = "\d+"})
+     * @Route("/toc/{id}")
      */
     public function tocAction($id)
     {
@@ -144,32 +132,14 @@ class OnlineController extends Controller
         return array(
             'issue_id' => $issue->getNumber(),
             // TODO add apiHelperService function to format this url
-            'url' => $apiHelperService->serverUrl('online/toc?id=' . $issue->getNumber() . '&api=' . $apiHelperService->getClientVersionParams()),
-            'cover_url' => $this->getCoverUrl($issue),
+            'url' => $apiHelperService->serverUrl('api/online/toc?id=' . $issue->getNumber() . '&api=' . $apiHelperService->getClientVersionParams()),
+            'cover_url' => $apiHelperService->getCoverUrl($issue),
             'title' => $issue->getTitle(),
             'description' => $apiHelperService->getArticleField($issue, 'shortdescription'),
             'year' => (int) $issue->getPublishDate()->format('Y'),
             'month' => (int) $issue->getPublishDate()->format('m'),
             'rank' => $this->rank++,
         );
-    }
-
-    /**
-     * Get cover image url
-     *
-     * @param Newscoop\Entity\Article $issue
-     * @return string
-     */
-    private function getCoverUrl(Article $issue)
-    {
-        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-
-        $image = $apiHelperService->getImageUrl($issue);
-        if ($image) {
-            return $apiHelperService->serverUrl(
-                $apiHelperService->getLocalImageUrl($image, array(145, 201), array(290, 402))
-            );
-        }
     }
 
     /**
@@ -190,8 +160,8 @@ class OnlineController extends Controller
         $toc = array(
             'issue_id' => $issue->getNumber(),
             // TODO add apiHelperService function to format this url
-            'offline_url' => $apiHelperService->serverUrl('offline/issues/' . $issue->getNumber() . $apiHelperService->getApiQueryString()),
-            'cover_url' => $this->getCoverUrl($issue),
+            'offline_url' => $apiHelperService->serverUrl('api/offline/issues/' . $issue->getNumber() . $apiHelperService->getApiQueryString()),
+            'cover_url' => $apiHelperService->getCoverUrl($issue),
             'single_issue_product_id' => sprintf('ch.tageswoche.issue.%d.%s', $issue->getPublishDate()->format('Y'), trim($apiHelperService->getArticleField($issue, 'issue_number'))),
             'title' => $issue->getTitle(),
             'description' => $apiHelperService->getArticleField($issue, 'shortdescription'),
@@ -216,148 +186,27 @@ class OnlineController extends Controller
     protected function formatArticle(Article $article)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-        $sectionId = $this->getSectionId($article);
-        $storyId = $this->getStoryName($article) ? $sectionId . $this->getStoryName($article) : null;
+
+        $sectionId = $apiHelperService->getSectionId($article);
+        $storyId = $apiHelperService->getStoryName($article) ? $sectionId . $apiHelperService->getStoryName($article) : null;
         return array_merge(parent::formatArticle($article), array(
             // TODO add apiHelperService function to format this url
-            'url' => $apiHelperService->serverUrl('online/articles?id=' . $article->getNumber() . '&api=' . $apiHelperService->getClientVersionParams()),
+            'url' => $apiHelperService->serverUrl('api/online/articles?id=' . $article->getNumber() . '&api=' . $apiHelperService->getClientVersionParams()),
             'section_id' => $sectionId,
-            'section_name' => $this->getSectionName($article),
-            'section_rank' => $this->getSectionRank($sectionId),
-            'image_url' => $this->getArticleImageUrl($article),
+            'section_name' => $apiHelperService->getSectionName($article),
+            'section_rank' => $apiHelperService->getSectionRank($sectionId),
+            'image_url' => $apiHelperService->getArticleImageUrl($article),
             'article_quality' => $this->isProminent($article) ? 'prominent' : 'companion',
             'last_modified' => $article->getDate()->format($apiHelperService::DATE_FORMAT),
             'published' => $article->getPublishDate()->format($apiHelperService::DATE_FORMAT),
-            'story_name' => $this->getStoryName($article) ?: null,
+            'story_name' => $apiHelperService->getStoryName($article) ?: null,
             'story_id' => $storyId ?: null,
-            'teaser_short' => $this->getTeaserShort($article),
-            'facebook_teaser' => $this->getTeaser($article, 'social'),
-            'twitter_teaser' => $this->getTeaser($article, 'social'),
-            'advertisement' => $this->isAd($article),
-            'story_image_url' => $this->getRenditionUrl($article, 'ios_app_story_image', array(174, 174), array(348, 348))
+            'teaser_short' => $apiHelperService->getTeaserShort($article),
+            'facebook_teaser' => $apiHelperService->getTeaser($article, 'social'),
+            'twitter_teaser' => $apiHelperService->getTeaser($article, 'social'),
+            'advertisement' => $apiHelperService->isAd($article),
+            'story_image_url' => $apiHelperService->getRenditionUrl($article, 'ios_app_story_image', array(174, 174), array(348, 348))
         ));
     }
 
-    /**
-     * Test if article is prominent
-     *
-     * @param Newscoop\Entity\Article $article
-     * @return bool
-     */
-    protected function isProminent($article)
-    {
-        try {
-            return $this->isAd($article) || $article->getData(self::PROMINENT_SWITCH);
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    /**
-     * Get section name
-     *
-     * @param Newscoop\Entity\Article $article
-     * @return string
-     */
-    protected function getSectionName($article)
-    {
-        try {
-            if ($this->isAd($article)) {
-                return $article->getData(self::AD_SECTION) ? ucwords((string) $article->getData(self::AD_SECTION)) : 'Anzeige';
-            } else {
-                return ucwords((string) $article->getData('printsection'));
-            }
-        } catch (Exception $e) {
-            return '';
-        }
-    }
-
-    /**
-     * Get section rank
-     *
-     * @param int $sectionId
-     * @return void
-     */
-    public function getSectionRank($sectionId)
-    {
-        if (!isset($this->sectionRanks[$sectionId])) {
-            $this->sectionRanks[$sectionId] = count($this->sectionRanks) + 1;
-        }
-
-        return $this->sectionRanks[$sectionId];
-    }
-
-    /**
-     * Get story name
-     *
-     * @param Newscoop\Entity\Article $article
-     * @return string
-     */
-    protected function getStoryName($article)
-    {
-        try {
-            return ucwords((string) $article->getData('printstory'));
-        } catch (Exception $e) {
-            return '';
-        }
-    }
-
-    /**
-     * Get id for string
-     *
-     * @param Newscoop\Entity\Article $article
-     * @return int
-     */
-    protected function getSectionId($article)
-    {
-        try {
-            $key = $article->getData('printsection') ?: $article->getNumber();
-        } catch (Exception $e) {
-            $key = $article->getNumber();
-        }
-
-        if (!isset($this->ids[$key])) {
-            $this->ids[$key] = count($this->ids) + 1;
-        }
-
-        return $this->ids[$key];
-    }
-
-    /**
-     * Get short teaser 
-     *
-     * @param Newscoop\Entity\Article $article
-     * @return string
-     */
-    protected function getTeaserShort($article)
-    {
-        $field = ($article->getType() == 'blog') ? 'teaser' : 'seo_title';
-
-        try {
-            $teaserShort = $article->getData($field);
-        } catch (Exception $e) {
-            $teaserShort = $article->getTitle();
-        }
-        
-        if (!empty($teaserShort)) {
-            return substr($teaserShort, 0, 120);
-        }
-
-        return null;
-    }
-
-    /**
-     * Get article image url
-     *
-     * @param Newscoop\Entity\Article $article
-     * @return string
-     */
-    protected function getArticleImageUrl($article)
-    {
-        if ($this->isProminent($article) || $this->isAd($article)) {
-            return $this->getRenditionUrl($article, 'mobile_prominent', array(300, 100), array(600, 200));
-        } else {
-            return $this->getRenditionUrl($article, 'mobile_non_prominent', array(100, 100), array(200, 200));
-        }
-    }
 }
