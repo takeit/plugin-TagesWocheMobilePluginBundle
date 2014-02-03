@@ -9,6 +9,7 @@ namespace  Newscoop\TagesWocheMobilePluginBundle\Mobile;
 
 use Newscoop\Entity\Article;
 use Newscoop\Http\ClientFactory;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
  */
