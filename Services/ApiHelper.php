@@ -248,7 +248,7 @@ class ApiHelper
     public function getTopicUrl($topic)
     {
         return $this->view->serverUrl($this->view->url(array(
-            'module' => 'mapi',
+            'module' => 'api',
             'controller' => 'articles',
             'action' => 'list',
         ), 'default') . $this->getApiQueryString(array(
@@ -274,7 +274,7 @@ class ApiHelper
 
         return $this->serverUrl(
             $this->container->get('zend_router')->assemble(array(
-                'module' => 'mapi',
+                'module' => 'api',
                 'controller' => 'articles',
                 'action' => 'item',
             ), 'default') . $this->getApiQueryString($params)
@@ -290,7 +290,7 @@ class ApiHelper
     public function getCommentsUrl($article)
     {
         return $this->serverUrl($this->container->get('zend_router')->assemble(array(
-            'module' => 'mapi',
+            'module' => 'api',
             'controller' => 'comments',
             'action' => 'list',
         ), 'default') . $this->getApiQueryString(array(
@@ -1070,7 +1070,7 @@ class ApiHelper
 
     public function apiUrl($relativeUrl, $makeAbsolute=true)
     {
-        $relativeUrl = '/mapi/' . $relativeUrl;
+        $relativeUrl = '/api/' . $relativeUrl;
         return ($makeAbsolute) ? absoluteUrl($relativeUrl) : $relativeUrl;
     }
     
