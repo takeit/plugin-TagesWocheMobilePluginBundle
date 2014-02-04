@@ -189,14 +189,14 @@ class OnlineController extends Controller
 
         $sectionId = $apiHelperService->getSectionId($article);
         $storyId = $apiHelperService->getStoryName($article) ? $sectionId . $apiHelperService->getStoryName($article) : null;
-        return array_merge(parent::formatArticle($article), array(
+        return array_merge($apiHelperService->formatArticle($article), array(
             // TODO add apiHelperService function to format this url
             'url' => $apiHelperService->serverUrl('api/online/articles?id=' . $article->getNumber() . '&api=' . $apiHelperService->getClientVersionParams()),
             'section_id' => $sectionId,
             'section_name' => $apiHelperService->getSectionName($article),
             'section_rank' => $apiHelperService->getSectionRank($sectionId),
             'image_url' => $apiHelperService->getArticleImageUrl($article),
-            'article_quality' => $this->isProminent($article) ? 'prominent' : 'companion',
+            'article_quality' => $apiHelperService->isProminent($article) ? 'prominent' : 'companion',
             'last_modified' => $article->getDate()->format($apiHelperService::DATE_FORMAT),
             'published' => $article->getPublishDate()->format($apiHelperService::DATE_FORMAT),
             'story_name' => $apiHelperService->getStoryName($article) ?: null,
