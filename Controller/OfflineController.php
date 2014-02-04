@@ -47,7 +47,7 @@ class OfflineController extends Controller
             return $apiHelperService->sendError(self::NOT_FOUND, self::NOT_FOUND_CODE);
         }
         
-        $zip = $offlineService->getIssueZipPath($issue, $apiHelperService->getClient());
+        $zip = $offlineService->getArticleZipPath($id, $apiHelperService->getClient());
 
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
