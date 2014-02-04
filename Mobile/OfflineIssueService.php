@@ -9,6 +9,7 @@ namespace  Newscoop\TagesWocheMobilePluginBundle\Mobile;
 
 use Newscoop\Entity\Article;
 use Newscoop\Http\ClientFactory;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
  */
@@ -92,13 +93,9 @@ class OfflineIssueService
     public function generateIssue(Article $issue)
     {
         foreach ($this->config['clients'] as $client) {
-            $toc = $this->fetchJson($this->container->get('zend_router')->assemble(array(
-                'controller' => 'online',
-                'action' => 'toc',
-                'id' => $issue->getNumber(),
-            ), array(
-                'client' => $client,
-            )));
+            $options = $this->container->getParameter('offline');
+            $onlineIssueUrl = $options['site_url'] . 'api/online/toc/' . $issue->getNumber() . '?client=' . $client;
+            $toc = $this->fetchJson($onlineIssueUrl);
 
             $dir = $this->getIssueDir($toc, $client);
             $this->fetchTocImage($toc, 'cover_url', $dir);

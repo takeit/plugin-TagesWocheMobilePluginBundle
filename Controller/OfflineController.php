@@ -46,8 +46,25 @@ class OfflineController extends Controller
         if (!$id) {
             return $apiHelperService->sendError(self::NOT_FOUND, self::NOT_FOUND_CODE);
         }
+        
+        $zip = $offlineService->getArticleZipPath($id, $apiHelperService->getClient());
 
-        $this->sendZip($offlineService->getArticleZipPath($id, $apiHelperService->getClient()));
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
+        if (!file_exists($zip)) {
+            return $apiHelperService->sendError(self::NOT_FOUND, self::NOT_FOUND_CODE);
+        }
+
+        $response = new Response();
+
+        $response->setStatusCode(200);
+        $response->headers->set('Content-Type', 'application/zip', true);
+        $response->headers->set('Content-Disposition', sprintf('attachment; filename=%s', basename($zip)));
+        $response->headers->set('Content-Length', filesize($zip));
+        $response->sendHeaders();
+        $response->setContent(readfile($zip));
+
+        return $response;
     }
 
     /**
@@ -66,30 +83,25 @@ class OfflineController extends Controller
         if (!$issue) {
             return $apiHelperService->sendError(self::NOT_FOUND, self::NOT_FOUND_CODE);
         }
+        
+        $zip = $offlineService->getIssueZipPath($issue, $apiHelperService->getClient());
 
-        $this->sendZip($offlineService->getIssueZipPath($issue, $apiHelperService->getClient()));
-    }
-
-    /**
-     * Send zip file to browser
-     *
-     * @param string $zip
-     * @return void
-     */
-    private function sendZip($zip)
-    {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         if (!file_exists($zip)) {
             return $apiHelperService->sendError(self::NOT_FOUND, self::NOT_FOUND_CODE);
         }
 
-        $response = new Response(file_get_contents($zip));
+        $response = new Response();
 
+        $response->setStatusCode(200);
         $response->headers->set('Content-Type', 'application/zip', true);
         $response->headers->set('Content-Disposition', sprintf('attachment; filename=%s', basename($zip)));
         $response->headers->set('Content-Length', filesize($zip));
+        $response->sendHeaders();
+        $response->setContent(readfile($zip));
 
-         return $response;
+        return $response;
     }
+
 }

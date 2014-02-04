@@ -44,6 +44,9 @@ class ApiHelper
     const TYPE_BLOGGER = 'blogger';
     const TYPE_MEMBER = 'community_member';
 
+    const PROMINENT_SWITCH = 'iPad_prominent';
+    const AD_SECTION = 'ad_name';
+
     /** @var int */
     private $rank = 1;
 
@@ -67,6 +70,15 @@ class ApiHelper
     private $clientSize = array();
 
     public $client;
+
+    /** @var array */
+    private $sections = array();
+
+    /** @var array */
+    private $sectionRanks = array();
+
+    /** @var array */
+    private $ids = array();
 
     /**
      * Initialize service
@@ -546,6 +558,86 @@ class ApiHelper
     }
 
     /**
+     * Get section name
+     *
+     * @param Newscoop\Entity\Article $article
+     * @return string
+     */
+    public function getSectionName($article)
+    {
+        try {
+            if ($this->isAd($article)) {
+                return $article->getData(self::AD_SECTION) ? ucwords((string) $article->getData(self::AD_SECTION)) : 'Anzeige';
+            } else {
+                return ($this->getArticleField($article, 'printsection')) ? ucwords((string) $this->getArticleField($article, 'printsection')) : '';
+            }
+        } catch (\Exception $e) {
+            return '';
+        }
+    }
+
+    /**
+     * Test if article is prominent
+     *
+     * @param Newscoop\Entity\Article $article
+     * @return bool
+     */
+    public function isProminent($article)
+    {
+        try {
+            return $this->isAd($article) || $article->getData(self::PROMINENT_SWITCH);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Get story name
+     *
+     * @param Newscoop\Entity\Article $article
+     * @return string
+     */
+    public function getStoryName($article)
+    {
+        try {
+            return ucwords((string) $article->getData('printstory'));
+        } catch (\Exception $e) {
+            return '';
+        }
+    }
+
+    /**
+     * Get cover image url
+     *
+     * @param Newscoop\Entity\Article $issue
+     * @return string
+     */
+    public function getCoverUrl(Article $issue)
+    {
+        $image = $this->getImageUrl($issue);
+        if ($image) {
+            return $this->serverUrl(
+                $this->getLocalImageUrl($image, array(145, 201), array(290, 402))
+            );
+        }
+    }
+
+    /**
+     * Get article image url
+     *
+     * @param Newscoop\Entity\Article $article
+     * @return string
+     */
+    public function getArticleImageUrl($article)
+    {
+        if ($this->isProminent($article) || $this->isAd($article)) {
+            return $this->getRenditionUrl($article, 'mobile_prominent', array(300, 100), array(600, 200));
+        } else {
+            return $this->getRenditionUrl($article, 'mobile_non_prominent', array(100, 100), array(200, 200));
+        }
+    }
+
+    /**
      * Format datetime
      *
      * @param DateTime $date
@@ -584,6 +676,65 @@ class ApiHelper
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    /**
+     * Get short teaser 
+     *
+     * @param Newscoop\Entity\Article $article
+     * @return string
+     */
+    public function getTeaserShort($article)
+    {
+        $field = ($article->getType() == 'blog') ? 'teaser' : 'seo_title';
+
+        try {
+            $teaserShort = $this->getArticleField($article, $field);
+        } catch (Exception $e) {
+            $teaserShort = $article->getTitle();
+        }
+
+        if (!empty($teaserShort)) {
+            return substr($teaserShort, 0, 120);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get section rank
+     *
+     * @param int $sectionId
+     * @return void
+     */
+    public function getSectionRank($sectionId)
+    {
+        if (!isset($this->sectionRanks[$sectionId])) {
+            $this->sectionRanks[$sectionId] = count($this->sectionRanks) + 1;
+        }
+
+        return $this->sectionRanks[$sectionId];
+    }
+
+    /**
+     * Get id for string
+     *
+     * @param Newscoop\Entity\Article $article
+     * @return int
+     */
+    public function getSectionId($article)
+    {
+        try {
+            $key = ($this->getArticleField($article, 'printsection')) ? ucwords((string) $this->getArticleField($article, 'printsection')) : $article->getNumber();
+        } catch (\Exception $e) {
+            $key = $article->getNumber();
+        }
+
+        if (!isset($this->ids[$key])) {
+            $this->ids[$key] = count($this->ids) + 1;
+        }
+
+        return $this->ids[$key];
     }
 
     /**
@@ -733,7 +884,7 @@ class ApiHelper
     {
         try {
             return $article->getData($field);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }
