@@ -54,17 +54,17 @@ class HighlightsController extends Controller
         $em = $this->container->get('em');
 
         $response = array();
-        $this->request = $request;
-        $this->initClient($this->params['client']);
-
         $params = $request->query->all();
+        $this->request = $request;
+        $this->initClient($params['client']);
+
         if (isset($params['section_id'])) {
             $sectionIds = array((int) $params['section_id']);
         } else {
             $sectionIds = array(6, 7, 8, 9, 10, 11, 25); // @todo config
         }
 
-        $listAds = $this->getArticleListAds('newshighlight');
+        $listAds = $apiHelperService->getArticleListAds('newshighlight');
         $sectionRank = 1;
         $articlesInResponse = array();
         $ad = 0;
@@ -87,8 +87,8 @@ class HighlightsController extends Controller
                     if (($sectionRank == 1 && $rank == 3) ||
                         ($sectionRank == 3 && $rank == 2) ||
                         ($sectionRank == 5 && $rank == 2)) {
-                        if ((!empty($listAds[$ad])) && ($this->getAdImageUrl($listAds[$ad]))) {
-                            $this->response[] = array_merge($this->formatArticle($listAds[$ad]), array(
+                        if ((!empty($listAds[$ad])) && ($apiHelperService->getAdImageUrl($listAds[$ad]))) {
+                            $this->response[] = array_merge($apiHelperService->formatArticle($listAds[$ad]), array(
                                 'rank' => (int) $rank++,
                                 'section_id' => (int) $sectionId,
                                 'section_name' => $playlist->getName(),
@@ -98,7 +98,7 @@ class HighlightsController extends Controller
                     }
 
                     if (!in_array($articleItem['articleId'], $articlesInResponse)){
-                        $articles = $this->container->get('article')->findBy(array('number' => $articleItem['articleId']));
+                        $articles = $em->getRepository('Newscoop\Entity\Article')->findBy(array('number' => $articleItem['articleId']));
                         $article = $articles[0];
                         if (!$article->isPublished()) {
                             continue;
@@ -108,11 +108,11 @@ class HighlightsController extends Controller
                         if ($sectionId == 6 && $rank == 1) {
                             $normalSize = array(self::IMAGE_TOP_WIDTH, self::IMAGE_TOP_HEIGHT);
                             $retinaSize = array(self::IMAGE_TOP_WIDTH * self::IMAGE_RETINA_FACTOR, self::IMAGE_TOP_HEIGHT * self::IMAGE_RETINA_FACTOR);
-                            $image = $this->getRenditionUrl($article, self::IMAGE_TOP_RENDITION, $normalSize, $retinaSize);
+                            $image = $apiHelperService->getRenditionUrl($article, self::IMAGE_TOP_RENDITION, $normalSize, $retinaSize);
                         } else {
                             $normalSize = array(self::IMAGE_STANDARD_WIDTH, self::IMAGE_STANDARD_HEIGHT);
                             $retinaSize = array(self::IMAGE_STANDARD_WIDTH * self::IMAGE_RETINA_FACTOR, self::IMAGE_STANDARD_HEIGHT * self::IMAGE_RETINA_FACTOR);
-                            $image = $this->getRenditionUrl($article, self::IMAGE_STANDARD_RENDITION, $normalSize, $retinaSize);
+                            $image = $apiHelperService->getRenditionUrl($article, self::IMAGE_STANDARD_RENDITION, $normalSize, $retinaSize);
                         }
 
                         $response = array_merge($apiHelperService->formatArticle($article), array(
@@ -192,12 +192,12 @@ class HighlightsController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
-        return  $apiHelper->serverUrl(
+        return  $apiHelperService->serverUrl(
             $this->container->get('zend_router')->assemble(array(
                 'module' => 'api',
                 'controller' => 'articles',
                 'action' => 'list',
-                ), 'default') . $this->getApiQueryString(array(
+                ), 'default') . $apiHelperService->getApiQueryString(array(
                 'section_id' => $section,
         )));
     }
@@ -213,7 +213,7 @@ class HighlightsController extends Controller
             'image_height' => self::IMAGE_STANDARD_HEIGHT,
         ));
 
-        if ($this->isRetinaClient()) {
+        if ($apiHelperService->isRetinaClient()) {
             $this->client['image_width'] = $this->client['image_width'] * self::IMAGE_RETINA_FACTOR;
             $this->client['image_height'] = $this->client['image_height'] * self::IMAGE_RETINA_FACTOR;
         }
