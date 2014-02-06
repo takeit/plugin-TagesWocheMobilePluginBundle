@@ -67,3 +67,8 @@ newscoop_tageswochemobile_plugin.legal:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/LegalController.php"
   type:     annotation
   prefix:   /api/legal
+
+newscoop_tageswochemobile_plugin.highlights:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/HighlightsController.php"
+  type:     annotation
+  prefix:   /api/highlights
