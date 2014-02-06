@@ -23,6 +23,7 @@ use Newscoop\Entity\Topic;
  */
 class DossiersController extends Controller
 {
+    const PUBLICATION = 5;
     const ARTICLE_TYPE = 'dossier';
     const IMAGE_STANDARD_WIDTH = 320;
     const IMAGE_STANDARD_HEIGHT = 140;
@@ -90,13 +91,13 @@ class DossiersController extends Controller
         $featured = $this->getFeaturedDossiers();
         $dossierArticle = $featured[$dossierId];
         $articleIds = array();
-        $listAds = $this->getArticleListAds('blogs_dossiers');
+        $listAds = $apiHelperService->getArticleListAds('blogs_dossiers');
         $ad = 0;
         $rank = 1;
 
         // look for an article of type dossier, if exists fetch related articles
         if (array_key_exists($dossierId, $featured)) {
-            $contextBox = new ContextBox(null, $dossierArticle->getNumber());
+            $contextBox = new \ContextBox(null, $dossierArticle->getNumber());
             $articleIds = $contextBox->getArticlesList() ?: array();
 
             foreach ($articleIds as $articleId) {
@@ -116,12 +117,7 @@ class DossiersController extends Controller
             }
         }
 
-        // get all articles with the current topic
-        $topic = $em->getRepository('Newscoop\Entity\Topic')
-            ->findOneBy(array(
-                'topic' => $dossierId,
-            ));
-        $topicArticles = $em->getRepository('Newscoop\Entity\Article')->findByTopic($topic, $limit = null);
+        $topicArticles = $em->getRepository('Newscoop\Entity\Article')->getArticlesForTopic(self::PUBLICATION, $dossierId);
         foreach ($topicArticles as $article) {
             // inject ad
             if (in_array($rank, $this->adRanks)) {
@@ -220,10 +216,14 @@ class DossiersController extends Controller
     {
         $em = $this->container->get('em');
 
-        $dossiersPlaylist = $em->getRepository('Newscoop\Entity\Playlist')
-            ->findOneBy(array('name' => 'Dossiers'));
-        $dossierArticles = $dossiersPlaylist->getArticles();
-        $dossierTopics = $dossierArticles[0]->getArticle()->getTopics();
+        $repository = $em->getRepository('Newscoop\Entity\Playlist');
+        $playlist = $repository->findOneBy(array('name' => 'Dossiers'));
+        if ($playlist) {
+            $articles = array_map(function ($playlistArticle) {
+                return $playlistArticle->getArticle();
+            }, $repository->articles($playlist, null, true));
+        }
+        $dossierTopics = $articles[0]->getTopics();
         return (int) $dossierTopics[0]->getTopicId();
     }
 
