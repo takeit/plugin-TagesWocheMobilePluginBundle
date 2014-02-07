@@ -72,3 +72,8 @@ newscoop_tageswochemobile_plugin.highlights:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/HighlightsController.php"
   type:     annotation
   prefix:   /api/highlights
+
+newscoop_tageswochemobile_plugin.dossiers:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/DossiersController.php"
+  type:     annotation
+  prefix:   /api/dossiers
