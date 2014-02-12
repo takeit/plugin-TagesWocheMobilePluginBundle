@@ -5,10 +5,10 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Subscription;
+namespace Newscoop\TagesWocheMobilePluginBundle\Subscription;
 
-/**
- */
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionException;
+
 class UserIsCustomerException extends SubscriptionException
 {
 }

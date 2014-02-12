@@ -7,7 +7,7 @@
 
 namespace Newscoop\TagesWocheMobilePluginBundle\Subscription;
 
-use Tageswoche\TageswocheException;
+use Newscoop\TagesWocheMobilePluginBundle\TageswocheException;
 
 /**
  */
