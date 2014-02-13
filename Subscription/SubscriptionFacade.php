@@ -9,7 +9,11 @@ namespace Newscoop\TagesWocheMobilePluginBundle\Subscription;
 
 use DateTime;
 use Newscoop\Entity\User;
-use Newscoop\User\UpdateProfileCommand;
+use Newscoop\TagesWocheMobilePluginBundle\Profile\UpdateProfileCommand;
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\PromocodeService;
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\DigitalUpgradeService;
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\UserService;
+use
 
 /**
  * Subscription Facade
@@ -19,30 +23,30 @@ class SubscriptionFacade
     const CID = 'customer_id';
 
     /**
-     * @var Tageswoche\Promocode\PromocodeService
+     * @var Newscoop\TagesWocheMobilePluginBundle\Subscription\PromocodeService
      */
     private $promocodeService;
 
     /**
-     * @var Tageswoche\Subscription\DmproService
+     * @var Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproService
      */
     private $dmproService;
 
     /**
-     * @var Tageswoche\Subscription\DigitalUpgradeService
+     * @var Newscoop\TagesWocheMobilePluginBundle\Subscription\DigitalUpgradeService
      */
     private $digitalUpgradeService;
 
     /**
-     * @var Tageswoche\Subscription\UserService
+     * @var Newscoop\TagesWocheMobilePluginBundle\Subscription\UserService
      */
     private $userService;
 
     /**
-     * @param Tageswoche\Promocode\PromocodeService $promocodeService
-     * @param Tageswoche\Subscription\DmproService $dmproService
-     * @param Tageswoche\Subscription\DigitalUpgradeService $digitalUpgradeService
-     * @param Tageswoche\Subscription\UserService $userService
+     * @param Newscoop\TagesWocheMobilePluginBundle\Subscription\PromocodeService $promocodeService
+     * @param Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproService $dmproService
+     * @param Newscoop\TagesWocheMobilePluginBundle\Subscription\DigitalUpgradeService $digitalUpgradeService
+     * @param Newscoop\TagesWocheMobilePluginBundle\Subscription\UserService $userService
      */
     public function __construct(
         PromocodeService $promocodeService,
@@ -96,7 +100,7 @@ class SubscriptionFacade
     /**
      * Update user profile
      *
-     * @param Newscoop\User\UpdateProfileCommand $command
+     * @param Newscoop\TagesWocheMobilePluginBundle\Profile\UpdateProfileCommand $command
      * @return void
      */
     public function updateProfile(UpdateProfileCommand $command)
