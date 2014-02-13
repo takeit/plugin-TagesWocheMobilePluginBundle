@@ -13,7 +13,6 @@ use Newscoop\TagesWocheMobilePluginBundle\Profile\UpdateProfileCommand;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\PromocodeService;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\DigitalUpgradeService;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\UserService;
-use
 
 /**
  * Subscription Facade
