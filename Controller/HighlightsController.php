@@ -43,6 +43,7 @@ class HighlightsController extends Controller
 
     /**
      * Return list of articles.
+     * @Route("/")
      * @Route("/index")
      * @Route("/list")
      *
@@ -71,7 +72,7 @@ class HighlightsController extends Controller
 
         foreach ($sectionIds as $sectionId) {
             $limit = 3;
-            
+
             if ($sectionId == 6) {
                 $limit = 5;
             }
@@ -83,7 +84,7 @@ class HighlightsController extends Controller
                 $articleArray = $playlistRepository->articles($playlist, null, false, $limit, null, true, $articlesInResponse);
                 $rank = 1;
                 foreach ($articleArray as $articleItem) {
-                    // inject newshighlight ad 
+                    // inject newshighlight ad
                     if (($sectionRank == 1 && $rank == 3) ||
                         ($sectionRank == 3 && $rank == 2) ||
                         ($sectionRank == 5 && $rank == 2)) {
