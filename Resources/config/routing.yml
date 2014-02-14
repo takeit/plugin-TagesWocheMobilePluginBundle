@@ -77,3 +77,8 @@ newscoop_tageswochemobile_plugin.dossiers:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/DossiersController.php"
   type:     annotation
   prefix:   /api/dossiers
+
+newscoop_tageswochemobile_plugin.feedback:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/FeedbackController.php"
+  type:     annotation
+  prefix:   /api/feedback
