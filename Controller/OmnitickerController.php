@@ -399,10 +399,12 @@ class OmnitickerController extends SolrOmnitickerController
             return;
         }
 
+        $apiHelper = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+
         try {
             $startDate = new DateTime($parameters['start_date']);
         } catch (Exception $e) {
-            $this->sendError($e->getMessage());
+            return $apiHelper->sendError($e->getMessage(), 500);
         }
 
         $endDate = $startDate;
@@ -410,7 +412,7 @@ class OmnitickerController extends SolrOmnitickerController
             try {
                 $endDate = new DateTime($parameters['end_date']);
             } catch (Exception $e) {
-                $this->sendError($e->getMessage());
+                return $apiHelper->sendError($e->getMessage(), 500);
             }
         }
 
@@ -428,22 +430,6 @@ class OmnitickerController extends SolrOmnitickerController
     {
         return array_merge(parent::encodeParameters($parameters), array(
             'rows' => $parameters['start_date'] && !$parameters['query_string'] ? 200 : 100,
-        ));
-    }
-
-    /**
-     * Send error and exit
-     *
-     * @param string $body
-     * @param int $code
-     * @return void
-     */
-    protected function sendError($body = '', $code = 400)
-    {
-        $this->getResponse()->setHttpResponseCode($code);
-        $this->_helper->json(array(
-            'code' => $code,
-            'message' => $body,
         ));
     }
 

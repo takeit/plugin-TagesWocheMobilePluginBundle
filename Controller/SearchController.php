@@ -25,7 +25,8 @@ class SearchController extends MobileOmnitickerController
     public function omnitickerAction(Request $request)
     {
         if (!$request->query->get(self::Q_PARAM)) {
-            //$this->sendError("No 'query_string' provided");
+            $apiHelper = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+            $apiHelper->sendError("No 'query_string' provided", 500);
         }
 
         $this->request = $request;
