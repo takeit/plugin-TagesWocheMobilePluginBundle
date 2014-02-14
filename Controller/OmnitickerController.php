@@ -384,22 +384,22 @@ class OmnitickerController extends SolrOmnitickerController
      *
      * @return string
      */
-    protected function buildSolrDateParam()
+    protected function buildSolrDateParam($parameters)
     {
-        if (!$this->_getParam('start_date')) {
+        if (!array_key_exists('start_date', $parameters) || !$parameters['start_date']) {
             return;
         }
 
         try {
-            $startDate = new DateTime($this->_getParam('start_date'));
+            $startDate = new DateTime($parameters['start_date']);
         } catch (Exception $e) {
             $this->sendError($e->getMessage());
         }
 
         $endDate = $startDate;
-        if ($this->_getParam('end_date')) {
+        if (array_key_exists('end_date', $parameters) && $parameters['end_date']) {
             try {
-                $endDate = new DateTime($this->_getParam('end_date'));
+                $endDate = new DateTime($parameters['end_date']);
             } catch (Exception $e) {
                 $this->sendError($e->getMessage());
             }
@@ -415,10 +415,10 @@ class OmnitickerController extends SolrOmnitickerController
      *
      * @return array
      */
-    protected function buildSolrParams()
+    protected function encodeParameters($parameters)
     {
-        return array_merge(parent::buildSolrParams(), array(
-            'rows' => $this->_getParam('start_date') && !$this->_getParam('query_string') ? 200 : 100,
+        return array_merge(parent::encodeParameters($parameters), array(
+            'rows' => $parameters['start_date'] && !$parameters['query_string'] ? 200 : 100,
         ));
     }
 
