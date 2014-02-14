@@ -28,6 +28,7 @@ class SearchController extends MobileOmnitickerController
             //$this->sendError("No 'query_string' provided");
         }
 
+        $this->request = $request;
         return parent::omnitickerAction($request, null);
     }
 

@@ -50,6 +50,11 @@ class OmnitickerController extends SolrOmnitickerController
     private $commentStats = array();
 
     /**
+     * @var Symfony\Component\HttpFoundation\Request
+     */
+    protected $request = null;
+
+    /**
      * @var array
      */
     private $topicTypes = array('newswire', 'news', 'blog', 'dossier');
@@ -95,6 +100,8 @@ class OmnitickerController extends SolrOmnitickerController
      */
     public function omnitickerAction(Request $request)
     {
+        $this->request = $request;
+
         $request->query->set('format', 'json');
         $responseObject = parent::omnitickerAction($request, null);
         $responseData = json_decode($responseObject->getContent(), true);
@@ -363,8 +370,10 @@ class OmnitickerController extends SolrOmnitickerController
      */
     protected function isSearch()
     {
-        // TODO: fix this
-        return false;//$this->getRequest()->getControllerName() === 'search';
+        if ($this->request !== null && strpos($this->request->get('_controller'), 'SearchController') !== false) {
+            return true;
+        }
+        return false;
     }
 
     /**
