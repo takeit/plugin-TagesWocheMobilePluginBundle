@@ -46,6 +46,7 @@ class WheelAdvertisementController extends Controller
     private $response = array();
 
     /**
+     * @Route("/")
      * @Route("/index")
      * @Route("/list")
      */
@@ -101,14 +102,14 @@ class WheelAdvertisementController extends Controller
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         $baseUrl = $this->getRequest()->getSchemeAndHttpHost();
-        
+
         $images = $this->container->get('image')->findByArticle($article->getNumber());
         foreach ($images as $image) {
             if ($image->getWidth() == $this->getAdWidth($device) && $image->getHeight() == $this->getAdHeight($device)) {
                 return $baseUrl . '/' .$image->getPath();
             }
             // if no standard image exists, check for larger retina image
-            if ($image->getWidth() == ($this->getAdWidth($device) * self::IMAGE_RETINA_FACTOR) && 
+            if ($image->getWidth() == ($this->getAdWidth($device) * self::IMAGE_RETINA_FACTOR) &&
                 $image->getHeight() == ($this->getAdHeight($device) * self::IMAGE_RETINA_FACTOR)) {
                 return $baseUrl . '/' .$image->getPath();
             }
@@ -170,7 +171,7 @@ class WheelAdvertisementController extends Controller
                 $height =  self::AD_LANDSCAPE_HEIGHT;
                 break;
         }
-        
+
         if (!$standard) {
             if ($apiHelperService->isRetinaClient()) {
                 return $height * self::IMAGE_RETINA_FACTOR;
