@@ -100,7 +100,7 @@ class OmnitickerController extends SolrOmnitickerController
         $responseData = json_decode($responseObject->getContent(), true);
 
         if (is_array($responseData)) {
-            $this->commentStats = $this->container->get('comment.service')
+            $this->commentStats = $this->container->get('comment')
                 ->getArticleStats(array_filter(array_map(function($doc) {
                 return OmnitickerController::getArticleId($doc);
             }, $responseData['response']['docs'])));
