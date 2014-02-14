@@ -14,11 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\Entity\Article;
 
-/**
- * Route('/blogs')
- *
- * Blogs API service controller.
- */
 class BlogsController extends Controller
 {
     const PUBLICATION = 5;
@@ -97,7 +92,7 @@ class BlogsController extends Controller
     }
 
     /**
-     * @Route("/posts")
+     * @Route("/posts/list")
      */
     public function postAction(Request $request)
     {
