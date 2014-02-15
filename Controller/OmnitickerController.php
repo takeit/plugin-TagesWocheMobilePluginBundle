@@ -428,8 +428,21 @@ class OmnitickerController extends SolrOmnitickerController
      */
     protected function encodeParameters($parameters)
     {
+        $rows = 100;
+
+        if (
+            array_key_exists('start_date', $parameters) &&
+            $parameters['start_date'] &&
+            (
+                !array_key_exists('query_string', $parameters) ||
+                !$parameters['query_string']
+            )
+        ) {
+            $rows = 200;
+        }
+
         return array_merge(parent::encodeParameters($parameters), array(
-            'rows' => $parameters['start_date'] && !$parameters['query_string'] ? 200 : 100,
+            'rows' => $rows
         ));
     }
 
