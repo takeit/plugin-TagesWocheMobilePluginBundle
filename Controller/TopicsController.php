@@ -37,10 +37,10 @@ class TopicsController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $response = array();
-        
+
         if ($apiHelperService->hasAuthInfo()) {
             $user = $apiHelperService->getUser();
-            if (!($user instanceof User)) {                               
+            if (!($user instanceof User)) {
                 return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
             }
             $topicsTemp = $this->container->get('user.topic')->getTopics($user);
@@ -51,17 +51,17 @@ class TopicsController extends Controller
         } else {
             $topics = \ArticleTopic::GetArticleTopics(self::ARTICLE_TOPICS);
         }
-        
+
         foreach ($topics as $topic) {
             $response[] = array(
                 'id' => (int) $topic->getTopicId(),
                 'topic_name' => $topic->getName(self::LANGUAGE),
             );
         }
-        
+
         return new JsonResponse($response);
     }
-    
+
     /**
      * @Route("/subscribe")
      * @Method("POST")
@@ -97,7 +97,7 @@ class TopicsController extends Controller
     }
 
     /**
-     * @Route("/mytopics")
+     * @Route("/my_topics")
      */
     public function mytopicsAction()
     {
