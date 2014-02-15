@@ -55,7 +55,7 @@ services:
         class: Newscoop\TagesWocheMobilePluginBundle\Mobile\IssueFacade
         arguments:
             - @em
-            
+
     newscoop_tageswochemobile_plugin.mobile.issue.offline:
         class: Newscoop\TagesWocheMobilePluginBundle\Mobile\OfflineIssueService
         arguments:
@@ -74,3 +74,6 @@ services:
         class: Newscoop\TagesWocheMobilePluginBundle\Debate\DebateService
         arguments:
             - @em
+
+    newscoop_tageswochemobile_plugin.legacy_request:
+        class: Newscoop\TagesWocheMobilePluginBundle\Services\LegacyServerHelper

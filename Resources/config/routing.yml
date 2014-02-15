@@ -18,6 +18,11 @@ newscoop_tageswochemobile_plugin.blogs:
   type:     annotation
   prefix:   /api/blogs
 
+newscoop_tageswochemobile_plugin.cinema:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/CinemaController.php"
+  type:     annotation
+  prefix:   /api/cinema
+
 newscoop_tageswochemobile_plugin.comments:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/CommentsController.php"
   type:     annotation
@@ -27,6 +32,16 @@ newscoop_tageswochemobile_plugin.debates:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/DebatesController.php"
   type:     annotation
   prefix:   /api/debates
+
+newscoop_tageswochemobile_plugin.events:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/EventsController.php"
+  type:     annotation
+  prefix:   /api/events
+
+newscoop_tageswochemobile_plugin.lunchgate:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/LunchgateController.php"
+  type:     annotation
+  prefix:   /api/lunchgate
 
 newscoop_tageswochemobile_plugin.topics:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/TopicsController.php"
