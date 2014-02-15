@@ -1,6 +1,7 @@
 <?php
 /**
  * @package   Newscoop\TagesWocheMobilePluginBundle
+ * @author    Mischa Gorinskat <mischa.gorinskat@sourcefabric.org>
  * @copyright 2014 Sourcefabric o.p.s.
  * @license   http://www.gnu.org/licenses/gpl.txt
  */
@@ -20,6 +21,8 @@ use DateTime;
  */
 class ArchiveController extends Controller
 {
+    const LANGUAGE = 5;
+
     /**
      * @Route("/index")
      * @Route("/calendar")
