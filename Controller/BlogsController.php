@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\Entity\Article;
 
@@ -70,7 +71,7 @@ class BlogsController extends Controller
                     'url' => $apiHelperService->serverUrl(
                         $this->container->get('router')
                         ->generate(
-                            'newscoop_tageswochemobileplugin_blogs_post',
+                            'newscoop_tageswochemobileplugin_blogs_postlist',
                             array('blog_id' => (int) $article->getSection()->getNumber())
                         )
                     ),
@@ -94,32 +95,11 @@ class BlogsController extends Controller
     /**
      * @Route("/posts/list")
      */
-    public function postAction(Request $request)
-    {
-        $postId = $request->query->get('post_id');
-
-        if ($postId) {
-            $response = $this->forward('NewscoopTagesWocheMobilePluginBundle:Blogs:postItem', array(
-                'request' => $request,
-                'postId' => $postId,
-            ));
-        } else {
-            $response = $this->forward('NewscoopTagesWocheMobilePluginBundle:Blogs:postList', array(
-                'request' => $request,
-                'blogId' => $request->query->get('blog_id'),
-            ));
-        }
-
-        return $response;
-    }
-
-    /**
-     * Returns list of posts.
-     */
-    public function postListAction(Request $request, $blogId)
+    public function postListAction(Request $request)
     {
         $em = $this->container->get('em');
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+        $blogId = $request->query->get('blog_id');
 
         $response = array();
         if ($blogId) {
@@ -131,8 +111,8 @@ class BlogsController extends Controller
 
             $section = $sections[0]->getNumber();
             $blogInfo = $this->getBlogInfo($section);
-            if (!$blogInfo['active']) {
-                $this->sendError('Blog not found', 404);
+            if (!$blogInfo) {
+                return $this->sendError('Blog not found', 404);
             }
 
             $posts = $em->getRepository('Newscoop\Entity\Article')
@@ -164,7 +144,7 @@ class BlogsController extends Controller
         foreach ($posts as $post) {
             if (!isset($section)) {
                 $blogInfo = $this->getBlogInfo($post->getSection()->getNumber());
-                if (!$blogInfo['active']) {
+                if (!$blogInfo || !$blogInfo['active']) {
                     continue;
                 }
             }
@@ -212,10 +192,11 @@ class BlogsController extends Controller
     }
 
     /**
-     * Returns the requested blog post.
+     * @Route("/posts")
      */
-    public function postItemAction(Request $request, $postId)
+    public function postItemAction(Request $request)
     {
+        $postId = $request->query->get('post_id');
         $apiHelperService = $this->container
             ->get('newscoop_tageswochemobile_plugin.api_helper');
         $article = $this->container->get('em')
@@ -230,11 +211,16 @@ class BlogsController extends Controller
 
         $cacheHelper->validateBrowserCache($article->getUpdated(), $request);
 
-        // TODO: check how to fix this
-        return $this->render(
-            'NewscoopTagesWocheMobilePluginBundle:Blogs:post.html.smarty',
-            array()
-        );
+        $fakeGimme = new \stdClass();
+        $fakeGimme->article = new \MetaArticle($article->getLanguageId(), $article->getNumber());
+
+        $templatesService = $this->container->get('newscoop.templates.service');
+        $smarty = $templatesService->getSmarty();
+        $smarty->assign('fakeGimme', $fakeGimme);
+
+        $response = new Response();
+        $response->setContent($templatesService->fetchTemplate("_views/blogs_post.tpl"));
+        return $response;
 
         // $this->_helper->smarty->setSmartyView();
         // $this->view->getGimme()->article = new MetaArticle($article->getLanguageId(), $article->getNumber());
@@ -255,7 +241,6 @@ class BlogsController extends Controller
             ->getRepository('Newscoop\Entity\Article')
             ->findBy(array('section' => $blogId, 'type' => 'bloginfo'));
         if (empty($blogInfos)) {
-            //$this->sendError('Blog not found, id: ' . $blogId, 404);
             return false;
         }
 
