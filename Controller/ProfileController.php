@@ -34,7 +34,7 @@ class ProfileController extends Controller
 {
 
     /**
-     * @Route("/index")
+     * @Route("/")
      */
     public function indexAction(Request $request)
     {
@@ -56,7 +56,7 @@ class ProfileController extends Controller
                 $command->image = !empty($_FILES['profile_image_data'])
                     ? $form->profile_image_data->getFileInfo()
                     : null;
-                
+
                 $errors = $this->container->get('validator')->validate($command);
                 if (count($errors) === 0) {
                     $this->container->get('user.profile')->updateProfile($command);
