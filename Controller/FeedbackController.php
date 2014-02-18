@@ -137,9 +137,9 @@ class FeedbackController extends Controller
                 $filename = $item->getImageFileName();
                 $tempFilename = explode('.', $filename);
                 $extension = $tempFilename[count($tempFilename) - 1];
-                if ($extension == 'gif') $at->type = 'image/gif';
-                if ($extension == 'jpg' || $extension == 'jpeg') $at->type = 'image/jpeg';
-                if ($extension == 'png') $at->type = 'image/png';
+                if ($extension == 'gif') $mineType = 'image/gif';
+                if ($extension == 'jpg' || $extension == 'jpeg') $mimeType = 'image/jpeg';
+                if ($extension == 'png') $mimeType = 'image/png';
 
                 $mail->attach(new Swift_Message_Attachment($contents, $filename, $mimeType));
             }
