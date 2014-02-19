@@ -221,10 +221,10 @@ class ApiHelper
     public function isAuthorized()
     {
         $options = $this->container->getParameter('offline');
-        if (!empty($options['secret']) && 
+        if (!empty($options['secret']) &&
             $this->request->headers->get(OfflineIssueService::OFFLINE_HEADER) === $options['secret']) {
             return;
-        } 
+        }
 
         return $this->sendError('Unauthorized.', 401);
     }
@@ -343,9 +343,25 @@ class ApiHelper
     public function getWebsiteUrl($article)
     {
         if ($article->hasWebcode()) {
-            return $this->serverUrl($article->getWebcode());
+            return $this->serverUrl($this->fixWebcode($article->getWebcode()));
         }
         return null;
+    }
+
+    /**
+     * Adds + to webcode is not present
+     *
+     * @param  string $webcode Webcode of an article
+     *
+     * @return string          Fixed webcode
+     */
+    public function fixWebcode($webcode) {
+
+        if (substr($webcode, 0, 1) != '+') {
+            $webcode = '+' . $webcode;
+        }
+
+        return $webcode;
     }
 
     /**
@@ -679,7 +695,7 @@ class ApiHelper
     }
 
     /**
-     * Get short teaser 
+     * Get short teaser
      *
      * @param Newscoop\Entity\Article $article
      * @return string

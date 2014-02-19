@@ -191,7 +191,7 @@ class ArticlesController extends Controller
                 'attachments' => $article->getAttachments(),
 
                 'sources' => $apiHelperService->getSources($article),
-                'webcode' => ($article->hasWebcode()) ? $article->getWebcode() : null,
+                'webcode' => ($article->hasWebcode()) ? $apiHelperService->fixWebcode($article->getWebcode()) : null,
                 'authors' => $article->getArticleAuthors(),
                 // TODO: figure out if related articles from author or from this article
                 'related' => '',
