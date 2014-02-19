@@ -392,7 +392,7 @@ class ApiHelper
     {
         $topics = array();
         $articleTopics = $article->getTopics();
-        if (is_array($articleTopics) && count($articleTopics) > 0) {
+        if ($articleTopics !== null && $articleTopics->count() > 0) {
             foreach ($articleTopics as $topic) {
                 $topics[] = array(
                     'topic_id' => $topic->getTopicId(),
@@ -400,7 +400,6 @@ class ApiHelper
                 );
             }
         }
-
         return $topics;
     }
 
