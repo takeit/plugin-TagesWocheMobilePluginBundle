@@ -174,33 +174,24 @@ class ArticlesController extends Controller
             return $apiHelperService->sendError("Article not found", 404);
         }
 
-        // $cacheHelper = $this->container
-            // ->get('newscoop_tageswochemobile_plugin.cache_helper');
+        $cacheHelper = $this->container
+            ->get('newscoop_tageswochemobile_plugin.cache_helper');
 
-        // $cacheHelper->validateBrowserCache($article->getDate(), $request);
+        $cacheHelper->validateBrowserCache($article->getDate(), $request);
 
         $templatesService = $this->container->get('newscoop.templates.service');
         $smarty = $templatesService->getSmarty();
+        $context = $smarty->context();
+        $context->article = new \MetaArticle($article->getLanguageId(), $article->getNumber());
 
         if ($request->get('side') == 'back') {
 
             $templateName = 'articles_backside.tpl';
             $smarty->assign('webcode', ($article->hasWebcode()) ? $apiHelperService->fixWebcode($article->getWebcode()) : null);
-
         } else {
 
             $templateName = 'articles_frontsize.tpl';
-            // $data = array('data' => array(
-            //     'dateline' => $apiHelperService->getDateLine($article),
-            //     'published'  => $article->getPublishDate(),
-            //     'teaser' => $apiHelperService->getTeaser($article),
-            //     'title' => $article->getTitle(),
-            //     'image_url' => $apiHelperService->getImageUrl($article),
-            //     'body' => $apiHelperService->getBody($article),
-            // ));
         }
-
-        $smarty->assign('data', $data['data']);
 
         $response = new Response();
         $response->setContent($templatesService->fetchTemplate("_mobile/".$templateName));
