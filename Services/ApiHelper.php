@@ -504,7 +504,7 @@ class ApiHelper
             'src' => $this->container->get('image')->getSrc($src, $width, $height, 'fit'),
         ), 'image', false, false);
 
-        return $this->serverUrl($imageUrl);
+        return $imageUrl;
     }
 
     /**
@@ -629,7 +629,7 @@ class ApiHelper
      */
     public function getCoverUrl(Article $issue)
     {
-        $image = $this->getImageUrl($issue);
+        $image = $issue->getFirstImage($issue);
         if ($image) {
             return $this->serverUrl(
                 $this->getLocalImageUrl($image, array(145, 201), array(290, 402))

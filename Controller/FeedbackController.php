@@ -72,9 +72,22 @@ class FeedbackController extends Controller
             'attachment_id' => 0,
         );
 
+        // handle attachment
+        if (!empty($request->files)) {
+            $file = $request->files->get('image_data');
+            $name = preg_replace('/[^\w\._]+/', '', $file->getData('name'));
+
+            $file->move($apiHelperService->serverUrl('/images'), $name);
+
+            $image = Image::ProcessFile($name, $name, $user->getId(), array('Source' => 'feedback', 'Status' => 'Unapproved'));
+
+            $values['attachment_type'] = 'image';
+            $values['attachment_id'] =  $image->getImageId();
+        }
+
         $feedbackRepository->save($feedback, $values);
         $feedbackRepository->flush();
-
+ 
         $this->sendMail($values);
 
         return new JsonResponse(array(), 201);
@@ -117,6 +130,19 @@ class FeedbackController extends Controller
                         $body
                     )
                 );
+            if ($values['attachment_type'] == 'image') {
+                $item = new Image($values['attachment_id']);
+                $location = $item->getImageStorageLocation();
+                $contents = file_get_contents($location);
+                $filename = $item->getImageFileName();
+                $tempFilename = explode('.', $filename);
+                $extension = $tempFilename[count($tempFilename) - 1];
+                if ($extension == 'gif') $mineType = 'image/gif';
+                if ($extension == 'jpg' || $extension == 'jpeg') $mimeType = 'image/jpeg';
+                if ($extension == 'png') $mimeType = 'image/png';
+
+                $mail->attach(new Swift_Message_Attachment($contents, $filename, $mimeType));
+            }
 
             $this->container->get('mailer')->send($mail);
         } catch (\Exception $e) {
