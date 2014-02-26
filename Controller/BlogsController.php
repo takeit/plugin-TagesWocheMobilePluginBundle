@@ -106,13 +106,13 @@ class BlogsController extends Controller
             $sections = $em->getRepository('Newscoop\Entity\Section')
                 ->findBy(array('publication' => self::PUBLICATION, 'number' => $blogId));
             if ($sections === null || (is_array($sections) && count($sections) == 0)) {
-                return $this->sendError('Blog not found', 404);
+                return $apiHelperService->sendError('Blog not found', 404);
             }
 
             $section = $sections[0]->getNumber();
             $blogInfo = $this->getBlogInfo($section);
             if (!$blogInfo) {
-                return $this->sendError('Blog not found', 404);
+                return $apiHelperService->sendError('Blog not found', 404);
             }
 
             $posts = $em->getRepository('Newscoop\Entity\Article')
