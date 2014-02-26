@@ -211,20 +211,14 @@ class BlogsController extends Controller
 
         $cacheHelper->validateBrowserCache($article->getUpdated(), $request);
 
-        $fakeGimme = new \stdClass();
-        $fakeGimme->article = new \MetaArticle($article->getLanguageId(), $article->getNumber());
-
         $templatesService = $this->container->get('newscoop.templates.service');
         $smarty = $templatesService->getSmarty();
-        $smarty->assign('fakeGimme', $fakeGimme);
+        $context = $smarty->context();
+        $context->article = new \MetaArticle($article->getLanguageId(), $article->getNumber());
 
         $response = new Response();
-        $response->setContent($templatesService->fetchTemplate("_views/blogs_post.tpl"));
+        $response->setContent($templatesService->fetchTemplate("_mobile/articles_frontsize.tpl"));
         return $response;
-
-        // $this->_helper->smarty->setSmartyView();
-        // $this->view->getGimme()->article = new MetaArticle($article->getLanguageId(), $article->getNumber());
-        // $this->render('post');
     }
 
     /**
