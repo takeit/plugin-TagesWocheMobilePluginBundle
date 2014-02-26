@@ -138,6 +138,10 @@ class OmnitickerController extends SolrOmnitickerController
         $article = $this->container->get('em')
             ->getRepository('Newscoop\Entity\Article')->findOneByNumber($id);
 
+        if ($article === null) {
+            return array();
+        }
+
         return $this->filterDoc(array(
             'article_id' => $id,
             'short_title' =>  html_entity_decode($this->formatTitle($doc), ENT_COMPAT, 'UTF-8'),
