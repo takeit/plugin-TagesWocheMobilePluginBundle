@@ -105,8 +105,8 @@ class BlogsController extends Controller
         if ($blogId) {
             $sections = $em->getRepository('Newscoop\Entity\Section')
                 ->findBy(array('publication' => self::PUBLICATION, 'number' => $blogId));
-            if ($sections === null) {
-                $this->sendError('Blog not found', 404);
+            if ($sections === null || (is_array($sections) && count($sections) == 0)) {
+                return $this->sendError('Blog not found', 404);
             }
 
             $section = $sections[0]->getNumber();
@@ -258,7 +258,7 @@ class BlogsController extends Controller
         $apiHelperService = $this->container
             ->get('newscoop_tageswochemobile_plugin.api_helper');
         $images = $post->getImages();
-        if ($images) {
+        if (is_array($images) && count($images) > 0) {
             $image = $images->first();
             return $apiHelperService->serverUrl(
                 $this->container->get('zend_router')->assemble(array(
