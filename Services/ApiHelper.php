@@ -980,11 +980,12 @@ class ApiHelper
      */
     public function getUserImageUrl($user, array $normalSizes, array $retinaSizes)
     {
+        list($width, $height) = $this->isRetinaClient() ? $retinaSizes : $normalSizes;
+
         if ($user->getImage() === null) {
-            return null;
+            return "/_css/tw2011/img/user_blank_$widthx$height.png";
         }
 
-        list($width, $height) = $this->isRetinaClient() ? $retinaSizes : $normalSizes;
         $imageUrl = $this->container->get('zend_router')->assemble(array(
             'src' => $this->container->get('image')->getSrc('images/'.$user->getImage(), $width, $height, 'fit'),
         ), 'image', true, false);
