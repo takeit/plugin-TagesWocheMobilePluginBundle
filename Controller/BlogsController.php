@@ -17,7 +17,7 @@ use Newscoop\Entity\Article;
 
 class BlogsController extends Controller
 {
-    const PUBLICATION = 5;
+    const PUBLICATION = 1;
     const ISSUE = 3;
     const LANGUAGE = 5;
     const LIST_LIMIT = 30;
