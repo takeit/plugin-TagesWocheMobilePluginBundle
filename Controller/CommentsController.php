@@ -55,6 +55,7 @@ class CommentsController extends Controller
         }
 
         $response = array();
+        $rank = 0;
         foreach($comments as $comment) {
             $created = $comment->getTimeCreated()->format('Y-m-d H:i:s');
             $modified = $created;
@@ -90,7 +91,7 @@ class CommentsController extends Controller
                 'recommended' => $comment->getRecommended() ? true : false,
                 'created_time' => $created,
                 'last_modified' => $modified,
-                'rank' => $this->rank++,
+                'rank' => $rank++,
             );
         }
 
