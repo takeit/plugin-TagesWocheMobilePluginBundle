@@ -983,7 +983,7 @@ class ApiHelper
         list($width, $height) = $this->isRetinaClient() ? $retinaSizes : $normalSizes;
 
         if ($user->getImage() === null) {
-            return "/_css/tw2011/img/user_blank_$widthx$height.png";
+            return $this->serverUrl('/themes/publication_1/theme_1/_css/tw2011/img/user_blank_'.$width.'x'.$height.'.png');
         }
 
         $imageUrl = $this->container->get('zend_router')->assemble(array(
