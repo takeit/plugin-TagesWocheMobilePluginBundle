@@ -113,7 +113,7 @@ class BlogsController extends Controller
 
             $section = $sections[0]->getNumber();
             $blogInfo = $this->getBlogInfo($section);
-            if (!$blogInfo) {
+            if (!$blogInfo || !array_key_exists('array', $blogInfo) || !$blogInfo['active']) {
                 return $apiHelperService->sendError('Blog not found', 404);
             }
 
@@ -146,7 +146,7 @@ class BlogsController extends Controller
         foreach ($posts as $post) {
             if (!isset($section)) {
                 $blogInfo = $this->getBlogInfo($post->getSection()->getNumber());
-                if (!$blogInfo || !$blogInfo['active']) {
+                if (!$blogInfo || !array_key_exists('array', $blogInfo) || !$blogInfo['active']) {
                     continue;
                 }
             }
