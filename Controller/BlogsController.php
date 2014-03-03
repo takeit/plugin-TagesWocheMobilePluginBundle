@@ -78,10 +78,12 @@ class BlogsController extends Controller
                     'title' => $article->getTitle(),
                     'description' => trim(strip_tags($article->getData('infolong'))),
                     'rank' => $rank++,
-                    'image_url' => $apiHelperService->getLocalImageUrl(
-                        $article->getFirstImage(),
-                        $this->getImageSizesNormal(),
-                        $this->getImageSizesRetina()
+                    'image_url' => $apiHelperService->serverUrl(
+                        $apiHelperService->getLocalImageUrl(
+                            $article->getFirstImage(),
+                            $this->getImageSizesNormal(),
+                            $this->getImageSizesRetina()
+                        )
                     ),
                     'website_url' => $apiHelperService->getWebsiteUrl($article),
                     'published' => $apiHelperService->formatDate($article->getPublished()),
@@ -234,6 +236,7 @@ class BlogsController extends Controller
         $blogInfos = $this->container->get('em')
             ->getRepository('Newscoop\Entity\Article')
             ->findBy(array('section' => $blogId, 'type' => 'bloginfo'));
+
         if (empty($blogInfos)) {
             return false;
         }
@@ -257,9 +260,8 @@ class BlogsController extends Controller
     {
         $apiHelperService = $this->container
             ->get('newscoop_tageswochemobile_plugin.api_helper');
-        $images = $post->getImages();
-        if (is_array($images) && count($images) > 0) {
-            $image = $images->first();
+        $image = $post->getFirstImage();
+        if ($image !== null) {
             return $apiHelperService->serverUrl(
                 $this->container->get('zend_router')->assemble(array(
                     'src' => $this->container->get('image')->getSrc($image->getPath(), $this->getImageWidth(), $this->getImageHeight(), 'crop'),
