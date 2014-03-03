@@ -103,6 +103,7 @@ class TopicsController extends Controller
     public function mytopicsAction()
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+        $em = $this->container->get('em');
 
         $user = $apiHelperService->getUser();
         if (!($user instanceof User)) {
