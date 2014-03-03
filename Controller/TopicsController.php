@@ -23,6 +23,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class TopicsController extends Controller
 {
+    const PUBLICATION = 5;
     const LANGUAGE = 5;
     const ARTICLE_TOPICS = 412233;
 
@@ -110,7 +111,7 @@ class TopicsController extends Controller
 
         $articles = new ArrayCollection();
         foreach ($this->container->get('user.topic')->getTopics($user) as $topic) {
-            foreach ($this->container->get('article')->findByTopic($topic, 3) as $article) {
+            foreach ($em->getRepository('Newscoop\Entity\Article')->getArticlesForTopic(self::PUBLICATION, $topic->getTopicId()) as $article) {
                 $articles->add(array_merge($apiHelperService->formatArticle($article), array(
                     'topic_id' => (int) $topic->getTopicId(),
                     'topic_name' => $topic->getName(),
