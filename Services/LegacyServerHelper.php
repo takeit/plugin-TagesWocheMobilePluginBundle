@@ -15,7 +15,7 @@ use Buzz\Browser;
 
 class LegacyServerHelper
 {
-    const URL_LEGACY_SERVER = 'http://agenda.tageswoche.ch/api/cinema';
+    const URL_LEGACY_SERVER = 'http://agenda.tageswoche.ch/api';
 
     /**
      * Passes through a request to the legacy solution
@@ -24,13 +24,14 @@ class LegacyServerHelper
      *
      * @return mixed            JsonResponse
      */
-    public function passthroughRequest(Request $request) {
+    public function passthroughRequest(Request $request, $urlSuffix) {
 
         $parameters = $request->query->all();
 
         try {
             $buzz = new Browser();
-            $legacyResponse = $buzz->get(self::URL_LEGACY_SERVER .'?'. http_build_query($parameters));
+            $legacyUrl = self::URL_LEGACY_SERVER . $urlSuffix .'?'. http_build_query($parameters);
+            $legacyResponse = $buzz->get($legacyUrl);
         } catch (\Exception $e) {
             return $this->container->get('newscoop_tageswochemobile_plugin.api_helper')->sentError('Request to legacy server failed.', 500);
         }

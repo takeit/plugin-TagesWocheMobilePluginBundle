@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class LunchgateController extends Controller
 {
+    const LEGACY_URL = '/lunchgate';
+
     /**
      * @Route("/list/")
      */
@@ -23,6 +25,6 @@ class LunchgateController extends Controller
 
         $legacyHelper = $this->container->get('newscoop_tageswochemobile_plugin.legacy_request');
 
-        return $legacyHelper->passthroughRequest($request);
+        return $legacyHelper->passthroughRequest($request, self::LEGACY_URL);
     }
 }

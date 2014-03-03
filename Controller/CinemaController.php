@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class CinemaController extends Controller
 {
+    const LEGACY_URL = '/cinema';
+
     /**
      * @Route("/")
      */
@@ -23,6 +25,6 @@ class CinemaController extends Controller
 
         $legacyHelper = $this->container->get('newscoop_tageswochemobile_plugin.legacy_request');
 
-        return $legacyHelper->passthroughRequest($request);
+        return $legacyHelper->passthroughRequest($request, self::LEGACY_URL);
     }
 }
