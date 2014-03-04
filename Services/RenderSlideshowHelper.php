@@ -46,6 +46,7 @@ class RenderSlideshowHelper
         $this->request = $this->container->get('request');
 
         $this->client = strtolower($this->request->get('client', self::CLIENT_DEFAULT));
+
         if (!isset($this->maxSize[$this->client])) {
             $this->client = self::CLIENT_DEFAULT;
         }
@@ -70,18 +71,21 @@ class RenderSlideshowHelper
                 if ($item->isImage()) {
                     $items[] = array(
                         'type' => 'image',
-                        'url' => $this->api_helper->getImageUrl($item, $this->maxSize[$this->client]),
+                        'url' => $this->api_helper->getImageUrlHelper($item, $this->maxSize[$this->client]),
                         'caption' => $item->getCaption() ?: ($item->getImage()->getCaption() ?: null),
                         'image_credits' => $item->getImage()->getPhotographer() ?: null,
                     );
                 } else {
                     $items[] = array(
                         'type' => 'video',
-                        'url' => $this->view->serverUrl() . $this->view->url(array(
+                        'url' => $this->api_helper->serverUrl(
+                            $this->container->get('zend_router')->assemble(array(
                                 'controller' => 'video',
                                 'action' => 'player',
                                 'module' => 'default',
-                            ), 'default') .'?'. http_build_query(array('video' => $this->view->getVideoUrl($item) )),
+                            ), 'default') .
+                            '?'. http_build_query(array('video' => $this->api_helper->getVideoUrlHelper($item)))
+                        ),
                         'caption' => $item->getCaption(),
                         'image_credits' => null,
                     );

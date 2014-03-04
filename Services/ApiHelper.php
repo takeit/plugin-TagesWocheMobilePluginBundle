@@ -454,6 +454,49 @@ class ApiHelper
     }
 
     /**
+     * Get image url
+     *
+     * @param object $item Newscoop\Entity\Image
+     * @param int $max
+     *
+     * @return string
+     */
+    public function getImageUrlHelper($item, $max = 2048)
+    {
+        $orig = $item->getImage()->isLocal()
+            ? $this->serverUrl($item->getImage()->getPath())
+            : $item->getImage()->getPath();
+
+        $src = $this->container->get('image')->getSrc($orig, $max, $max, 'fit');
+
+        return $this->serverUrl(
+            $this->container->get('zend_router')->assemble(
+                array('src' => $src), 'image', true, false
+            )
+        );
+    }
+
+    /**
+     * Get video url
+     *
+     * @param object $item Newscoop\Entity\Image
+     *
+     * @return string
+     */
+    public function getVideoUrlHelper($item)
+    {
+        if (strpos($item->getVideoUrl(), 'http') !== false) {
+            return $item->getVideoUrl();
+        }
+
+        if (is_numeric($item->getVideoUrl())) {
+            return sprintf('http://vimeo.com/%d', $item->getVideoUrl());
+        } else {
+            return sprintf('http://youtu.be/%s', $item->getVideoUrl());
+        }
+    }
+
+    /**
      * Get ad image url
      *
      * @param mixed $ad
@@ -1074,8 +1117,12 @@ class ApiHelper
 
     public function absoluteUrl($relativeUrl)
     {
-        //$Newscoop['WEBSITE_URL']
+        if (strpos($relativeUrl, 'http://') === 0 || strpos($relativeUrl, 'https://') === 0) {
+            return $relativeUrl;
+        }
+
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off') ? 'https://' : 'http://';
+
         return $protocol . $_SERVER['HTTP_HOST'] . ((substr($relativeUrl, 0, 1) == '/') ? $relativeUrl : '/' . $relativeUrl);
     }
 
