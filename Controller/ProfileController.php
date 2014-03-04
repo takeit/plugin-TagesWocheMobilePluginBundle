@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Newscoop\Entity\User;
@@ -182,10 +183,15 @@ class ProfileController extends Controller
             return $user !== null ? $user : $apiHelperService->sendError('Invalid user.', 401);
         }
 
-        return $this->render('NewscoopTagesWocheMobilePluginBundle:profile:user_profile.html.smarty', array(
-            'user' => new \MetaUser($user),
-            'profile' => $user->getAttributes()
-        ));
+        $templatesService = $this->container->get('newscoop.templates.service');
+        $smarty = $templatesService->getSmarty();
+        $smarty->assign('user', new \MetaUser($user));
+        $smarty->assign('profile', $user->getAttributes());
+
+        $response = new Response();
+        $response->setContent($templatesService->fetchTemplate("_views/user_profile.tpl"));
+        return $response;
+
     }
 
     /**
