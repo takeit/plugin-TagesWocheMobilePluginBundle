@@ -94,11 +94,11 @@ class ArticlesController extends Controller
                 $qb = $qb->andWhere($qb->expr()->eq('a.type', ':type'))
                     ->setParameter('type', $params['type']);
             }
-            // TODO: Was marked as todo in old code
-            // if (!empty($params['topic_id'])) {
-            //     $qb = $qb->andWhere($qb->expr()->gte('a.type', ':topic_id'))
-            //         ->setParameter('topic_id', $params['topic_id']);
-            // }
+            if (!empty($params['topic_id'])) {
+                $qb->leftJoin('a.topics', 't');
+                $qb->andWhere($qb->expr()->eq('t.id', ':topic_id'))
+                    ->setParameter('topic_id', $params['topic_id']);
+            }
 
             $articles = $qb
                 ->setMaxResults(self::LIST_LIMIT_BYTOPIC)
