@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Newscoop\Entity\Article;
@@ -111,12 +112,17 @@ class OnlineController extends Controller
         //$this->view->height = $apiHelperService->getClientHeight();
         //$this->render('article');
 
-        // TODO: find out how to do the getGimme() thing as above and what that does
-        return $this->render('NewscoopTagesWocheMobilePluginBundle:online:article.html.smarty', array(
-            'article' => new \MetaArticle($article->getLanguageId(), $article->getNumber()),
-            'width' => $apiHelperService->getClientWidth(),
-            'height' => $apiHelperService->getClientHeight()
-        ));
+        $templatesService = $this->container->get('newscoop.templates.service');
+        $smarty = $templatesService->getSmarty();
+        $gimme =  $smarty->context();
+        $gimme->article = new \MetaArticle($article->getLanguageId(), $article->getNumber());
+        $smarty->assign('gimme', $gimme);
+        $smarty->assign('width', $apiHelperService->getClientWidth());
+        $smarty->assign('height', $apiHelperService->getClientHeight());
+
+        $response = new Response();
+        $response->setContent($templatesService->fetchTemplate("article.tpl"));
+        return $response;
     }
 
     /**
