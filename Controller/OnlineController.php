@@ -121,7 +121,7 @@ class OnlineController extends Controller
         $smarty->assign('height', $apiHelperService->getClientHeight());
 
         $response = new Response();
-        $response->setContent($templatesService->fetchTemplate("article.tpl"));
+        $response->setContent($templatesService->fetchTemplate("_views/online_article.tpl"));
         return $response;
     }
 
