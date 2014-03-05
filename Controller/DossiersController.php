@@ -23,7 +23,7 @@ use Newscoop\Entity\Topic;
  */
 class DossiersController extends Controller
 {
-    const PUBLICATION = 5;
+    const PUBLICATION = 1;
     const ARTICLE_TYPE = 'dossier';
     const IMAGE_STANDARD_WIDTH = 320;
     const IMAGE_STANDARD_HEIGHT = 140;
@@ -56,11 +56,11 @@ class DossiersController extends Controller
             $response = $this->processItems($this->getFeaturedDossiers(), 'article');
         } else {
             $topics = array();
-            $dossierIds = $this->container->get('article.topic')->getDossiers();
+            $dossierIds = $this->getDossiers();
             foreach($dossierIds as $dossierId) {
                 $topics[] = $em->getRepository('Newscoop\Entity\Topic')
                     ->findOneBy(array(
-                        'topic' => $dossierId,
+                        'id' => $dossierId,
                     ));
             }
 
@@ -117,7 +117,7 @@ class DossiersController extends Controller
             }
         }
 
-        $topicArticles = $em->getRepository('Newscoop\Entity\Article')->getArticlesForTopic(self::PUBLICATION, $dossierId);
+        $topicArticles = $em->getRepository('Newscoop\Entity\Article')->getArticlesForTopic(self::PUBLICATION, $dossierId)->getResult();
         foreach ($topicArticles as $article) {
             // inject ad
             if (in_array($rank, $this->adRanks)) {
@@ -271,5 +271,38 @@ class DossiersController extends Controller
     private function getImageHeight()
     {
         return $this->isRetinaClient() ? self::IMAGE_RETINA_HEIGHT : self::IMAGE_STANDARD_HEIGHT;
+    }
+
+    /**
+     * Get dossiers
+     *
+     * @return array
+     */
+    private function getDossiers()
+    {
+        $em = $this->container->get('em');
+        $qb = $em->createQueryBuilder();
+        $qb->select('at')
+            ->from('Newscoop\Entity\ArticleTopic', 'at')
+            ->innerJoin('Newscoop\Entity\Topic', 't', 'WITH', 'at.topic = t.id')
+            ->innerJoin('Newscoop\Entity\TopicNodes', 'tn', 'WITH', 't.id = tn.id')
+            ->andWhere('tn.leftNode < 983')
+            ->groupBy('at.topic')
+            ->having('COUNT(at) > :articles')
+            ->setParameter('articles', 3);
+        $articleDossiers =  $qb->getQuery()->getResult();
+
+        $items = array_filter($articleDossiers, function($item) {
+            return (!preg_match('/^(_|Ambiente\:|Küche\:|Restaurant\:)/', $item->getTopic()->getName()));
+        });
+
+        $dossiers = array();
+        foreach($items as $item) {
+            $dossiers[$item->getTopic()->getTopicId()] = $item->getTopic()->getName();
+        }
+
+        asort($dossiers);
+
+        return array_keys($dossiers);
     }
 }
