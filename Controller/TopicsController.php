@@ -112,11 +112,12 @@ class TopicsController extends Controller
 
         $articles = new ArrayCollection();
         foreach ($this->container->get('user.topic')->getTopics($user) as $topic) {
-            foreach ($em->getRepository('Newscoop\Entity\Article')->getArticlesForTopic(self::PUBLICATION, $topic->getTopicId()) as $article) {
+            $topicArticlesQuery = $em->getRepository('Newscoop\Entity\Article')->getArticlesForTopic(self::PUBLICATION, $topic->getTopicId())->setMaxResults(3);
+            foreach ($topicArticlesQuery->getResult() as $article) {
                 $articles->add(array_merge($apiHelperService->formatArticle($article), array(
                     'topic_id' => (int) $topic->getTopicId(),
                     'topic_name' => $topic->getName(),
-                    'topic_url' => $this->getTopicUrl($topic),
+                    'topic_url' => $apiHelperService->getTopicUrl($topic),
                 )));
             }
         }

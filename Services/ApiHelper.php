@@ -247,7 +247,7 @@ class ApiHelper
      */
     public function getTopicUrl($topic)
     {
-        return $this->view->serverUrl($this->view->url(array(
+        return $this->serverUrl($this->container->get('zend_router')->assemble(array(
             'module' => 'api',
             'controller' => 'articles',
             'action' => 'list',
