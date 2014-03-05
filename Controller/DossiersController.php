@@ -89,7 +89,6 @@ class DossiersController extends Controller
 
         $response = array();
         $featured = $this->getFeaturedDossiers();
-        $dossierArticle = $featured[$dossierId];
         $articleIds = array();
         $listAds = $apiHelperService->getArticleListAds('blogs_dossiers');
         $ad = 0;
@@ -97,6 +96,7 @@ class DossiersController extends Controller
 
         // look for an article of type dossier, if exists fetch related articles
         if (array_key_exists($dossierId, $featured)) {
+            $dossierArticle = $featured[$dossierId];
             $contextBox = new \ContextBox(null, $dossierArticle->getNumber());
             $articleIds = $contextBox->getArticlesList() ?: array();
 
