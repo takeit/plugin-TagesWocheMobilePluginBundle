@@ -154,7 +154,9 @@ class DebatesController extends Controller
             'conclusion_url' => $apiHelperService->getArticleUrl($debate, ApiHelper::FRONT_SIDE, array('stage' => '4')),
             'conclusion_website_url' => $apiHelperService->getWebsiteUrl($debate) . '?stage=4',
             'conclusion_date' => $apiHelperService->getArticleField($debate, 'date_closing'),
-            'conclusion_image_url' => $apiHelperService->getLocalImageUrl($this->getAuthorImage($debate), array(70, 70), array(140, 140)),
+            'conclusion_image_url' => $apiHelperService->serverUrl(
+                $apiHelperService->getLocalImageUrl($this->getAuthorImage($debate), array(70, 70), array(140, 140))
+            ),
             'comment_count' => $apiHelperService->getCommentsCount($debate),
             'recommended_comment_count' => $apiHelperService->getCommentsCount($debate, true),
             'comment_url' => $apiHelperService->getCommentsUrl($debate),
