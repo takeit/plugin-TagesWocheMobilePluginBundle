@@ -114,6 +114,7 @@ class OmnitickerController extends SolrOmnitickerController
         }
 
         $mappedData = array_map(array($this, 'formatDoc'), (array) $responseData['response']['docs']);
+        $mappedData = array_filter($mappedData);
 
         $response = new JsonResponse($mappedData);
         $response->headers->set('Expires', $this->getExpires($request), true);
