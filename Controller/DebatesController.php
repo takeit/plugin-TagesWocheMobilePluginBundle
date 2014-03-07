@@ -147,7 +147,7 @@ class DebatesController extends Controller
             'my_vote' => $debateService->getVote($debate->getNumber(), $device_id, $user),
             'pro_vote_display_name' => $debateService->findStatement($debate, true)->getName(),
             'con_vote_display_name' => $debateService->findStatement($debate, false)->getName(),
-            'vote_url' => $apiHelperService->serverUrl($this->container->get('zend_router')->assemble(array('action' => 'vote'))),
+            'vote_url' => $apiHelperService->serverUrl($this->generateUrl('newscoop_tageswochemobileplugin_vote_url')),
             'start_date' => $apiHelperService->getArticleField($debate, 'date_opening'),
             'intro_url' => $apiHelperService->getArticleUrl($debate, ApiHelper::FRONT_SIDE, array('stage' => '0')),
             'intro_website_url' => $apiHelperService->getWebsiteUrl($debate) . '?stage=0',
@@ -171,7 +171,7 @@ class DebatesController extends Controller
     }
 
     /**
-     * @Route("/vote")
+     * @Route("/vote", name="newscoop_tageswochemobileplugin_vote_url")
      * @Method("POST")
      */
     public function voteAction(Request $request)
