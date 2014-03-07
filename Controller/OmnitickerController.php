@@ -13,6 +13,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Encoder\JsonDecode;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use DateTime;
 use DateTimeZone;
 use DateInterval;
@@ -104,7 +106,8 @@ class OmnitickerController extends SolrOmnitickerController
 
         $request->query->set('format', 'json');
         $responseObject = parent::omnitickerAction($request, null);
-        $responseData = json_decode($responseObject->getContent(), true);
+        $decoder = new JsonDecode(true);
+        $responseData = $decoder->decode($responseObject->getContent(), JsonEncoder::FORMAT);
 
         if (is_array($responseData)) {
             $this->commentStats = $this->container->get('comment')
@@ -114,7 +117,6 @@ class OmnitickerController extends SolrOmnitickerController
         }
 
         $mappedData = array_map(array($this, 'formatDoc'), (array) $responseData['response']['docs']);
-        $mappedData = array_filter($mappedData);
 
         $response = new JsonResponse($mappedData);
         $response->headers->set('Expires', $this->getExpires($request), true);
@@ -135,12 +137,11 @@ class OmnitickerController extends SolrOmnitickerController
         $slideshowHelper = $this->container->get('newscoop_tageswochemobile_plugin.render_slideshow_helper');
 
         $id = self::getArticleId($doc);
-
-        $article = $this->container->get('em')
-            ->getRepository('Newscoop\Entity\Article')->findOneByNumber($id);
-
-        if ($article === null) {
-            return array();
+        $isArticle = ($id === null) ? false : true;
+        $article = null;
+        if ($isArticle) {
+            $article = $this->container->get('em')
+                ->getRepository('Newscoop\Entity\Article')->findOneByNumber($id);
         }
 
         return $this->filterDoc(array(
@@ -150,7 +151,7 @@ class OmnitickerController extends SolrOmnitickerController
             'url' => $this->formatUrl($id),
             'backside_url' => $this->formatUrl($id, false),
             'link_url' => $this->formatLinkUrl($doc),
-            'website_url' => $apiHelper->getWebsiteUrl($article),
+            'website_url' => ($isArticle) ? $apiHelper->getWebsiteUrl($article) : $apiHelper->serverUrl(''),
             'section_id' => !empty($doc['section_id']) ? (int) $doc['section_id'] : null,
             'section_name' => !empty($doc['section_name']) ? $doc['section_name'] : null,
             'comments_enabled' => isset($this->commentStats[$id]['comments_enabled']) ? $this->commentStats[$id]['comments_enabled'] : false,
@@ -168,7 +169,7 @@ class OmnitickerController extends SolrOmnitickerController
             'topics' => $this->formatTopics($doc),
             'facebook_teaser' => $this->formatTeaser($doc),
             'twitter_teaser' => $this->formatTeaser($doc),
-            'slideshow_images' => $slideshowHelper->direct($id),
+            'slideshow_images' => ($isArticle) ? $slideshowHelper->direct($id) : null,
         ));
     }
 
