@@ -55,12 +55,14 @@ class OnlineController extends Controller
     }
 
     /**
-     * @Route("/toc/{id}")
+     * @Route("/toc")
      */
-    public function tocAction($id)
+    public function tocAction($request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $mobileService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue');
+
+        $id = $request->query->get('id');
 
         if (in_array($id, array(IssueFacade::CURRENT_ISSUE, $mobileService->getCurrentIssueId()))) {
             if (!$apiHelperService->isSecure()) {
