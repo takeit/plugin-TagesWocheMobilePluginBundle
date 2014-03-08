@@ -57,7 +57,7 @@ class OnlineController extends Controller
     /**
      * @Route("/toc")
      */
-    public function tocAction($request)
+    public function tocAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $mobileService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue');
