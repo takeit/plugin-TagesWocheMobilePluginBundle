@@ -860,7 +860,7 @@ class ApiHelper
      *
      * @return string
      */
-    private function getCurrentIssueProductId()
+    public function getCurrentIssueProductId()
     {
         $issue = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->findCurrent();
         $date = $this->getArticleField($issue, 'issuedate')
