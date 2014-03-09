@@ -125,9 +125,9 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/subscriptioninfo")
+     * @Route("/subscription_info")
      */
-    public function subscriptioninfoAction()
+    public function subscriptionInfoAction()
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         if (!$apiHelperService->isSecure()) {
@@ -272,11 +272,11 @@ class ProfileController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
-        $config = new Zend_Config_Xml(APPLICATION_PATH . '/configs/subscriptions.xml');
-        $array = $config->toArray();
-        $array['single_issue_product']['product_id'] = $apiHelperService->getCurrentIssueProductId();
-        $array['digital_subscriptions'] = array_values($array['digital_subscriptions']['subscription']);
-        return $array;
+        $subscriptions = $this->container->getParameter('subscriptions');
+        $subscriptions['single_issue_product']['product_id'] = $apiHelperService->getCurrentIssueProductId();
+        $subscriptions['digital_subscriptions'] = array_values($subscriptions['digital_subscriptions']);
+
+        return $subscriptions;
     }
 
 }
