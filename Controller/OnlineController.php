@@ -83,10 +83,11 @@ class OnlineController extends Controller
     }
 
     /**
-     * @Route("/articles/{id}", requirements={"id" = "\d+"})
+     * @Route("/articles")
      */
-    public function articlesAction($id)
+    public function articlesAction(Request $request)
     {
+        $id = $request->query->get('id');
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         $article = $this->container->get('em')
