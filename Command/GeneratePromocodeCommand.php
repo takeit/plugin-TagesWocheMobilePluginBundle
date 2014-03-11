@@ -7,12 +7,14 @@
 
 namespace Newscoop\TagesWocheMobilePluginBundle\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  */
-class GeneratePromocodeCommand extends Console\Command\Command
+class GeneratePromocodeCommand extends Command
 {
     /**
      */
@@ -25,7 +27,7 @@ class GeneratePromocodeCommand extends Console\Command\Command
 
     /**
      */
-    protected function execute($input, $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->getHelper('container')->getService('promocode.generator')->generate($input->getArgument('count'));
     }

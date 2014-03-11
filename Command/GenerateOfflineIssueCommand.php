@@ -31,7 +31,7 @@ class GenerateOfflineIssueCommand extends ContainerAwareCommand
 
     /**
      */
-    protected function execute($input, $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($input->getArgument('issue') === 'all') {
             foreach ($this->getContainer()->get('newscoop_tageswochemobile_plugin.mobile.issue')->findAll() as $issue) {
