@@ -77,3 +77,15 @@ services:
 
     newscoop_tageswochemobile_plugin.legacy_request:
         class: Newscoop\TagesWocheMobilePluginBundle\Services\LegacyServerHelper
+
+    newscoop_tageswochemobile_plugin.facebook:
+        class: Newscoop\TagesWocheMobilePluginBundle\Auth\FacebookAdapter
+        arguments:
+            - @newscoop_tageswochemobile_plugin.client_factory
+            - @em
+
+    newscoop_tageswochemobile_plugin.user.confirm:
+        class: Newscoop\TagesWocheMobilePluginBundle\Auth\ConfirmService
+        arguments:
+            - @em
+            - @auth.adapter.social

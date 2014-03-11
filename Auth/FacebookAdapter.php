@@ -63,7 +63,7 @@ class FacebookAdapter
      * @param string $token
      * @return string
      */
-    private function getFacebookUserId($token)
+    public function getFacebookUserId($token)
     {
         $client = $this->clientFactory->getClient();
 
@@ -77,5 +77,27 @@ class FacebookAdapter
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    /**
+     * Fetch user via graph info for given token
+     *
+     * @param string $token                                       
+     * @return fb graph user obj 
+     */
+    public function getFacebookUser($token)                       
+    {   
+        $client = $this->clientFactory->getClient();              
+        
+        try {
+            $response = $client->get(array(self::GRAPH_URI, array(
+                'token' => $token,                                
+            )))->send();                                          
+            
+            $data = json_decode($response->getBody(true));        
+            return !empty($data) ? $data : null;                  
+        } catch (\Exception $e) {                                 
+            return null;                                          
+        }                                                         
     }
 }

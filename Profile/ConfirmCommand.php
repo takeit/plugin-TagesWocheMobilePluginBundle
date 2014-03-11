@@ -12,36 +12,72 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ConfirmCommand
 {
     /**
+     * @var int
+     */
+    public $id;
+
+    /**
+     * @var string
+     */
+    public $provider;
+
+    /**
+     * @var int
+     */
+    public $provider_user_id;
+
+    /**
+     * @var string
+     */
+    public $email;
+
+    /**
      * @Assert\NotBlank(message="first_name is required")
      */
-    public first_name;
+    public $first_name;
     /**
      * @Assert\NotBlank(message="last_name is required")
      */
-    public last_name;
+    public $last_name;
     /**
      * @Assert\NotBlank(message="username is required")
      */
-    public username;
+    public $username;
     /**
      * @Assert\Image(
      *     maxSize = "1024k"
      * )
      */
-    public image;
+    public $image;
     /**
      * @Assert\NotBlank(message="password is required")
      */
-    public password;
+    public $password;
     /**
      * @Assert\NotBlank(message="password_confirm is required")
      */
-    public password_confirm;
+    public $password_confirm;
     /**
      * @Assert\GreaterThan(
      *     value = 0 
      * )
      */
-    public terms_of_use;
-    
+    public $terms_of_use;
+   
+    /**
+     * Create command by given facebook info
+     *
+     * @param object $info
+     * @return Newscoop\User\ConfirmCommand
+     */
+    public static function createByFacebook($info)
+    {
+        $command = new self($info);
+        $command->id = null;
+        $command->provider = 'Facebook';
+        $command->provider_user_id = $info->id;
+        $command->username = $info->name;
+        return $command;
+    }
+ 
 }
