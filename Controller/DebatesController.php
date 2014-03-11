@@ -288,7 +288,9 @@ class DebatesController extends Controller
                 $prefix . 'author_name' => $author->getFullName(),
                 $prefix . 'author_profile_url' => null,
                 $prefix . 'short_bio' => $author->getBiography() ?: null,
-                $prefix . 'author_image_url' => $apiHelperService->getLocalImageUrl($author->getImage(), array(70, 70), array(140, 140)),
+                $prefix . 'author_image_url' => $apiHelperService->serverUrl(
+                    $apiHelperService->getLocalImageUrl($author->getImage(), array(70, 70), array(140, 140))
+                ),
             );
         }
     }
