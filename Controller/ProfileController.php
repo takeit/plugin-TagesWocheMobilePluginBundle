@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Newscoop\Entity\User;
 
-use Newscoop\TagesWocheMobilePluginBundle\Profile\ConfirmCommand;
+use Newscoop\TagesWocheMobilePluginBundle\Profile\FacebookConfirmCommand;
 use Newscoop\TagesWocheMobilePluginBundle\Profile\RegisterUserCommand;
 use Newscoop\TagesWocheMobilePluginBundle\Profile\UpdateProfileCommand;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade;
@@ -234,7 +234,7 @@ class ProfileController extends Controller
 
         try {
             $token = $request->request->get(self::FACEBOOK_AUTH_TOKEN);
-            $command = ConfirmCommand::createByFacebook($this->container->get('newscoop_tageswochemobile_plugin.facebook')->getFacebookUser($token));
+            $command = FacebookConfirmCommand::createByFacebook($this->container->get('newscoop_tageswochemobile_plugin.facebook')->getFacebookUser($token));
             $this->container->get('newscoop_tageswochemobile_plugin.user.confirm')->confirm($command);
             $response = new Response();
             $response->setStatusCode(201);
