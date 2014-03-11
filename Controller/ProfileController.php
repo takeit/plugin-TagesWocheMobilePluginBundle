@@ -48,7 +48,8 @@ class ProfileController extends Controller
                 return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
         }
 
-        if ($request->getMethod() == 'POST') {
+        $token = $request->request->get(self::FACEBOOK_AUTH_TOKEN);
+        if (empty($token) && ($request->getMethod() == 'POST')) {
             try {
                 $command = new UpdateProfileCommand($form->getValues());
                 $command->user = $user;
