@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManager;
 use Newscoop\Entity\User;
 use Newscoop\Services\Auth\SocialAuthService;
 
-use Newscoop\TagesWocheMobilePluginBundle\Profile\ConfirmCommand;
+use Newscoop\TagesWocheMobilePluginBundle\Profile\FacebookConfirmCommand;
 
 /**
  */
@@ -52,10 +52,10 @@ class ConfirmService
     /**
      * Confirm user
      *
-     * @param Newscoop\TagesWocheMobilePluginBundle\Profile\ConfirmCommand $command
+     * @param Newscoop\TagesWocheMobilePluginBundle\Profile\FacebookConfirmCommand $command
      * @return Newscoop\Entity\User
      */
-    public function confirm(ConfirmCommand $command)
+    public function confirm(FacebookConfirmCommand $command)
     {
         $user = $this->em->getRepository('Newscoop\Entity\User')
             ->findOneByEmail($command->email);
@@ -82,7 +82,7 @@ class ConfirmService
      * @param Newscoop\User\ConfirmCommand $command
      * @return void
      */
-    public function confirmUser(User $user, ConfirmCommand $command)
+    public function confirmUser(User $user, FacebookConfirmCommand $command)
     {
         $user->setEmail($command->email ?: $user->getEmail());
         $user->setUsername($command->username);
