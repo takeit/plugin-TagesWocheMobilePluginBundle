@@ -19,6 +19,7 @@ class BlogsController extends Controller
 {
     const PUBLICATION = 1;
     const ISSUE = 3;
+    const ISSUE_ID = 13;
     const LANGUAGE = 5;
     const LIST_LIMIT = 30;
     const IMAGE_RENDITION = 'topfront';
@@ -106,14 +107,18 @@ class BlogsController extends Controller
         $response = array();
         if ($blogId) {
             $sections = $em->getRepository('Newscoop\Entity\Section')
-                ->findBy(array('publication' => self::PUBLICATION, 'number' => $blogId));
+                ->findBy(array(
+                    'publication' => self::PUBLICATION,
+                    'issue' => self::ISSUE_ID,
+                    'number' => $blogId
+                ));
             if ($sections === null || (is_array($sections) && count($sections) == 0)) {
                 return $apiHelperService->sendError('Blog not found', 404);
             }
 
             $section = $sections[0]->getNumber();
             $blogInfo = $this->getBlogInfo($section);
-            if (!$blogInfo || !array_key_exists('array', $blogInfo) || !$blogInfo['active']) {
+            if (!$blogInfo || !array_key_exists('active', $blogInfo) || !$blogInfo['active']) {
                 return $apiHelperService->sendError('Blog not found', 404);
             }
 
