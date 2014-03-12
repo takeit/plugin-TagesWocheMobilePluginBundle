@@ -16,8 +16,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Newscoop\Entity\User;
-use Newscoop\User\ConfirmCommand;
 
+use Newscoop\TagesWocheMobilePluginBundle\Profile\ConfirmCommand;
 use Newscoop\TagesWocheMobilePluginBundle\Profile\RegisterUserCommand;
 use Newscoop\TagesWocheMobilePluginBundle\Profile\UpdateProfileCommand;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade;
@@ -33,6 +33,8 @@ use Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproException;
  */
 class ProfileController extends Controller
 {
+
+    const FACEBOOK_AUTH_TOKEN = 'fb_access_token';
 
     /**
      * @Route("/")
@@ -232,10 +234,11 @@ class ProfileController extends Controller
 
         try {
             $token = $request->request->get(self::FACEBOOK_AUTH_TOKEN);
-            $command = ConfirmCommand::createByFacebook($this->container->get('facebook')->me($token));
-            $this->container->get('user.confirm')->confirm($command);
-            $this->getResponse()->setHttpResponseCode(201);
-            return $this->forward('NewscoopTagesWocheMobilePluginBundle:Profile:index', array('request' => $request));
+            $command = ConfirmCommand::createByFacebook($this->container->get('newscoop_tageswochemobile_plugin.facebook')->getFacebookUser($token));
+            $this->container->get('newscoop_tageswochemobile_plugin.user.confirm')->confirm($command);
+            $response = new Response();
+            $response->setStatusCode(201);
+            return $this->forward('NewscoopTagesWocheMobilePluginBundle:Profile:index');
         } catch (Exception $e) {
             return $apiHelperService->sendError('Duplicate', 500);
         }
