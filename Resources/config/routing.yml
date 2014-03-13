@@ -56,7 +56,7 @@ newscoop_tageswochemobile_plugin.sections:
 newscoop_tageswochemobile_plugin.profile:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/ProfileController.php"
   type:     annotation
-  prefix:   /api/profile
+  prefix:   /api/
 
 newscoop_tageswochemobile_plugin.purchase:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/PurchaseController.php"

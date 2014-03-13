@@ -37,7 +37,7 @@ class ProfileController extends Controller
     const FACEBOOK_AUTH_TOKEN = 'fb_access_token';
 
     /**
-     * @Route("/")
+     * @Route("/profile")
      */
     public function indexAction(Request $request)
     {
@@ -128,7 +128,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/subscription_info")
+     * @Route("/profile/subscription_info")
      */
     public function subscriptionInfoAction()
     {
@@ -143,7 +143,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/create")
+     * @Route("/profile/create")
      * @Method("POST")
      */
     public function createAction(Request $request)
@@ -170,7 +170,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/public")
+     * @Route("/profile/public")
      */
     public function publicAction(Request $request)
     {
@@ -198,7 +198,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/reset")
+     * @Route("/profile/reset")
      * @Method("POST")
      */
     public function resetAction(Request $request)
@@ -223,7 +223,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/facebookcreate")
+     * @Route("/profile/facebookcreate")
      * @Method("POST")
      */
     public function facebookcreateAction(Request $request)
@@ -246,7 +246,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/resetpassword")
+     * @Route("/profile/resetpassword")
      */
     public function resetpasswordAction(Request $request)
     {
@@ -282,6 +282,4 @@ class ProfileController extends Controller
 
         return $subscriptions;
     }
-
 }
-
