@@ -30,11 +30,9 @@ class ConfirmCommand
      */
     public $image;
     /**
-     * @Assert\NotBlank(message="password is required")
      */
     public $password;
     /**
-     * @Assert\NotBlank(message="password_confirm is required")
      */
     public $password_confirm;
     /**

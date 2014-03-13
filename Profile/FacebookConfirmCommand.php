@@ -32,11 +32,9 @@ class FacebookConfirmCommand
     public $email;
 
     /**
-     * @Assert\NotBlank(message="first_name is required")
      */
     public $first_name;
     /**
-     * @Assert\NotBlank(message="last_name is required")
      */
     public $last_name;
     /**
