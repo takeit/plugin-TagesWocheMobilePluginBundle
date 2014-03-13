@@ -38,6 +38,7 @@ class ProfileController extends Controller
 
     /**
      * @Route("/profile")
+     * @Route("/profile/")
      */
     public function indexAction(Request $request)
     {
