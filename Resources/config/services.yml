@@ -89,3 +89,17 @@ services:
         arguments:
             - @em
             - @auth.adapter.social
+
+    newscoop_tageswochemobile_plugin.user.register:
+        class: Newscoop\TagesWocheMobilePluginBundle\Services\RegisterUserService
+        arguments:
+            - @em
+            - @user
+            - @email
+
+    newscoop_tageswochemobile_plugin.user.profile:
+        class: Newscoop\TagesWocheMobilePluginBundle\Services\UserProfileService
+        arguments:
+            - @em
+            - @image
+            - @newscoop_tageswochemobile_plugin.user_subscription

@@ -45,7 +45,7 @@ class ProfileController extends Controller
 
         $user = $apiHelperService->getUser();
         if (!($user instanceof User)) {
-                return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
+            return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
         }
 
         $token = $request->request->get(self::FACEBOOK_AUTH_TOKEN);
@@ -63,7 +63,7 @@ class ProfileController extends Controller
 
                 $errors = $this->container->get('validator')->validate($command);
                 if (count($errors) === 0) {
-                    $this->container->get('user.profile')->updateProfile($command);
+                    $this->container->get('newscoop_tageswochemobile_plugin.user.profile')->updateProfile($command);
                 } else {
                     return $apiHelperService->sendError($errors[0]->getMessage(), 500);
                 }
@@ -159,7 +159,7 @@ class ProfileController extends Controller
 
             $errors = $this->container->get('validator')->validate($command);
             if (count($errors) === 0) {
-                $this->container->get('user.register')->register($command);
+                $this->container->get('newscoop_tageswochemobile_plugin.user.register')->register($command);
                 return new JsonResponse(array(), 200);
             } else {
                 return $apiHelperService->sendError($errors[0]->getMessage(), 500);
@@ -252,7 +252,7 @@ class ProfileController extends Controller
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
-        $email = $request->request('email');
+        $email = $request->request->get('email');
         if (empty($email)) {
             return $apiHelperService->sendError('No email', 400);
         }
