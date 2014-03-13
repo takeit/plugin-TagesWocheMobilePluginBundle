@@ -155,7 +155,7 @@ class ProfileController extends Controller
 
         try {
             $command = new RegisterUserCommand();
-            $command->email = $request->request('email');
+            $command->email = $request->request->get('email');
 
             $errors = $this->container->get('validator')->validate($command);
             if (count($errors) === 0) {
