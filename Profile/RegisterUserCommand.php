@@ -17,5 +17,5 @@ class RegisterUserCommand
      *     checkMX = true
      * )
      */
-    public $email
+    public $email;
 }
