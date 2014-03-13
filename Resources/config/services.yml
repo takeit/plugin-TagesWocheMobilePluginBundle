@@ -98,7 +98,7 @@ services:
             - @email
 
     newscoop_tageswochemobile_plugin.user.profile:
-        class: Newscoop\TagesWocheMobilePluginBundle\Services\UserProfileService
+        class: Newscoop\TagesWocheMobilePluginBundle\Services\UpdateProfileService
         arguments:
             - @em
             - @image
