@@ -68,7 +68,7 @@ class UpdateProfileService
         $this->subscriptionService->updateProfile($command);
 
         if (!empty($command->image)) {
-            $command->image = $this->imageService->save(array_shift($command->image));
+            $command->image = $this->imageService->save($command->image);
         }
 
         $command->user->updateProfile(
