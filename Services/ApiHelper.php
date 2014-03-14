@@ -97,9 +97,10 @@ class ApiHelper
      */
     public function getUser()
     {
-        if ($this->request->request->get(self::FACEBOOK_AUTH_TOKEN)) {
+        $token = $this->_getParam(self::FACEBOOK_AUTH_TOKEN);
+        if ($token) {
             $user = $this->container->get('newscoop_tageswochemobile_plugin.facebook')
-                ->findByAuthToken($this->request->request->get(self::FACEBOOK_AUTH_TOKEN));
+                ->findByAuthToken($token);
             return $user !== null ? $user : $this->sendError('Invalid credentials', 412);
         }
 
