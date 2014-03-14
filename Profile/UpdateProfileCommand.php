@@ -8,12 +8,12 @@
 namespace Newscoop\TagesWocheMobilePluginBundle\Profile;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Newscoop\Command;
 
-class UpdateProfileCommand
+class UpdateProfileCommand extends Command
 {
     public $user;
     /**
-     * @Assert\NotBlank(message="username is required")
      */
     public $username;
     /**
@@ -31,5 +31,5 @@ class UpdateProfileCommand
      * )
      */
     public $image;
-    public $attributes;
+    public $attributes = array();
 }
