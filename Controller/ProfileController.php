@@ -54,10 +54,13 @@ class ProfileController extends Controller
             try {
                 $command = new UpdateProfileCommand($request->request->all());
                 $command->user = $user;
-                $command->first_name = $user->getFirstName();
-                $command->last_name = $user->getLastName();
-                $command->username = $user->getUsername();
-                $command->attributes = $user->getAttributes();
+                $command->attributes = array(
+                    'bio' => $request->request->get('bio'),
+                    'website' => $request->request->get('website'),
+                    'facebook' => $request->request->get('facebook'),
+                    'google' => $request->request->get('google'),
+                    'email_pubic' => $request->request->get('email_pubic')
+                );
                 $command->image = !empty($_FILES['profile_image_data'])
                     ? $request->files->get('profile_image_data')
                     : null;
