@@ -55,14 +55,12 @@ class OnlineController extends Controller
     }
 
     /**
-     * @Route("/toc")
+     * @Route("/toc/{id}")
      */
-    public function tocAction(Request $request)
+    public function tocAction($id, Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $mobileService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue');
-
-        $id = $request->query->get('id');
 
         if (in_array($id, array(IssueFacade::CURRENT_ISSUE, $mobileService->getCurrentIssueId()))) {
             if (!$apiHelperService->isSecure()) {
@@ -141,7 +139,7 @@ class OnlineController extends Controller
         return array(
             'issue_id' => $issue->getNumber(),
             // TODO add apiHelperService function to format this url
-            'url' => $apiHelperService->serverUrl('api/online/toc?id=' . $issue->getNumber() . '&api=' . $apiHelperService->getClientVersionParams()),
+            'url' => $apiHelperService->serverUrl('api/online/toc/' . $issue->getNumber() . '?api=' . $apiHelperService->getClientVersionParams()),
             'cover_url' => $apiHelperService->getCoverUrl($issue),
             'title' => $issue->getTitle(),
             'description' => $apiHelperService->getArticleField($issue, 'shortdescription'),
