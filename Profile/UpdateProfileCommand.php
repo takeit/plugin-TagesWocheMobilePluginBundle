@@ -17,7 +17,6 @@ class UpdateProfileCommand
      */
     public $username;
     /**
-     * @Assert\NotBlank(message="password is required")
      */
     public $password;
     /**
