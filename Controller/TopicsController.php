@@ -47,7 +47,7 @@ class TopicsController extends Controller
             $topicsTemp = $this->container->get('user.topic')->getTopics($user);
             $topics = array();
             foreach ($topicsTemp as $item) {
-                $topics[] = new Topic($item->getTopicId());
+                $topics[] = new \Topic($item->getTopicId());
             }
         } else {
             $topics = \ArticleTopic::GetArticleTopics(self::ARTICLE_TOPICS);
@@ -91,7 +91,7 @@ class TopicsController extends Controller
             return $apiHelperService->sendError('Secure connection required', 400);
         }
 
-        $this->container->get('user.topic')->unfollowTopic($apiHelperService->getUser(), $apiHelperService->getTopic($request->request->get('topic_id')));
+        $this->container->get('user.topic')->unfollowTopic($apiHelperService->getUser(), $this->getTopic($request->request->get('topic_id')));
         return new JsonResponse(array(
             'status' => 200,
         ));
