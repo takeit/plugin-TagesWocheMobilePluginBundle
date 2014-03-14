@@ -52,17 +52,22 @@ class ProfileController extends Controller
         //$token = $request->request->get(self::FACEBOOK_AUTH_TOKEN);
         if ($request->getMethod() == 'POST') {
             try {
-                $command = new UpdateProfileCommand($form->getValues());
+                $command = new UpdateProfileCommand($request->request->all());
                 $command->user = $user;
                 $command->first_name = $user->getFirstName();
                 $command->last_name = $user->getLastName();
                 $command->username = $user->getUsername();
                 $command->attributes = $user->getAttributes();
                 $command->image = !empty($_FILES['profile_image_data'])
-                    ? $form->profile_image_data->getFileInfo()
+                    ? $request->files->get('profile_image_data')
                     : null;
 
                 $errors = $this->container->get('validator')->validate($command);
+
+                $command->image =  !empty($_FILES['profile_image_data'])
+                    ? $_FILES['profile_image_data']
+                    : null;
+
                 if (count($errors) === 0) {
                     $this->container->get('newscoop_tageswochemobile_plugin.user.profile')->updateProfile($command);
                 } else {
