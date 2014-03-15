@@ -37,30 +37,6 @@ class ArticlesController extends Controller
     private $adRanks = array(4, 10, 16);
 
     /**
-     * Init controller
-     */
-    // public function init()
-    // {
-    //     global $Campsite;
-
-    //     $this->_helper->layout->disableLayout();
-    //     $this->request = $this->getRequest();
-    //     $this->language = $this->_helper->entity->getRepository('Newscoop\Entity\Language')->findOneBy(array('id' => self::LANGUAGE));
-    //     $this->articleService = $this->_helper->service('article');
-    //     $this->url = $Campsite['WEBSITE_URL'];
-    //     $this->params = $this->request->getParams();
-
-    //     if (empty($this->params['client'])) {
-    //         $this->params['client'] = self::CLIENT_DEFAULT;
-    //     }
-
-    //     $this->initClient($this->params['client']);
-    //     if (is_null($this->client['type'])) {
-    //         $this->sendError('Invalid client', 500);
-    //     }
-    // }
-
-    /**
      * @Route("/index")
      * @Route("/list")
      */
@@ -102,6 +78,7 @@ class ArticlesController extends Controller
 
             $articles = $qb
                 ->setMaxResults(self::LIST_LIMIT_BYTOPIC)
+                ->add('orderBy', 'a.publication ASC, a.issue DESC, a.section ASC, a.articleOrder ASC')
                 ->getQuery()
                 ->getResult();
         }
