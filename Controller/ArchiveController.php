@@ -55,9 +55,10 @@ class ArchiveController extends Controller
 
         $articleCalendarService = $this->container->get('newscoop_articles_calendar.articles_calendar_service');
         $articlesOfTheDay = $articleCalendarService->getArticleOfTheDay($startDate, $endDate);
+        $articleRepo = $em->getRepository('Newscoop\Entity\Article');
 
         foreach ($articlesOfTheDay as $item) {
-            $article = $item->getArticle();
+            $article = $articleRepo->findOneByNumber($item['articleNumber']);
             if ($article !== null) {
                 $data[] = $apiHelper->formatArticle($article);
             }
