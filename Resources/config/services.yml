@@ -77,6 +77,8 @@ services:
 
     newscoop_tageswochemobile_plugin.legacy_request:
         class: Newscoop\TagesWocheMobilePluginBundle\Services\LegacyServerHelper
+        arguments:
+            - %mobile_legacyserver%
 
     newscoop_tageswochemobile_plugin.facebook:
         class: Newscoop\TagesWocheMobilePluginBundle\Auth\FacebookAdapter
