@@ -59,7 +59,8 @@ class ProfileController extends Controller
                     'website' => $request->request->get('website'),
                     'facebook' => $request->request->get('facebook'),
                     'google' => $request->request->get('google'),
-                    'email_pubic' => $request->request->get('email_pubic')
+                    'email_pubic' => $request->request->get('email_pubic'),
+                    'birth_date' => $request->request->get('birth_date')
                 );
                 $command->image = !empty($_FILES['profile_image_data'])
                     ? $request->files->get('profile_image_data')
