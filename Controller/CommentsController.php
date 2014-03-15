@@ -32,7 +32,7 @@ class CommentsController extends Controller
     const IMAGE_RETINA_HEIGHT = 70;
 
     /**
-     * @Route("/list")
+     * @Route("/comments/list")
      * @Method("GET")
      *
      * Lists comments.
@@ -99,7 +99,7 @@ class CommentsController extends Controller
     }
 
     /**
-     * @Route("/list")
+     * @Route("/comments")
      * @Method("POST")
      */
     public function composeAction(Request $request)

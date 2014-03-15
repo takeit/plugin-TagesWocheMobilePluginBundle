@@ -26,7 +26,7 @@ newscoop_tageswochemobile_plugin.cinema:
 newscoop_tageswochemobile_plugin.comments:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/CommentsController.php"
   type:     annotation
-  prefix:   /api/comments
+  prefix:   /api/
 
 newscoop_tageswochemobile_plugin.debates:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/DebatesController.php"
