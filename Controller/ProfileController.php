@@ -123,7 +123,7 @@ class ProfileController extends Controller
 
                     'subscribed_topics' => array_map(
                         function ($topic) {
-                             array(
+                            return array(
                                 'topic_id' => $topic->getTopicId(),
                                 'topic_name' => $topic->getName(),
                             );
