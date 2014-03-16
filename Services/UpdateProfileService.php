@@ -10,6 +10,8 @@ namespace Newscoop\TagesWocheMobilePluginBundle\Services;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
+use Imagine\Image\Box;
+use Imagine\Gd\Imagine;
 use Newscoop\Entity\User;
 use Newscoop\Image\ImageService;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade;
@@ -36,6 +38,16 @@ class UpdateProfileService
      * @var Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade
      */
     private $subscriptionService;
+
+    /**
+     * @var array
+     */
+    protected $supportedTypes = array(
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+    );
 
     /**
      * @param Doctrine\ORM\EntityManager $em
@@ -68,7 +80,7 @@ class UpdateProfileService
         $this->subscriptionService->updateProfile($command);
 
         if (!empty($command->image)) {
-            $command->image = $this->imageService->saveProfileImage($command->image);
+            $command->image = $this->saveProfileImage($command->image);
         }
 
         $command->user->updateProfile(
@@ -81,6 +93,47 @@ class UpdateProfileService
         );
 
         $this->em->flush();
+    }
+
+    /**
+     * Save Profile image
+     *
+     * @param array $info
+     *
+     * @return string
+     */
+    public function saveProfileImage(array $info) {
+        if (!in_array($info['type'], $this->supportedTypes)) {
+            throw new \InvalidArgumentException("Unsupported image type '$info[type]'.");
+        }
+
+        $imagine = new Imagine();
+
+        $extension = substr($info['type'], (strpos($info['type'], "/") + 1));
+
+        $originalName = sha1_file($info['tmp_name']) . '.' . array_pop(explode('.', $info['name']));
+        $newName = sha1_file($info['tmp_name']) . '.' . $extension;
+
+        $originalPath = APPLICATION_PATH . "/../images/" . $originalName;
+        $newPath = APPLICATION_PATH . "/../images/" . $newName;
+
+        if (!file_exists($originalPath)) {
+            rename($info['tmp_name'], $originalPath);
+        }
+
+        //rename($originalPath, $newPath);
+
+        $profileImagePath = APPLICATION_PATH . "/../images/cache/125x125/fit/images|" . $newName;
+        $imagine->open($originalPath)
+            ->resize(new Box(125, 125))
+            ->save($profileImagePath);
+
+        $profileImagePath = APPLICATION_PATH . "/../images/cache/130x130/crop/images|" . $newName;
+        $imagine->open($originalPath)
+            ->resize(new Box(130, 130))
+            ->save($profileImagePath);
+
+        return $newName;
     }
 
     /**
