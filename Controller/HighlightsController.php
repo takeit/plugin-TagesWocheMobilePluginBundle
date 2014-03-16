@@ -72,6 +72,7 @@ class HighlightsController extends Controller
 
         foreach ($sectionIds as $sectionId) {
             $limit = 3;
+	        $added = 0;
 
             if ($sectionId == 6) {
                 $limit = 5;
@@ -81,7 +82,7 @@ class HighlightsController extends Controller
             $playlist = $playlistRepository->findOneBy(array('id' => $sectionId));
             if ($playlist) {
 
-                $articleArray = $playlistRepository->articles($playlist, null, false, $limit, null, true, $articlesInResponse);
+                $articleArray = $playlistRepository->articles($playlist, null, false, ($limit+2), null, true, $articlesInResponse);
                 $rank = 1;
                 foreach ($articleArray as $articleItem) {
                     // inject newshighlight ad
@@ -95,10 +96,11 @@ class HighlightsController extends Controller
                                 'section_name' => $playlist->getName(),
                                 'section_rank' => $sectionRank));
                             $ad++;
+			                $added++;
                         }
                     }
 
-                    if (!in_array($articleItem['articleId'], $articlesInResponse)){
+                    if (!in_array($articleItem['articleId'], $articlesInResponse) && $added < $limit){
                         $articles = $em->getRepository('Newscoop\Entity\Article')->findBy(array('number' => $articleItem['articleId']));
                         $article = $articles[0];
                         if (!$article->isPublished()) {
@@ -132,6 +134,7 @@ class HighlightsController extends Controller
 
                         $articlesInResponse[] = (int) $article->getNumber();
                         $this->response[] = $response;
+			            $added++;
                     }
                 }
                 $sectionRank++;
