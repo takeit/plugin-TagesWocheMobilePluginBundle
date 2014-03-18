@@ -51,8 +51,10 @@ class FacebookAdapter
                 'provider_user_id' => $this->getFacebookUserId($token),
             ));
 
-        $identity->getUser()->setLastLogin(new \DateTime());
-        $this->em->flush();
+        if (isset($identity)) {
+            $identity->getUser()->setLastLogin(new \DateTime());
+            $this->em->flush();
+        }
 
         return $identity ? $identity->getUser() : null;
     }
