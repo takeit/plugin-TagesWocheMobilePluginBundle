@@ -71,19 +71,19 @@ class CommentsController extends Controller
             $user = $comment->getCommenter()->getUser();
 
             $response[] = array(
-                'author_name' => $user->getUsername(),
+                'author_name' => ($user !== null) ? $user->getUsername() : 'Unbekannt',
                 'author_image_url' => $apiHelperService->getUserImageUrl(
-                    $user,
-                    $this->getImageSizesNormal(),
-                    $this->getImageSizesRetina()
-                ),
+                        $user,
+                        $this->getImageSizesNormal(),
+                        $this->getImageSizesRetina()
+                    ),
                 'public_profile_url' => $apiHelperService->serverUrl(
                     $this->container->get('zend_router')->assemble(array(
                         'module' => 'api',
                         'controller' => 'profile',
                         'action' => 'public',
                         ), 'default') . $apiHelperService->getApiQueryString(array(
-                            'user' => $user->getId(),
+                            'user' => ($user !== null) ? $user->getId() : '',
                         ))
                 ),
                 'subject' => $comment->getSubject(),

@@ -1026,7 +1026,7 @@ class ApiHelper
     {
         list($width, $height) = $this->isRetinaClient() ? $retinaSizes : $normalSizes;
 
-        if ($user->getImage() === null) {
+        if ($user === null || $user->getImage() === null) {
             return $this->serverUrl('/themes/publication_1/theme_1/_css/tw2011/img/user_blank_'.$width.'x'.$height.'.png');
         }
 
