@@ -61,6 +61,7 @@ services:
         arguments:
             - @newscoop_tageswochemobile_plugin.client_factory
             - @service_container
+            - %offline%
 
     newscoop_tageswochemobile_plugin.user_subscription:
         class: Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade

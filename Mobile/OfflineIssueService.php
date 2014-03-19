@@ -42,10 +42,14 @@ class OfflineIssueService
     /**
      * @param Newscoop\Http\ClientFactory $clientFactory
      */
-    public function __construct(ClientFactory $clientFactory, Container $container)
+    public function __construct(ClientFactory $clientFactory, Container $container, $config = null)
     {
         $this->clientFactory = $clientFactory;
         $this->container = $container;
+
+        if (is_array($config)) {
+            $this->config =  array_merge($this->config, $config);
+        }
     }
 
     /**
@@ -249,10 +253,11 @@ class OfflineIssueService
      */
     private function fetch($url)
     {
-        $client = $this->getClient();
+        $response = $client = $this->getClient();
         $response = $client->get($url, array(
             self::OFFLINE_HEADER => $this->config['secret'],
-        ))->send();
+        ), array(), array(), array('timeout' => 340))->send();
+
         return $response->isSuccessful() ? $response->getBody(true) : null;
     }
 
@@ -330,5 +335,4 @@ class OfflineIssueService
             $article->article_id
         ), $client));
     }
-
 }
