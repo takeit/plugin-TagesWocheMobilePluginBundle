@@ -23,7 +23,7 @@ use Tageswoche\Subscription\DmproException;
 class PurchaseController extends Controller
 {
     /**
-     * Route("/validate")
+     * @Route("/validate")
      */
     public function validateAction()
     {
