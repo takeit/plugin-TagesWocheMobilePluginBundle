@@ -56,7 +56,7 @@ class CommentsController extends Controller
 
         $response = array();
         $rank = 0;
-        foreach($comments as $comment) {
+        foreach ($comments as $comment) {
             $created = $comment->getTimeCreated()->format('Y-m-d H:i:s');
             $modified = $created;
 
