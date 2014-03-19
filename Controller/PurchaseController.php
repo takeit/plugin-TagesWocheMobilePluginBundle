@@ -69,9 +69,9 @@ class PurchaseController extends Controller
     }
 
     /**
-     * @Route("/freeupgrade")
+     * @Route("/free_upgrade")
      */
-    public function freeupgradeAction()
+    public function freeUpgradeAction()
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 

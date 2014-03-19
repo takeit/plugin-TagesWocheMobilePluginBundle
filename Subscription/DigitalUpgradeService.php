@@ -117,6 +117,6 @@ class DigitalUpgradeService
      */
     private function getRepository()
     {
-        return $this->em->getRepository('Tageswoche\Entity\DigitalUpgrade');
+        return $this->em->getRepository('Newscoop\TagesWocheMobilePluginBundle\Entity\DigitalUpgrade');
     }
 }
