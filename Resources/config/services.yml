@@ -13,6 +13,13 @@ services:
         arguments:
             - @translator
 
+    newscoop_tageswochemobile_plugin.request_listener:
+        class: Newscoop\TagesWocheMobilePluginBundle\EventListener\ApiHelperRequestListener
+        arguments:
+            - @newscoop_tageswochemobile_plugin.api_helper
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onRequest }
+
     newscoop_tageswochemobile_plugin.api_helper:
         class: Newscoop\TagesWocheMobilePluginBundle\Services\ApiHelper
         arguments:

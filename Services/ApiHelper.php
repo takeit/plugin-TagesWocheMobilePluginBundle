@@ -7,6 +7,7 @@ use DateTimeZone;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\Webcode\Manager;
 use Newscoop\Entity\Article;
@@ -81,13 +82,27 @@ class ApiHelper
     private $ids = array();
 
     /**
+     * @var Request
+     */
+    private $request = null;
+
+    /**
      * Initialize service
      */
     public function __construct(EntityManager $em, Container $container) {
         $this->em = $em;
         $this->container = $container;
         $this->router = $this->container->get('router');
-        $this->request = $this->container->get('request');
+    }
+
+    /**
+     * Set request for service (done in event listener)
+     *
+     * @param Symfony\Component\HttpFoundation\Request $request
+     */
+    public function setRequest (Request $request)
+    {
+        $this->request = $request;
     }
 
     /**
@@ -141,7 +156,11 @@ class ApiHelper
      */
     public function isSecure()
     {
-        if (APPLICATION_ENV === 'development' || $this->isAuthorized()) {
+        if (
+            APPLICATION_ENV === 'development' ||
+            $this->isAuthorized() ||
+            $this->request === null
+        ) {
             return true;
         }
 
@@ -157,7 +176,7 @@ class ApiHelper
      */
     public function isPost()
     {
-        if ($this->request->getMethod() != 'POST') {
+        if ($this->request !== null && $this->request->getMethod() != 'POST') {
             return false;
         }
         return true;
@@ -171,7 +190,10 @@ class ApiHelper
      */
     public function getClientVersionParams($onlyParams = true)
     {
-        return sprintf('%sclient=%s&version=%s', $onlyParams ? '?' : '&', $this->request->query->get('client', 'ipad'), $this->request->query->get('version', '1.0'));
+        if ($this->request !== null) {
+            return sprintf('%sclient=%s&version=%s', $onlyParams ? '?' : '&', $this->request->query->get('client', 'ipad'), $this->request->query->get('version', '1.0'));
+        }
+        return null;
     }
 
     /**
@@ -222,8 +244,11 @@ class ApiHelper
     public function isAuthorized()
     {
         $options = $this->container->getParameter('offline');
-        if (!empty($options['secret']) &&
-            $this->request->headers->get(OfflineIssueService::OFFLINE_HEADER) === $options['secret']) {
+        if (
+            !empty($options['secret']) &&
+            $this->request !== null &&
+            $this->request->headers->get(OfflineIssueService::OFFLINE_HEADER) === $options['secret']
+        ) {
             return;
         }
 
@@ -237,7 +262,7 @@ class ApiHelper
      */
     public function hasAuthInfo()
     {
-        return $this->request->request->get('username') || $this->request->request->get(self::FACEBOOK_AUTH_TOKEN);
+        return $this->request !== null && ($this->request->request->get('username') || $this->request->request->get(self::FACEBOOK_AUTH_TOKEN));
     }
 
     /**
@@ -307,10 +332,12 @@ class ApiHelper
      */
     public function getApiQueryString(array $params = array())
     {
-        $params = array_filter(array_merge($params, array(
-            'client' => $this->request->query->get('client'),
-            'version' => $this->request->query->get('version'),
-        )));
+        if ($this->request !== null) {
+            $params = array_filter(array_merge($params, array(
+                'client' => $this->request->query->get('client'),
+                'version' => $this->request->query->get('version'),
+            )));
+        }
 
         return empty($params) ? '' : '?' . implode('&', array_map(function ($key) use ($params) {
             return sprintf('%s=%s', $key, $params[$key]);
@@ -372,7 +399,7 @@ class ApiHelper
      */
     private function getTopic($topicId)
     {
-        if (!$topicId) {
+        if (!$topicId && $this->request !== null) {
             $topicId = $this->request->query->get('topic_id');
         }
         $topic = $this->_helper->service('user.topic')->findTopic($topicId);
@@ -895,7 +922,10 @@ class ApiHelper
      */
     public function isRetinaClient()
     {
-       return strpos($this->request->query->get('client', self::CLIENT_DEFAULT), 'retina') !== false;
+        if ($this->request !== null) {
+            return strpos($this->request->query->get('client', self::CLIENT_DEFAULT), 'retina') !== false;
+        }
+        return null;
     }
 
     /**
@@ -1140,10 +1170,14 @@ class ApiHelper
 
     public function _getParam($param)
     {
-        if ($this->request->request->get($param))
-            return $this->request->request->get($param);
-        if ($this->request->query->get($param))
-            return $this->request->query->get($param);
+        if ($this->request !== null) {
+            if ($this->request->request->get($param)) {
+                return $this->request->request->get($param);
+            }
+            if ($this->request->query->get($param)) {
+                return $this->request->query->get($param);
+            }
+        }
 
         return null;
     }
