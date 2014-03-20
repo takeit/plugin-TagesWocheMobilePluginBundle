@@ -25,7 +25,7 @@ class PurchaseController extends Controller
     /**
      * @Route("/validate")
      */
-    public function validateAction()
+    public function validateAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
