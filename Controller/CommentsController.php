@@ -106,6 +106,7 @@ class CommentsController extends Controller
     {
         $em = $this->container->get('em');
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+        $userService = $this->container->get('user');
 
         $parameters = $request->request->all();
 
@@ -120,7 +121,7 @@ class CommentsController extends Controller
             $article = new Article(self::LANGUAGE, $parameters['article_id']);
             $acceptanceRepository = $em->getRepository('Newscoop\Entity\Comment\Acceptance');
 
-            if (!$acceptanceRepository->checkParamsBanned($user->getName(), $user->getEmail(), $apiHelperService->getIp(), $article->getPublicationId())) {
+            if (!$acceptanceRepository->checkParamsBanned($user->getName(), $user->getEmail(), $userService->getUserIp(), $article->getPublicationId())) {
 
                 $comment = new Comment();
                 $commentRepository = $em->getRepository('Newscoop\Entity\Comment');

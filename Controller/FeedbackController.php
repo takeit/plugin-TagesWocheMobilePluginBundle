@@ -26,7 +26,6 @@ class FeedbackController extends Controller
     const MESSAGE_STATUS_PENDING = 'pending';
     const MESSAGE_STATUS_APPROVED = 'approved';
 
-
     /**
      * @Route("/index")
      * @Method("POST")
@@ -35,6 +34,7 @@ class FeedbackController extends Controller
     {
         $em = $this->container->get('em');
         $apiHelper = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+        $userService = $this->container->get('user');
 
         $params = $request->request->all();
         $user = $apiHelper->getUser();
@@ -46,7 +46,7 @@ class FeedbackController extends Controller
         $acceptanceRepository = $em->getRepository('Newscoop\Entity\Comment\Acceptance');
 
         if ($acceptanceRepository->checkParamsBanned(
-                $user->getName(), $user->getEmail(), $apiHelper->getIp(), self::PUBLICATION)) {
+                $user->getName(), $user->getEmail(), $userService->getUserIp(), self::PUBLICATION)) {
             return $apiHelper->sendError('Invalid credentials.', 401);
         }
 
@@ -87,7 +87,7 @@ class FeedbackController extends Controller
 
         $feedbackRepository->save($feedback, $values);
         $feedbackRepository->flush();
- 
+
         $this->sendMail($values);
 
         return new JsonResponse(array(), 201);
