@@ -23,7 +23,7 @@ use Tageswoche\Subscription\DmproException;
 class PurchaseController extends Controller
 {
     /**
-     * Route("/validate")
+     * @Route("/validate")
      */
     public function validateAction()
     {
@@ -69,9 +69,9 @@ class PurchaseController extends Controller
     }
 
     /**
-     * @Route("/freeupgrade")
+     * @Route("/free_upgrade")
      */
-    public function freeupgradeAction()
+    public function freeUpgradeAction()
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 

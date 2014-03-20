@@ -106,3 +106,9 @@ services:
             - @em
             - @image
             - @newscoop_tageswochemobile_plugin.user_subscription
+
+    newscoop_tageswochemobile_plugin.mobile.purchase:
+        class: Newscoop\TagesWocheMobilePluginBundle\Mobile\PurchaseFacade
+        arguments:
+            - @newscoop_tageswochemobile_plugin.client_factory
+            - @service_container

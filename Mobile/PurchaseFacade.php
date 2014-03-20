@@ -5,8 +5,9 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-namespace Tageswoche\Mobile;
+namespace Newscoop\TagesWocheMobilePluginBundle\Mobile;
 
+use Symfony\Component\DependencyInjection\Container;
 use Newscoop\Http\ClientFactory;
 use Newscoop\Entity\User;
 
@@ -36,10 +37,10 @@ class PurchaseFacade
      * @param Newscoop\Http\ClientFactory $clientFactory
      * @param array $config
      */
-    public function __construct(ClientFactory $clientFactory, array $config)
+    public function __construct(ClientFactory $clientFactory, Container $container)
     {
         $this->clientFactory = $clientFactory;
-        $this->config = $config;
+        $this->container = $container;
     }
 
     /**
@@ -116,7 +117,8 @@ class PurchaseFacade
      */
     private function getPassword()
     {
-        return !empty($this->config[self::CONFIG_PASSWORD]) ? $this->config[self::CONFIG_PASSWORD] : '';
+        $password = $this->container->getParameter(self::CONFIG_PASSWORD);
+        return !empty($password) ? $password : '';
     }
 }
 
