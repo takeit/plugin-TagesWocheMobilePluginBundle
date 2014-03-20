@@ -91,7 +91,11 @@ class TopicsController extends Controller
             return $apiHelperService->sendError('Secure connection required', 400);
         }
 
-        $this->container->get('user.topic')->unfollowTopic($apiHelperService->getUser(), $this->getTopic($request->request->get('topic_id')));
+
+        $this->container->get('user.topic')->unfollowTopic(
+            $apiHelperService->getUser(),
+            $this->getTopic($request->request->get('topic_id'))
+        );
         return new JsonResponse(array(
             'status' => 200,
         ));
