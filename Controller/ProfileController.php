@@ -183,9 +183,9 @@ class ProfileController extends Controller
      * @Route("/profile/public")
      * @Route("/profile/public/user/{id}")
      */
-    public function publicAction($id)
+    public function publicAction($id = null)
     {
-        if (empty($id)) {
+        if (!isset($id)) {
             $id = $request->query->get('user');
         }
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
