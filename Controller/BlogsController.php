@@ -131,6 +131,7 @@ class BlogsController extends Controller
                     array('published' => 'desc'), self::LIST_LIMIT
                 );
         } else {
+            $section = null;
             $posts = $em->getRepository('Newscoop\Entity\Article')
                 ->findBy(
                     array(
