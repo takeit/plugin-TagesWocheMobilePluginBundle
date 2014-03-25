@@ -183,7 +183,7 @@ class ProfileController extends Controller
      * @Route("/profile/public")
      * @Route("/profile/public/user/{id}")
      */
-    public function publicAction($id = null)
+    public function publicAction(Request $request, $id = null)
     {
         if (!isset($id)) {
             $id = $request->query->get('user');
