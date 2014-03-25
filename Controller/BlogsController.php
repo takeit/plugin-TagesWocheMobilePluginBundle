@@ -151,7 +151,7 @@ class BlogsController extends Controller
         foreach ($posts as $post) {
             if (!isset($section)) {
                 $blogInfo = $this->getBlogInfo($post->getSection()->getNumber());
-                if (!$blogInfo || !array_key_exists('array', $blogInfo) || !$blogInfo['active']) {
+                if (!$blogInfo || !array_key_exists('active', $blogInfo) || !$blogInfo['active']) {
                     continue;
                 }
             }
