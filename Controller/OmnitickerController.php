@@ -151,7 +151,7 @@ class OmnitickerController extends SolrOmnitickerController
             'url' => $this->formatUrl($id),
             'backside_url' => $this->formatUrl($id, false),
             'link_url' => $this->formatLinkUrl($doc),
-            'website_url' => ($isArticle) ? $apiHelper->getWebsiteUrl($article) : $apiHelper->serverUrl(''),
+            'website_url' => ($isArticle && !is_null($article)) ? $apiHelper->getWebsiteUrl($article) : $apiHelper->serverUrl(''),
             'section_id' => !empty($doc['section_id']) ? (int) $doc['section_id'] : null,
             'section_name' => !empty($doc['section_name']) ? $doc['section_name'] : null,
             'comments_enabled' => isset($this->commentStats[$id]['comments_enabled']) ? $this->commentStats[$id]['comments_enabled'] : false,
