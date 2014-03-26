@@ -20,7 +20,16 @@ class SearchController extends SolrOmnitickerController
     const Q_PARAM = 'query_string';
 
     /**
-     * @Route("/")
+     * Just keeping calls to parent function unchanged
+     */
+    public function omnitickerAction(Request $request)
+    {
+        $this->request = $request;
+        return parent::omnitickerAction($request, null);
+    }
+
+    /**
+     * @Route("/api/search")
      */
     public function searchAction(Request $request)
     {

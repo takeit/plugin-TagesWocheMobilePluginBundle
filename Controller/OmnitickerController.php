@@ -98,9 +98,18 @@ class OmnitickerController extends SolrOmnitickerController
     );
 
     /**
-     * @Route("/")
+     * Just keeping calls to parent function unchanged
      */
     public function omnitickerAction(Request $request)
+    {
+        $this->request = $request;
+        return parent::omnitickerAction($request, null);
+    }
+
+    /**
+     * @Route("/api/omniticker/")
+     */
+    public function omnitickerMobileAction(Request $request)
     {
         $this->request = $request;
 

@@ -76,12 +76,10 @@ newscoop_tageswochemobile_plugin.offline:
 newscoop_tageswochemobile_plugin.omniticker:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/OmnitickerController.php"
   type:     annotation
-  prefix:   /api/omniticker
 
 newscoop_tageswochemobile_plugin.search:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/SearchController.php"
   type:     annotation
-  prefix:   /api/search
 
 newscoop_tageswochemobile_plugin.wheel-advertisement:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/WheelAdvertisementController.php"
