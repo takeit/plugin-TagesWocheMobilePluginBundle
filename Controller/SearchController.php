@@ -15,25 +15,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Newscoop\SolrSearchPluginBundle\Controller\OmnitickerController AS SolrOmnitickerController;
+use Newscoop\TagesWocheMobilePluginBundle\Controller\OmnitickerController AS MobileOmnitickerController;
 
-class SearchController extends SolrOmnitickerController
+class SearchController extends MobileOmnitickerController
 {
     const Q_PARAM = 'query_string';
 
     /**
-     * Just keeping calls to parent function unchanged
-     */
-    public function omnitickerAction(Request $request)
-    {
-        $this->request = $request;
-        return parent::omnitickerAction($request, null);
-    }
-
-    /**
      * @Route("/api/search/")
      */
-    public function searchAction(Request $request)
+    public function searchMobileAction(Request $request)
     {
         if (!$request->query->get(self::Q_PARAM)) {
             $apiHelper = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
@@ -45,11 +36,7 @@ class SearchController extends SolrOmnitickerController
         $request->query->set('format', 'json');
 
         $this->request = $request;
-        $responseObject = parent::omnitickerAction($request, null);
-        $decoder = new JsonDecode(true);
-        $responseData = $decoder->decode($responseObject->getContent(), JsonEncoder::FORMAT);
-
-        return new JsonResponse($responseData['response']['docs']);
+        return parent::omnitickerMobileAction($request);
     }
 
     /**
