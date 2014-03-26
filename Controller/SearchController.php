@@ -13,6 +13,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Encoder\JsonDecode;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Newscoop\SolrSearchPluginBundle\Controller\OmnitickerController AS SolrOmnitickerController;
 
 class SearchController extends SolrOmnitickerController
@@ -29,7 +31,7 @@ class SearchController extends SolrOmnitickerController
     }
 
     /**
-     * @Route("/api/search")
+     * @Route("/api/search/")
      */
     public function searchAction(Request $request)
     {
@@ -43,7 +45,11 @@ class SearchController extends SolrOmnitickerController
         $request->query->set('format', 'json');
 
         $this->request = $request;
-        return parent::omnitickerAction($request, null);
+        $responseObject = parent::omnitickerAction($request, null);
+        $decoder = new JsonDecode(true);
+        $responseData = $decoder->decode($responseObject->getContent(), JsonEncoder::FORMAT);
+
+        return new JsonResponse($responseData['response']['docs']);
     }
 
     /**
