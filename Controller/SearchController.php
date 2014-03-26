@@ -13,21 +13,25 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Newscoop\TagesWocheMobilePluginBundle\Controller\OmnitickerController AS MobileOmnitickerController;
+use Newscoop\SolrSearchPluginBundle\Controller\OmnitickerController AS SolrOmnitickerController;
 
-class SearchController extends MobileOmnitickerController
+class SearchController extends SolrOmnitickerController
 {
     const Q_PARAM = 'query_string';
 
     /**
      * @Route("/")
      */
-    public function omnitickerAction(Request $request)
+    public function searchAction(Request $request)
     {
         if (!$request->query->get(self::Q_PARAM)) {
             $apiHelper = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-            $apiHelper->sendError("No 'query_string' provided", 500);
+            return $apiHelper->sendError("No 'query_string' provided", 500);
         }
+
+        // Convert the query_string to q, parent controller is using that var
+        $request->query->set('q', $request->query->get(self::Q_PARAM));
+        $request->query->set('format', 'json');
 
         $this->request = $request;
         return parent::omnitickerAction($request, null);
@@ -40,13 +44,14 @@ class SearchController extends MobileOmnitickerController
      */
     protected function encodeParameters($parameters)
     {
+        $queryService = $this->container->get('newscoop_solrsearch_plugin.query_service');
         $queryParam = trim($parameters[self::Q_PARAM]);
 
-        if ($this->container->get('webcode')->findArticleByWebcode($queryParam) !== null) {
+        if (substr($queryParam, 0, 1) === '+' && $this->container->get('webcode')->findArticleByWebcode(substr($queryParam, 1)) !== null) {
             $queryParam = "webcode:$queryParam";
         }
 
-        $dateParam = $this->buildSolrDateParam($parameters);
+        $dateParam = $queryService->buildSolrDateParam($parameters);
         return array_merge(parent::encodeParameters($parameters), array(
             'q' => $queryParam,
             'fq' => '-(section:swissinfo OR type:tweet OR type:event OR type:comment)' . ($dateParam ? " AND $dateParam" : ''),
