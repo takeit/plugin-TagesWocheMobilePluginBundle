@@ -249,10 +249,12 @@ class ApiHelper
             $this->request !== null &&
             $this->request->headers->get(OfflineIssueService::OFFLINE_HEADER) === $options['secret']
         ) {
-            return;
+            return true;
         }
-
-        return $this->sendError('Unauthorized.', 401);
+    
+        // not sure this works in symfony
+        //return $this->sendError('Unauthorized.', 401);
+        return false;
     }
 
     /**
