@@ -143,8 +143,9 @@ class ArticlesController extends Controller
         }
 
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+        $em = $this->container->get('em');
 
-        $article = $this->container->get('em')
+        $article = $em
             ->getRepository('Newscoop\Entity\Article')
             ->findOneByNumber($id);
         if (!$article || (!$article->isPublished() && !$allowUnpublished)) {
@@ -156,18 +157,33 @@ class ArticlesController extends Controller
 
         $cacheHelper->validateBrowserCache($article->getDate(), $request);
 
+        $metaArticle = new \MetaArticle($article->getLanguageId(), $article->getNumber());
         $templatesService = $this->container->get('newscoop.templates.service');
         $smarty = $templatesService->getSmarty();
         $context = $smarty->context();
-        $context->article = new \MetaArticle($article->getLanguageId(), $article->getNumber());
+        $context->article = $metaArticle;
 
         if ($request->get('side') == 'back') {
-
             $templateName = 'articles_backside.tpl';
             $smarty->assign('webcode', ($article->hasWebcode()) ? $apiHelperService->fixWebcode($article->getWebcode()) : null);
         } else {
+            $articleTopic = $em
+                ->getRepository('Newscoop\Entity\Article')
+                ->createQueryBuilder('a')
+                ->select('a.number', 't.id')
+                ->leftJoin('a.topics', 't')
+                ->where('a.number = :number')
+                ->setParameter('number', $id)
+                ->getQuery()
+                ->getArrayResult();
 
             $templateName = 'articles_frontsize.tpl';
+
+            foreach ($articleTopic as $topicId) {
+                if ($topicId['id'] === 816) {
+                    $templateName = 'online_article_debate_new.tpl';
+                }
+            }
         }
 
         $response = new Response();
