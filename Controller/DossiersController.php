@@ -280,24 +280,31 @@ class DossiersController extends Controller
      */
     private function getDossiers()
     {
-        $em = $this->container->get('em');
-        $qb = $em->createQueryBuilder();
+        $qb = $this->em->createQueryBuilder();
         $qb->select('at')
             ->from('Newscoop\Entity\ArticleTopic', 'at')
-            ->innerJoin('Newscoop\Entity\Topic', 't', 'WITH', 'at.topic = t.id')
-            ->innerJoin('Newscoop\Entity\TopicNodes', 'tn', 'WITH', 't.id = tn.id')
-            ->andWhere('tn.leftNode < 983')
             ->groupBy('at.topic')
             ->having('COUNT(at) > :articles')
             ->setParameter('articles', 3);
-        $articleDossiers =  $qb->getQuery()->getResult();
 
-        $items = array_filter($articleDossiers, function($item) {
-            return (!preg_match('/^(_|Ambiente\:|Küche\:|Restaurant\:)/', $item->getTopic()->getName()));
+        $articleDossiers = $qb->getQuery()->getResult();
+
+        $em = $this->em;
+
+        $items = array_filter($articleDossiers, function($item) use (&$em) {
+            $qb = $em->createQueryBuilder();
+            $qb->select('tn')
+                ->from('Newscoop\Entity\TopicNodes', 'tn')
+                ->where('tn.id = :topicId')
+                ->setParameter('topicId', $item->getTopic()->getTopicId());
+
+            $topicNodes = $qb->getQuery()->getResult();
+
+            return (!preg_match('/^(_|Ambiente\:|Küche\:|Restaurant\:)/', $item->getTopic()->getName()) && $topicNodes[0]->getLeftNode() < 983);
         });
 
         $dossiers = array();
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $dossiers[$item->getTopic()->getTopicId()] = $item->getTopic()->getName();
         }
 
@@ -305,4 +312,6 @@ class DossiersController extends Controller
 
         return array_keys($dossiers);
     }
+
+
 }
