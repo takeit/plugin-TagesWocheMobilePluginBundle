@@ -33,7 +33,7 @@ class PurchaseController extends Controller
             return $apiHelperService->sendError('Secure connection required', 400);
         }
 
-        $receipt = $request->query->get('receipt_data');
+        $receipt = $apiHelperService->_getParam('receipt_data');
         if (empty($receipt)) {
             return $apiHelperService->sendError("No 'receipt_data' provided");
         }
