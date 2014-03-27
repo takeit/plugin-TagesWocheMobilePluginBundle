@@ -34,18 +34,15 @@ class PurchaseController extends Controller
         }
 
         $receipt = $apiHelperService->_getParam('receipt_data');
+        $version = $apiHelperService->_getParam('version');
         if (empty($receipt)) {
             return $apiHelperService->sendError("No 'receipt_data' provided");
         }
 
         try {
-            $data = $this->container->get('newscoop_tageswochemobile_plugin.mobile.purchase')->validate($receipt);
+            $data = $this->container->get('newscoop_tageswochemobile_plugin.mobile.purchase')->validate($receipt, $version);
         } catch (Exception $e) {
             return $apiHelperService->sendError('Can not validate ticket', 403);
-        }
-
-        if (!$data['receipt_valid']) {
-            return $apiHelperService->sendError('Payment required', 402);
         }
 
         if ($apiHelperService->hasAuthInfo()) {
@@ -54,7 +51,27 @@ class PurchaseController extends Controller
                 return $user !== null ? $user : $apiHelperService->sendError('Invalid credentials.', 401);
             }
 
-            if ($data['receipt_valid']) {
+            // this will upgrade the users free digital upgrade status
+            if ($version > 1.0 ) {
+                foreach ($data as $receipt) {
+                    if (strpos($receipt->product_id, 'ch.tageswoche.subscription') !== false) {
+                        $freeDigitalUpgrade = true;
+                        break;
+                    }
+                    if (strpos($receipt->product_id, 'ch.tageswoche.issue') !== false) {
+                        $freeDigitalUpgrade = true;
+                        break;
+                    }
+                } 
+            } else {
+                // iOS6 style receipts
+                if (!$data['receipt_valid']) {
+                    return $apiHelperService->sendError('Payment required', 402);
+                }
+                $freeDigitalUpgrade = $data['receipt_valid'];
+            }
+  
+            if ($freeDigitalUpgrade) {
                 try {
                     $this->container->get('newscoop_tageswochemobile_plugin.user_subscription')->upgrade($user);
                 } catch (DmproException $e) {
