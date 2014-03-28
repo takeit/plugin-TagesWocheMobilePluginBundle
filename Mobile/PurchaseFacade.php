@@ -49,20 +49,37 @@ class PurchaseFacade
      * @param string $receipt
      * @return array
      */
-    public function validate($receipt)
+    public function validate($receipt, $version)
     {
         $data = $this->getResponse(self::PRODUCTION_URL, $receipt);
         if ($data->status === self::STATUS_SANDBOX) {
             $data = $this->getResponse(self::SANDBOX_URL, $receipt);
         }
 
-        $return = array(
-            'receipt_valid' => $data->status === 0,
-            'product_id' => $data->status === 0 ? $data->receipt->product_id : null,
-        );
+        // check if this is an iOS7 or higher receipt type
+        if ($version > 1.0) {
+            $return = array();
+            foreach ($data->receipt->in_app as $receipt) {
+                $productReceipt = array(
+                    'receipt_valid' => $data->status === 0,
+                    'product_id' => $data->status === 0 ? $receipt->product_id : null,
+                );
 
-        if (!empty($data->latest_receipt_info)) {
-            $return['expires_date'] = gmdate('Y-m-d H:i:s', round($data->latest_receipt_info->expires_date / 1000.0));
+                if (isset($receipt->expires_date)) {
+                    $productReceipt['expires_date'] = gmdate('Y-m-d H:i:s', round($receipt->expires_date_ms / 1000.0));
+                }
+                array_push($return, $productReceipt);
+            }
+        } else {
+            // this is an iOS 6 style receipt
+            $return = array(
+                'receipt_valid' => $data->status === 0,
+                'product_id' => $data->status === 0 ? $data->receipt->product_id : null,
+            );
+
+            if (!empty($data->latest_receipt_info)) {
+                $return['expires_date'] = gmdate('Y-m-d H:i:s', round($data->latest_receipt_info->expires_date / 1000.0));
+            }
         }
 
         return $return;

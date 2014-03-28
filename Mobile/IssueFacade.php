@@ -129,6 +129,10 @@ class IssueFacade
             return false;
         }
 
+        if ($issue->getNumber() ===  $article->getNumber()) {
+            return true;
+        }
+
         foreach ($this->getArticles($issue) as $issueArticle) {
             if ($issueArticle->getNumber() === $article->getNumber()) {
                 return true;
