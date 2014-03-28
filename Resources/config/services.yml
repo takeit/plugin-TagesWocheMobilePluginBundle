@@ -78,6 +78,12 @@ services:
             - @newscoop_tageswochemobile_plugin.digital_upgrade_service
             - @newscoop_tageswochemobile_plugin.user_service
 
+    newscoop_tageswochemobile_plugin.subscription.device:
+        class: Newscoop\TagesWocheMobilePluginBundle\Subscription\DeviceService
+        arguments:
+            - @em
+            - @newscoop_tageswochemobile_plugin.user_subscription
+
     newscoop_tageswochemobile_plugin.debate:
         class: Newscoop\TagesWocheMobilePluginBundle\Debate\DebateService
         arguments:

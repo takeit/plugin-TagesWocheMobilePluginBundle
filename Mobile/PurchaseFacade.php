@@ -91,10 +91,14 @@ class PurchaseFacade
      * @param string $receipt
      * @return bool
      */
-    public function isValid($receipt)
+    public function isValid($receipt, $version)
     {
-        $status = $this->validate($receipt);
-        return $status['receipt_valid'];
+        $status = $this->validate($receipt, $version);
+        if ($version > 1.0) {
+            return $status[0]['receipt_valid'];
+        } else {
+            return $status['receipt_valid'];
+        }
     }
 
     /**
