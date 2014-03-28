@@ -213,7 +213,7 @@ class ApiHelper
 
         // user has included DMPro device data
         if ($this->_getParam('receipt_data') && $this->_getParam('device_id')) {
-            if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.purchase')->isValid($this->_getParam('receipt_data'))) {
+            if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.purchase')->isValid($this->_getParam('receipt_data'), $this->_getParam('version'))) {
                 return true;
             }
         }
