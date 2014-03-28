@@ -167,6 +167,8 @@ class ApiHelper
         if (!$this->request->isSecure()) {
             return false;
         }
+
+        return true;
     }
 
     /**
