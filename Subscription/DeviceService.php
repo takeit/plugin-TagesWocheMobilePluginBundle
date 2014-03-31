@@ -83,7 +83,7 @@ class DeviceService
      */
     private function getDevices(User $user, DateTime $date)
     {
-        return $this->em->getRepository('Tageswoche\Entity\Device')
+        return $this->em->getRepository('Newscoop\TagesWocheMobilePluginBundle\Entity\Device')
             ->getDeviceIds($user, $date);
     }
 }
