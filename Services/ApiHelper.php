@@ -254,8 +254,6 @@ class ApiHelper
             return true;
         }
 
-        // not sure this works in symfony
-        //return $this->sendError('Unauthorized.', 401);
         return false;
     }
 
