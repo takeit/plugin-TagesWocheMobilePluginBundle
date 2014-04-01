@@ -253,7 +253,7 @@ class ApiHelper
         ) {
             return true;
         }
-    
+
         // not sure this works in symfony
         //return $this->sendError('Unauthorized.', 401);
         return false;
@@ -357,10 +357,15 @@ class ApiHelper
     public function getDateline($article)
     {
         try {
-            $dateline = ($article->getType() === 'blog')
-                ? $article->getSection()->getName()
-                : $article->getData('dateline');
-            return !empty($dateline) ? $dateline : null;
+            if ($article->getType() === 'blog') {
+                $section = $this->em->getRepository('Newscoop\Entity\Section')
+                    ->findSectionByArticle($article);
+                $dateline = ($section !== null) ? $section->getName() : null;
+            } else {
+                $dateline = $article->getData('dateline');
+            }
+
+            return (!empty($dateline)) ? $dateline : null;
         } catch (\Exception $e) {
             return null;
         }
