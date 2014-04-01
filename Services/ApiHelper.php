@@ -266,7 +266,7 @@ class ApiHelper
      */
     public function hasAuthInfo()
     {
-        return $this->request !== null && ($this->request->request->get('username') || $this->request->request->get(self::FACEBOOK_AUTH_TOKEN));
+        return $this->request !== null && ($this->_getParam('username') || $this->request->request->get(self::FACEBOOK_AUTH_TOKEN));
     }
 
     /**
