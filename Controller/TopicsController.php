@@ -74,7 +74,17 @@ class TopicsController extends Controller
             return $apiHelperService->sendError('Secure connection required', 400);
         }
 
-        $this->container->get('user.topic')->followTopic($apiHelperService->getUser(), $this->getTopic($request->request->get('topic_id')));
+        $user = $apiHelperService->getUser();
+        if (!($user instanceof \Newscoop\Entity\User)) {
+            return $user;
+        }
+
+        $topic = $this->getTopic($request->request->get('topic_id'));
+        if (!($topic instanceof \Newscoop\Entity\Topic)) {
+            return $topic;
+        }
+
+        $this->container->get('user.topic')->followTopic($user, $topic);
         return new JsonResponse(array(
             'status' => 200,
         ));
@@ -91,7 +101,17 @@ class TopicsController extends Controller
             return $apiHelperService->sendError('Secure connection required', 400);
         }
 
-        $this->container->get('user.topic')->unfollowTopic($apiHelperService->getUser(), $this->getTopic($request->request->get('topic_id')));
+        $user = $apiHelperService->getUser();
+        if (!($user instanceof \Newscoop\Entity\User)) {
+            return $user;
+        }
+
+        $topic = $this->getTopic($request->request->get('topic_id'));
+        if (!($topic instanceof \Newscoop\Entity\Topic)) {
+            return $topic;
+        }
+
+        $this->container->get('user.topic')->unfollowTopic($user, $topic);
         return new JsonResponse(array(
             'status' => 200,
         ));
@@ -128,11 +148,13 @@ class TopicsController extends Controller
     /**
      * Get topic
      *
-     * @return Newscoop\Entity\UserTopic
+     * @return Newscoop\Entity\Topic
      */
     private function getTopic($topicId)
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $topic = $this->container->get('user.topic')->findTopic($topicId);
+
         if (!$topic) {
             return $apiHelperService->sendError('Topic not found.', 404);
         }
