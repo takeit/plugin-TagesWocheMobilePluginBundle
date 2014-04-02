@@ -214,7 +214,7 @@ class ApiHelper
         }
 
         // user has included DMPro device data
-        if ($this->_getParam('receipt_data') && $this->_getParam('device_id')) {
+        if ($this->_getParam('receipt_data')) {
             if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.purchase')->isValid($this->_getParam('receipt_data'), $this->_getParam('version'))) {
                 return true;
             }
@@ -264,7 +264,7 @@ class ApiHelper
      */
     public function hasAuthInfo()
     {
-        return $this->request !== null && ($this->request->request->get('username') || $this->request->request->get(self::FACEBOOK_AUTH_TOKEN));
+        return $this->request !== null && ($this->_getParam('username') || $this->request->request->get(self::FACEBOOK_AUTH_TOKEN));
     }
 
     /**
