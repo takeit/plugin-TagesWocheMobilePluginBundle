@@ -206,7 +206,7 @@ class ProfileController extends Controller
         $smarty->assign('profile', $user->getAttributes());
 
         $response = new Response();
-        $response->setContent($templatesService->fetchTemplate("user_profile.tpl"));
+        $response->setContent($templatesService->fetchTemplate("_mobile/user_profile.tpl"));
         return $response;
 
     }
