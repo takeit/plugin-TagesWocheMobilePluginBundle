@@ -225,6 +225,7 @@ class BlogsController extends Controller
         $context->article = new \MetaArticle($article->getLanguageId(), $article->getNumber());
 
         $response = new Response();
+        $response->headers->set('Content-Type', 'text/html');
         $response->setContent($templatesService->fetchTemplate("_mobile/articles_frontsize.tpl"));
         return $response;
     }

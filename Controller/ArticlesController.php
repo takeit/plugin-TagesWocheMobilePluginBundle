@@ -187,6 +187,7 @@ class ArticlesController extends Controller
         }
 
         $response = new Response();
+        $response->headers->set('Content-Type', 'text/html');
         $response->setContent($templatesService->fetchTemplate("_mobile/".$templateName));
 
         return $response;
