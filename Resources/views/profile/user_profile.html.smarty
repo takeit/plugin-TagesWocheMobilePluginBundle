@@ -1,1 +1,1 @@
-{{ include file="_views/user_profile.tpl" }}
+{{ include file="_mobile/user_profile.tpl" }}
