@@ -86,9 +86,9 @@ class OnlineController extends Controller
      */
     public function articlesAction(Request $request, $id = null)
     {
-	if (!isset($id)) {
+        if (!isset($id)) {
             $id = $request->query->get('id');
-	}
+        }
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
         $article = $this->container->get('em')

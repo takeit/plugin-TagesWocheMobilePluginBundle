@@ -206,7 +206,6 @@ class ApiHelper
      */
     public function isSubscriber($article = null)
     {
-
         // user is accessing from a authorized server
         // no auth required
         if ($this->isAuthorized()) {
@@ -229,7 +228,7 @@ class ApiHelper
 
         // reqeusted article is in the current issue or is requesting an ad
         // no auth required
-        if ($article !== null && ! $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->isInCurrentIssue($article)) {
+        if ($article !== null && !$this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->isInCurrentIssue($article)) {
             return true;
         } elseif ($article !== null && $this->isAd($article)) {
             return true;
