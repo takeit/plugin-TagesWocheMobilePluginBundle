@@ -115,12 +115,6 @@ class OnlineController extends Controller
             }
         }
 
-        //$this->_helper->smarty->setSmartyView();
-        //$this->view->getGimme()->article = new MetaArticle($article->getLanguageId(), $article->getNumber());
-        //$this->view->width = $apiHelperService->getClientWidth();
-        //$this->view->height = $apiHelperService->getClientHeight();
-        //$this->render('article');
-
         $templatesService = $this->container->get('newscoop.templates.service');
         $smarty = $templatesService->getSmarty();
         $gimme =  $smarty->context();
