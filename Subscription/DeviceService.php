@@ -28,7 +28,7 @@ class DeviceService
 
     /**
      * @param Doctrine\ORM\EntityManager $em
-     * @param Tageswoche\Subscription\SubscriptionFacade $subscriptionFacade
+     * @param Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade $subscriptionFacade
      */
     public function __construct(EntityManager $em, SubscriptionFacade $subscriptionFacade)
     {
