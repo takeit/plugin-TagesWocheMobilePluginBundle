@@ -47,10 +47,9 @@ class IssueFacade
      * @param int $limit
      * @return array
      */
-    public function findAll($limit = 100)
+    public function findAll()
     {
         $qb = $this->createQueryBuilder();
-        $qb->setMaxResults($limit);
         $query = $qb->getQuery();
 
         return array_map(function ($row) {
