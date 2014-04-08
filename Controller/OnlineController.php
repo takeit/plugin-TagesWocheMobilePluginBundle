@@ -105,8 +105,13 @@ class OnlineController extends Controller
             if (!$apiHelperService->isSecure()) {
                 return $apiHelperService->sendError('Secure connection required', 400);
             }
-            if (!$apiHelperService->isSubscriber($article)) {
-                return $apiHelperService->sendError('Unauthorized', 401);
+            $isSubscriber = $apiHelperService->isSubscriber($article);
+            if (!$isSubscriber || ($isSubscriber instanceof JSONResponse)) {
+                if ($isSubscriber instanceof JSONResponse) {
+                    return $isSubscriber;
+                } else {
+                    return $apiHelperService->sendError('Unauthorized', 401);
+                }
             }
         }
 
