@@ -200,13 +200,17 @@ class ProfileController extends Controller
             return $user !== null ? $user : $apiHelperService->sendError('Invalid user.', 401);
         }
 
+        $profileService = $this->get('newscoop_tages_woche_extra.profile');
         $templatesService = $this->container->get('newscoop.templates.service');
         $smarty = $templatesService->getSmarty();
         $smarty->assign('user', new \MetaUser($user));
         $smarty->assign('profile', $user->getAttributes());
+        $smarty->assign('questions', $profileService->getPoliticianQuestions());
+        $smarty->assign('labels', $profileService->getFormLabels());
 
         $response = new Response();
-        $response->setContent($templatesService->fetchTemplate("user_profile.tpl"));
+        $response->headers->set('Content-Type', 'text/html');
+        $response->setContent($templatesService->fetchTemplate("_mobile/user_profile.tpl"));
         return $response;
 
     }
