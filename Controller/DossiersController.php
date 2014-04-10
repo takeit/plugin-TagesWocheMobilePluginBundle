@@ -280,7 +280,9 @@ class DossiersController extends Controller
      */
     private function getDossiers()
     {
-        $qb = $this->em->createQueryBuilder();
+        $em = $this->container->get('em');
+
+        $qb = $em->createQueryBuilder();
         $qb->select('at')
             ->from('Newscoop\Entity\ArticleTopic', 'at')
             ->groupBy('at.topic')
@@ -288,8 +290,6 @@ class DossiersController extends Controller
             ->setParameter('articles', 3);
 
         $articleDossiers = $qb->getQuery()->getResult();
-
-        $em = $this->em;
 
         $items = array_filter($articleDossiers, function($item) use (&$em) {
             $qb = $em->createQueryBuilder();
@@ -312,6 +312,4 @@ class DossiersController extends Controller
 
         return array_keys($dossiers);
     }
-
-
 }
