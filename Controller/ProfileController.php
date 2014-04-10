@@ -33,7 +33,6 @@ use Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproException;
  */
 class ProfileController extends Controller
 {
-
     const FACEBOOK_AUTH_TOKEN = 'fb_access_token';
 
     /**
