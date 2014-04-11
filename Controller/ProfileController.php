@@ -25,6 +25,7 @@ use Newscoop\TagesWocheMobilePluginBundle\Promocode\PromocodeUsedException;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\CustomerIdUsedException;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\UserIsCustomerException;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproException;
+use Exception;
 
 /**
  * Route('/profile')
