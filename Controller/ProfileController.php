@@ -264,13 +264,13 @@ class ProfileController extends Controller
     }
 
     /**
-     * @Route("/profile/resetpassword")
+     * @Route("/profile/reset_password")
      */
     public function resetpasswordAction(Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
-        $email = $request->request->get('email');
+        $email = $request->query->get('email');
         if (empty($email)) {
             return $apiHelperService->sendError('No email', 400);
         }
@@ -282,7 +282,7 @@ class ProfileController extends Controller
 
         $this->container->get('email')->sendPasswordRestoreToken($users[0]);
 
-        return newJsonResponse(array('code' => 200));
+        return new JsonResponse(array('code' => 200));
     }
 
     /**
