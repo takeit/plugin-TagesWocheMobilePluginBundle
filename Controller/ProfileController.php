@@ -227,17 +227,21 @@ class ProfileController extends Controller
         }
 
         $user = $apiHelperService->getUser();
-        $this->container->get('promocode')->removeUserPromocode($user);
+        if (!($user instanceof \Newscoop\Entity\User)) {
+            return $user;
+        }
+
+        $this->container->get('newscoop_tageswochemobile_plugin.promocode_service')->removeUserPromocode($user);
         $this->container->get('user_attributes')->removeAttributes(
             $user,
             array(
                 SubscriptionFacade::CID,
-                self::DIGITAL_UPGRADE,
+                $apiHelperService::DIGITAL_UPGRADE,
             )
         );
 
-        $this->container->get('mobile.free_upgrade')->reset($user, $request->request->get('free_upgrade'));
-        return newJsonResponse(array('code' => 200));
+        $this->container->get('newscoop_tageswochemobile_plugin.digital_upgrade_service')->reset($user, $request->request->get('free_upgrade'));
+        return new JsonResponse(array('code' => 200));
     }
 
     /**
