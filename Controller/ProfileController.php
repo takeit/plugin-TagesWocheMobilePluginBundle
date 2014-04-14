@@ -227,7 +227,7 @@ class ProfileController extends Controller
         }
 
         $user = $apiHelperService->getUser();
-        if (!($user instanceof \Newscoop\Entity\User)) {
+        if (!($user instanceof User)) {
             return $user;
         }
 
