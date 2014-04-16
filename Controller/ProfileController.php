@@ -60,7 +60,8 @@ class ProfileController extends Controller
                     'facebook' => $request->request->get('facebook'),
                     'google' => $request->request->get('google'),
                     'email_pubic' => $request->request->get('email_pubic'),
-                    'birth_date' => $request->request->get('birth_date')
+                    'birth_date' => $request->request->get('birth_date'),
+                    'customer_id' => $request->request->get('customer_id'),
                 );
                 $command->image = !empty($_FILES['profile_image_data'])
                     ? $request->files->get('profile_image_data')
@@ -86,7 +87,7 @@ class ProfileController extends Controller
                 return $apiHelperService->sendError(get_class($e), 409);
             } catch (DmproException $e) {
                 return $apiHelperService->sendError(get_class($e), 500);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $apiHelperService->sendError(get_class($e) . ': ' . $e->getMessage());
             }
         }

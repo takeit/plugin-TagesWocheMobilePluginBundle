@@ -148,13 +148,12 @@ class TopicsController extends Controller
     /**
      * Get topic
      *
-     * @return Newscoop\Entity\Topic
+     * @return Newscoop\Entity\UserTopic
      */
     private function getTopic($topicId)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $topic = $this->container->get('user.topic')->findTopic($topicId);
-
         if (!$topic) {
             return $apiHelperService->sendError('Topic not found.', 404);
         }
