@@ -54,11 +54,11 @@ class PurchaseController extends Controller
             // this will upgrade the users free digital upgrade status
             if ($version > 1.0 ) {
                 foreach ($data as $receipt) {
-                    if (strpos($receipt->product_id, 'ch.tageswoche.subscription') !== false) {
+                    if (strpos($receipt['product_id'], 'ch.tageswoche.subscription') !== false) {
                         $freeDigitalUpgrade = true;
                         break;
                     }
-                    if (strpos($receipt->product_id, 'ch.tageswoche.issue') !== false) {
+                    if (strpos($receipt['product_id'], 'ch.tageswoche.issue') !== false) {
                         $freeDigitalUpgrade = true;
                         break;
                     }
