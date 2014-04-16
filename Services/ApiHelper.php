@@ -128,8 +128,6 @@ class ApiHelper
 
         $user = $this->container->get('auth.adapter')->findByCredentials($username, $password);
 
-        ladybug_dump($user); exit;
-
         return $user !== null ? $user : $this->sendError('Invalid credentials.', 401);
     }
 
