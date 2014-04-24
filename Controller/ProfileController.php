@@ -52,6 +52,10 @@ class ProfileController extends Controller
         //$token = $request->request->get(self::FACEBOOK_AUTH_TOKEN);
         if ($request->getMethod() == 'POST') {
             try {
+                // Prevent changing of username
+                $request->request->set('username', null);
+                $request->request->set('password', null);
+
                 $command = new UpdateProfileCommand($request->request->all());
                 $command->user = $user;
                 $command->attributes = array(
@@ -59,7 +63,8 @@ class ProfileController extends Controller
                     'website' => $request->request->get('website'),
                     'facebook' => $request->request->get('facebook'),
                     'google' => $request->request->get('google'),
-                    'email_pubic' => $request->request->get('email_pubic'),
+                    'twitter' => $request->request->get('twitter'),
+                    'email_public' => $request->request->get('email_public'),
                     'birth_date' => $request->request->get('birth_date'),
                     'customer_id' => $request->request->get('customer_id'),
                 );
