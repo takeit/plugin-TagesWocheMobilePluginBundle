@@ -792,7 +792,7 @@ class ApiHelper
         }
 
         if (!empty($teaserShort)) {
-            return substr($teaserShort, 0, 120);
+            return mb_substr($teaserShort, 0, 120);
         }
 
         return null;
