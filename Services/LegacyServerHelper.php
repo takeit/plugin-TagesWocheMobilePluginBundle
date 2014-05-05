@@ -24,13 +24,20 @@ class LegacyServerHelper
     private $config = array('authorization' => false);
 
     /**
+     * @var Symfony\Component\DependencyInjection\Container
+     */
+    private $container;
+
+    /**
      * Initialize service data
      *
+     * @param array $config
      * @param Symfony\Component\DependencyInjection\Container $container
      */
-    public function __construct($config = array())
+    public function __construct($config = array(), $container)
     {
         $this->config = array_merge($this->config, $config);
+        $this->container = $container;
     }
 
     /**
@@ -38,7 +45,7 @@ class LegacyServerHelper
      *
      * @param  Request $request
      *
-     * @return mixed            JsonResponse
+     * @return mixed
      */
     public function passthroughRequest(Request $request, $urlSuffix) {
 
@@ -57,7 +64,7 @@ class LegacyServerHelper
             $legacyResponse = $buzz->get($legacyUrl, $headers);
 
         } catch (\Exception $e) {
-            return $this->container->get('newscoop_tageswochemobile_plugin.api_helper')->sentError('Request to legacy server failed.', 500);
+            return $this->container->get('newscoop_tageswochemobile_plugin.api_helper')->sendError('Request to legacy server failed.', 500);
         }
 
         $response = new JsonResponse(json_decode($legacyResponse->getContent(), true), $legacyResponse->getStatusCode());

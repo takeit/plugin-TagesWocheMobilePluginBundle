@@ -19,6 +19,7 @@ class LunchgateController extends Controller
     const LEGACY_URL = '/lunchgate';
 
     /**
+     * @Route("/")
      * @Route("/list/")
      */
     public function indexAction(Request $request) {
