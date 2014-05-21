@@ -24,7 +24,7 @@ use Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade;
 use Newscoop\TagesWocheMobilePluginBundle\Promocode\PromocodeUsedException;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\CustomerIdUsedException;
 use Newscoop\TagesWocheMobilePluginBundle\Subscription\UserIsCustomerException;
-use Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproException;
+use Newscoop\TagesWocheMobilePluginBundle\Subscription\VerlagsManagerException;
 use Exception;
 
 /**
@@ -90,7 +90,7 @@ class ProfileController extends Controller
                 return $apiHelperService->sendError(get_class($e), 409);
             } catch (CustomerIdUsedException $e) {
                 return $apiHelperService->sendError(get_class($e), 409);
-            } catch (DmproException $e) {
+            } catch (VerlagsManagerException $e) {
                 return $apiHelperService->sendError(get_class($e), 500);
             } catch (Exception $e) {
                 return $apiHelperService->sendError(get_class($e) . ': ' . $e->getMessage());
