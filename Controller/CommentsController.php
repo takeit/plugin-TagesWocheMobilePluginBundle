@@ -78,13 +78,18 @@ class CommentsController extends Controller
         $rank = 0;
         foreach ($comments as $comment) {
 
-            $profileUrl = '';
+            $profileUrl = null;
             $created = new DateTime($comment['created']);
             $modified = new DateTime($comment['updated']);
 
             try {
                 $commenter = $commenterRepository->findOneById($comment['commenter']['id']);
                 $user = $commenter->getUser();
+            } catch (Exception $e) {
+                $user = null;
+            }
+
+            if ($user instanceof User) {
                 $profileUrl = $apiHelperService->serverUrl(
                     $this->container->get('zend_router')->assemble(array(
                         'module' => 'api',
@@ -94,8 +99,6 @@ class CommentsController extends Controller
                             'user' => $user->getId()
                         ))
                 );
-            } catch (Exception $e) {
-                $user = null;
             }
 
             $response[] = array(
