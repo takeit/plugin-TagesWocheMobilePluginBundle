@@ -44,7 +44,7 @@ class CommentsController extends Controller
     {
         $em = $this->container->get('em');
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-        $commenterRepository = $em->getRepository('Newscoop\Entity\Comment\Commenter');
+        $commentRepository = $em->getRepository('Newscoop\Entity\Comment');
 
         $article_id = $request->query->get('article_id');
         $comments = array();
@@ -83,7 +83,8 @@ class CommentsController extends Controller
             $modified = new DateTime($comment['updated']);
 
             try {
-                $commenter = $commenterRepository->findOneById($comment['commenter']['id']);
+                $commentDb = $commentRepository->findOneById($comment['id']);
+                $commenter = $commentDb->getCommenter();
                 $user = $commenter->getUser();
             } catch (Exception $e) {
                 $user = null;
