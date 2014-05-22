@@ -78,12 +78,22 @@ class CommentsController extends Controller
         $rank = 0;
         foreach ($comments as $comment) {
 
+            $profileUrl = '';
             $created = new DateTime($comment['created']);
             $modified = new DateTime($comment['updated']);
 
             try {
                 $commenter = $commenterRepository->findOneById($comment['commenter']['id']);
                 $user = $commenter->getUser();
+                $profileUrl = $apiHelperService->serverUrl(
+                    $this->container->get('zend_router')->assemble(array(
+                        'module' => 'api',
+                        'controller' => 'profile',
+                        'action' => 'public',
+                        ), 'default') . $apiHelperService->getApiQueryString(array(
+                            'user' => $user->getId()
+                        ))
+                );
             } catch (Exception $e) {
                 $user = null;
             }
@@ -95,15 +105,7 @@ class CommentsController extends Controller
                         $this->getImageSizesNormal(),
                         $this->getImageSizesRetina()
                     ),
-                'public_profile_url' => $apiHelperService->serverUrl(
-                    $this->container->get('zend_router')->assemble(array(
-                        'module' => 'api',
-                        'controller' => 'profile',
-                        'action' => 'public',
-                        ), 'default') . $apiHelperService->getApiQueryString(array(
-                            'user' => ($user !== null) ? $user->getId() : '',
-                        ))
-                ),
+                'public_profile_url' => $profileUrl,
                 'subject' => $comment['subject'],
                 'message'=> $comment['message'],
                 'recommended' => ($comment['recommended'] == '1')  ? true : false,
