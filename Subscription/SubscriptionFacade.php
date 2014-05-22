@@ -27,9 +27,9 @@ class SubscriptionFacade
     private $promocodeService;
 
     /**
-     * @var Newscoop\TagesWocheMobilePluginBundle\Subscription\VerlagsManagerService
+     * @var Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproService
      */
-    private $vmService;
+    private $dmproService;
 
     /**
      * @var Newscoop\TagesWocheMobilePluginBundle\Subscription\DigitalUpgradeService
@@ -43,18 +43,18 @@ class SubscriptionFacade
 
     /**
      * @param Newscoop\TagesWocheMobilePluginBundle\Subscription\PromocodeService $promocodeService
-     * @param Newscoop\TagesWocheMobilePluginBundle\Subscription\VerlagsManagerService $vmService
+     * @param Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproService $dmproService
      * @param Newscoop\TagesWocheMobilePluginBundle\Subscription\DigitalUpgradeService $digitalUpgradeService
      * @param Newscoop\TagesWocheMobilePluginBundle\Subscription\UserService $userService
      */
     public function __construct(
         PromocodeService $promocodeService,
-        VerlagsManagerService $vmService,
+        DmproService $dmproService,
         DigitalUpgradeService $digitalUpgradeService,
         UserService $userService
     ) {
         $this->promocodeService = $promocodeService;
-        $this->vmService = $vmService;
+        $this->dmproService = $dmproService;
         $this->digitalUpgradeService = $digitalUpgradeService;
         $this->userService = $userService;
     }
@@ -63,7 +63,6 @@ class SubscriptionFacade
      * Add free upgrade to existing user
      *
      * @param Newscoop\Entity\User $user
-     *
      * @return void
      */
     public function freeUpgrade(User $user)
@@ -85,12 +84,11 @@ class SubscriptionFacade
      * Upgrade given user
      *
      * @param Newscoop\Entity\User $user
-     *
      * @return void
      */
     public function upgrade(User $user)
     {
-        $customerView = $this->vmService->getView($user);
+        $customerView = $this->dmproService->getView($user);
         if (!$customerView->print_subscription) {
             throw new SubscriptionNotFoundException();
         }
@@ -102,7 +100,6 @@ class SubscriptionFacade
      * Update user profile
      *
      * @param Newscoop\TagesWocheMobilePluginBundle\Profile\UpdateProfileCommand $command
-     *
      * @return void
      */
     public function updateProfile(UpdateProfileCommand $command)
@@ -112,7 +109,7 @@ class SubscriptionFacade
         }
 
         if ($this->promocodeService->isPromocode($command->attributes[self::CID])) {
-            $view = $this->vmService->getView($command->user);
+            $view = $this->dmproService->getView($command->user);
             if ($view->print_subscription) {
                 throw new UserIsCustomerException();
             }
@@ -124,7 +121,7 @@ class SubscriptionFacade
 
             unset($command->attributes[self::CID]);
         } else {
-            if ( ! $this->vmService->isCustomer($command->attributes[self::CID])) {
+            if ( ! $this->dmproService->isCustomer($command->attributes[self::CID])) {
                 throw new CustomerNotFoundException();
             }
 
@@ -138,13 +135,12 @@ class SubscriptionFacade
      * Get subscription info for given user
      *
      * @param Newscoop\Entity\User $user
-     *
      * @return Tageswoche\Subscription\SubscriptionInfo
      */
     public function getView(User $user)
     {
         $view = new SubscriptionView();
-        $customerView = $this->vmService->getView($user);
+        $customerView = $this->dmproService->getView($user);
         $view->mergeView($customerView);
 
         if ($customerView->customer_id_subcode) {

@@ -14,8 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Newscoop\Entity\Article;
 use Newscoop\Entity\User;
-use Newscoop\TagesWocheMobilePluginBundle\Subscription\VerlagsManagerException;
-use Exception;
+use Tageswoche\TageswocheException;
+use Tageswoche\Subscription\DmproException;
 
 /**
  * Purchage API
@@ -62,7 +62,7 @@ class PurchaseController extends Controller
                         $freeDigitalUpgrade = true;
                         break;
                     }
-                }
+                } 
             } else {
                 // iOS6 style receipts
                 if (!$data['receipt_valid']) {
@@ -70,13 +70,13 @@ class PurchaseController extends Controller
                 }
                 $freeDigitalUpgrade = $data['receipt_valid'];
             }
-
+  
             if ($freeDigitalUpgrade) {
                 try {
                     $this->container->get('newscoop_tageswochemobile_plugin.user_subscription')->upgrade($user);
-                } catch (VerlagsManagerException $e) {
-                    return $apiHelperService->sendError('Verlags manager service error.', 500);
-                } catch (Exception $e) {
+                } catch (DmproException $e) {
+                    return $apiHelperService->sendError('Dmpro service error.', 500);
+                } catch (TageswocheException $e) {
                     return $apiHelperService->sendError('No way to upgrade', 403);
                 }
             }
@@ -104,9 +104,9 @@ class PurchaseController extends Controller
 
             $this->container->get('newscoop_tageswochemobile_plugin.user_subscription')->freeUpgrade($user);
             return $apiHelperService->sendError('OK', 200);
-        } catch (VerlagsManagerException $e) {
-            return $apiHelperService->sendError('Verlags manager service error.', 500);
-        } catch (Exception $e) {
+        } catch (DmproException $e) {
+            return $apiHelperService->sendError('Dmpro service error.', 500);
+        } catch (TageswocheException $e) {
             return $apiHelperService->sendError('No way to upgrade', 403);
         }
     }
