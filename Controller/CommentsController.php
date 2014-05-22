@@ -44,13 +44,13 @@ class CommentsController extends Controller
     {
         $em = $this->container->get('em');
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-        $userRepository = $em->getRepository('Newscoop\Entity\User');
+        $commenterRepository = $em->getRepository('Newscoop\Entity\Comment\Commenter');
 
         $article_id = $request->query->get('article_id');
         $comments = array();
 
         if (is_null($article_id)) {
-            $url = '/content-api/comments.json?items_per_page=20&sort[created]=asc';
+            $url = '/content-api/comments.json?items_per_page=20&sort[created]=desc';
         } else {
             $url = str_replace('{number}', $article_id, '/content-api/comments/article/{number}/de/asc.json?items_per_page=10000');
         }
@@ -82,7 +82,8 @@ class CommentsController extends Controller
             $modified = new DateTime($comment['updated']);
 
             try {
-                $user = $userRepository->findOneById($comment['commenter']['id']);
+                $commenter = $commenterRepository->findOneById($comment['commenter']['id']);
+                $user = $commenter->getUser();
             } catch (Exception $e) {
                 $user = null;
             }
