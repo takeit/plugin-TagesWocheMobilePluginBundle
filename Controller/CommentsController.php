@@ -50,7 +50,7 @@ class CommentsController extends Controller
         $comments = array();
 
         if (is_null($article_id)) {
-            $url = '/content-api/comments.json?items_per_page=20';
+            $url = '/content-api/comments.json?items_per_page=20&sort[created]=asc';
         } else {
             $url = str_replace('{number}', $article_id, '/content-api/comments/article/{number}/de/asc.json?items_per_page=10000');
         }
