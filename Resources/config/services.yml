@@ -43,8 +43,8 @@ services:
     newscoop_tageswochemobile_plugin.client_factory:
         class: Newscoop\Http\ClientFactory
 
-    newscoop_tageswochemobile_plugin.dmpro_service:
-        class: Newscoop\TagesWocheMobilePluginBundle\Subscription\DmproService
+    newscoop_tageswochemobile_plugin.verlags_manager_service:
+        class: Newscoop\TagesWocheMobilePluginBundle\Subscription\VerlagsManagerService
         arguments:
             - @newscoop_tageswochemobile_plugin.client_factory
 
@@ -74,7 +74,7 @@ services:
         class: Newscoop\TagesWocheMobilePluginBundle\Subscription\SubscriptionFacade
         arguments:
             - @newscoop_tageswochemobile_plugin.promocode_service
-            - @newscoop_tageswochemobile_plugin.dmpro_service
+            - @newscoop_tageswochemobile_plugin.verlags_manager_service
             - @newscoop_tageswochemobile_plugin.digital_upgrade_service
             - @newscoop_tageswochemobile_plugin.user_service
 
