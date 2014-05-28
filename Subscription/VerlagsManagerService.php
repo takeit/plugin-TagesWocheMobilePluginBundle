@@ -108,7 +108,7 @@ class VerlagsManagerService
                 $paidUntil = array_pop($paidUntil);
             }
 
-            return DateTime::createFromFormat('dmY', $paidUntil)->format('Y-m-d');
+            return DateTime::createFromFormat('dmy', $paidUntil)->format('Y-m-d');
         }, $activeSubscriptions);
 
         if (!empty($dates)) {
