@@ -122,7 +122,7 @@ class VerlagsManagerService
      * @param Newscoop\Entity\User $user
      * @return SimpleXmlElement
      */
-    private function findSubscriber(User $user)
+    public function findSubscriber(User $user)
     {
         if ($user->getAttribute(self::CID)) {
             return $this->findByCustomer($user->getAttribute(self::CID));
@@ -137,7 +137,7 @@ class VerlagsManagerService
      * @param string $customer
      * @return SimpleXmlElement
      */
-    private function findByCustomer($customer)
+    public function findByCustomer($customer)
     {
         return $this->fetchXml(array(
             self::CUSTOMER_URL,
