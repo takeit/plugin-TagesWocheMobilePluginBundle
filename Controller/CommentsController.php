@@ -79,6 +79,7 @@ class CommentsController extends Controller
         foreach ($comments as $comment) {
 
             $profileUrl = null;
+            $username = null;
             $created = new DateTime($comment['created']);
             $modified = new DateTime($comment['updated']);
 
@@ -100,10 +101,11 @@ class CommentsController extends Controller
                             'user' => $user->getId()
                         ))
                 );
+                $username = $user->getUsername();
             }
 
             $response[] = array(
-                'author_name' => strip_tags($comment['author']),
+                'author_name' => $username,
                 'author_image_url' => $apiHelperService->getUserImageUrl(
                         $user,
                         $this->getImageSizesNormal(),
