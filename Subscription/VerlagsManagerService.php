@@ -11,6 +11,7 @@ use DateTime;
 use SimpleXmlElement;
 use Exception;
 use Guzzle\Http\Exception\RequestException;
+use Guzzle\Http\Exception\ClientErrorResponseException;
 use Newscoop\Entity\User;
 use Newscoop\Http\ClientFactory;
 
@@ -155,9 +156,15 @@ class VerlagsManagerService
     {
         try {
             $client = $this->clientFactory->getClient();
-            $response = $client->get($params)->send();
+            $getRequest = $client->get($params);
+            $response = $getRequest->send();
+        } catch(ClientErrorResponseException $e){
+            if ($getRequest->getResponse()->getStatusCode() == '404') {
+                return null;
+            }
+            throw new VerlagsManagerException($e->getMessage());
         } catch (RequestException $e) {
-            throw new VerlagsManagerException();
+            throw new VerlagsManagerException($e->getMessage());
         }
 
         if (!$response->isSuccessful()) {
