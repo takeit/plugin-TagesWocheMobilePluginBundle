@@ -22,6 +22,7 @@ class VerlagsManagerService
 {
     const CID = 'customer_id';
     const CUSTOMER_URL = 'https://www.tageswoche.ch/ftp/subscriptions/{customer}.xml';
+    const SUBSCRIBER_URL = 'https://abo.tageswoche.ch/dmpro/ws/subscriber/NMBA/{subscriber}{?userkey}';
     const TEST_URL = 'https://www.tageswoche.ch/ftp/subscriptions/demo/{customer}.xml';
 
     /**
