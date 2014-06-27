@@ -78,6 +78,10 @@ class CommentsController extends Controller
         $rank = 0;
         foreach ($comments as $comment) {
 
+            if ($comment['status'] !== 'approved') {
+                continue;
+            }
+
             $profileUrl = null;
             $username = null;
             $created = new DateTime($comment['created']);
