@@ -35,6 +35,15 @@ class SearchController extends MobileOmnitickerController
         $request->query->set('q', $request->query->get(self::Q_PARAM));
         $request->query->set('format', 'json');
 
+        // Convert app data parameters to support date parameters by QueryService
+        if ($request->query->get('start_date') && $request->query->get('end_date')) {
+            $request->query->set('date', $request->query->get('start_date').','.$request->query->get('end_date'));
+        } elseif ($request->query->get('start_date')) {
+            $request->query->set('date', $request->query->get('start_date').',');
+        } elseif ($request->query->get('end_date')) {
+            $request->query->set('date', ','.$request->query->get('end_date'));
+        }
+
         $this->request = $request;
         return parent::omnitickerMobileAction($request);
     }
