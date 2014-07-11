@@ -129,7 +129,7 @@ class VerlagsManagerService
         if ($user->getAttribute(self::CID)) {
             return $this->findByCustomer($user->getAttribute(self::CID));
         } elseif ($user->getSubscriber()) {
-            throw new VerlagsManagerException('Searching by subscriber not supported by Verlags Manager.');
+            return null;
         }
     }
 
