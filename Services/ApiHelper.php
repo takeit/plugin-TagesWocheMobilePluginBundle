@@ -594,11 +594,15 @@ class ApiHelper
      *
      * @param mixed Article
      * @param bool $recommended
+     *
      * @return int
      */
     public function getCommentsCount($article, $recommended = false)
     {
-        $constraints = array('thread' => $article->getNumber());
+        $constraints = array(
+            'thread' => $article->getNumber(),
+            'status' => \Newscoop\Entity\Comment::STATUS_APPROVED,
+        );
 
         if ($recommended) {
             $constraints['recommended'] = 1;
@@ -792,7 +796,7 @@ class ApiHelper
         }
 
         if (!empty($teaserShort)) {
-            return substr($teaserShort, 0, 120);
+            return mb_substr($teaserShort, 0, 120);
         }
 
         return null;

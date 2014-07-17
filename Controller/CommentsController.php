@@ -44,53 +44,83 @@ class CommentsController extends Controller
     {
         $em = $this->container->get('em');
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-
-        $repository = $em->getRepository('Newscoop\Entity\Comment');
+        $commentRepository = $em->getRepository('Newscoop\Entity\Comment');
 
         $article_id = $request->query->get('article_id');
+        $comments = array();
+
         if (is_null($article_id)) {
-            $comments = $repository->findBy(array('status' => 0), array('time_created' => 'desc'), self::LIST_LIMIT);
+            $url = '/content-api/comments.json?items_per_page=20&sort[created]=desc';
         } else {
-            $comments = $repository->findBy(array('article_num' => $article_id, 'status' => 0), array('time_created' => 'desc'));
+            $url = str_replace('{number}', $article_id, '/content-api/comments/article/{number}/de/asc.json?items_per_page=10000');
+        }
+
+        try {
+            $ch = curl_init('http://' . $_SERVER['HTTP_HOST'] . $url);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER , CURLINFO_HTTP_CODE);
+            $response = curl_exec($ch);
+            $info = curl_getinfo($ch);
+            curl_close($ch);
+            if ($info['http_code'] == 200) {
+                $comments = json_decode($response, true);
+                if (count($comments)) {
+                    $comments = $comments['items'];
+                } else {
+                    $comments = array();
+                }
+            }
+        } catch(Exception $e) {
+            throw new Exception('Could not connect with api.');
         }
 
         $response = array();
         $rank = 0;
         foreach ($comments as $comment) {
-            $created = $comment->getTimeCreated()->format('Y-m-d H:i:s');
-            $modified = $created;
 
-            if (
-                $comment->getTimeUpdated() !== null &&
-                $comment->getTimeUpdated()->getTimestamp() !== false &&
-                $comment->getTimeCreated()->getTimestamp() < $comment->getTimeUpdated()->getTimestamp()
-            ) {
-                $modified = $comment->getTimeUpdated()->format('Y-m-d H:i:s');
+            if ($comment['status'] !== 'approved') {
+                continue;
             }
 
-            $user = $comment->getCommenter()->getUser();
+            $profileUrl = null;
+            $username = null;
+            $created = new DateTime($comment['created']);
+            $modified = new DateTime($comment['updated']);
 
-            $response[] = array(
-                'author_name' => ($user !== null) ? $user->getUsername() : 'Unbekannt',
-                'author_image_url' => $apiHelperService->getUserImageUrl(
-                        $user,
-                        $this->getImageSizesNormal(),
-                        $this->getImageSizesRetina()
-                    ),
-                'public_profile_url' => $apiHelperService->serverUrl(
+            try {
+                $commentDb = $commentRepository->findOneById($comment['id']);
+                $commenter = $commentDb->getCommenter();
+                $user = $commenter->getUser();
+            } catch (Exception $e) {
+                $user = null;
+            }
+
+            if ($user instanceof User) {
+                $profileUrl = $apiHelperService->serverUrl(
                     $this->container->get('zend_router')->assemble(array(
                         'module' => 'api',
                         'controller' => 'profile',
                         'action' => 'public',
                         ), 'default') . $apiHelperService->getApiQueryString(array(
-                            'user' => ($user !== null) ? $user->getId() : '',
+                            'user' => $user->getId()
                         ))
-                ),
-                'subject' => $comment->getSubject(),
-                'message'=> $comment->getMessage(),
-                'recommended' => $comment->getRecommended() ? true : false,
-                'created_time' => $created,
-                'last_modified' => $modified,
+                );
+                $username = $user->getUsername();
+            }
+
+            $response[] = array(
+                'author_name' => $username,
+                'author_image_url' => $apiHelperService->getUserImageUrl(
+                        $user,
+                        $this->getImageSizesNormal(),
+                        $this->getImageSizesRetina()
+                    ),
+                'public_profile_url' => $profileUrl,
+                'subject' => $comment['subject'],
+                'message'=> $comment['message'],
+                'recommended' => ($comment['recommended'] == '1')  ? true : false,
+                'created_time' => $created->format('Y-m-d H:i:s'),
+                'last_modified' => $modified->format('Y-m-d H:i:s'),
                 'rank' => $rank++,
             );
         }
