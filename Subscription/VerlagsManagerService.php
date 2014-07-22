@@ -150,7 +150,7 @@ class VerlagsManagerService
         if ($user->getAttribute(self::CID)) {
             return $this->findByCustomer($user->getAttribute(self::CID));
         } elseif ($user->getSubscriber()) {
-            throw new VerlagsManagerException('Searching by subscriber not supported by Verlags Manager.');
+            return null;
         }
     }
 
@@ -162,10 +162,30 @@ class VerlagsManagerService
      */
     public function findByCustomer($customer)
     {
-        return $this->fetchXml(array(
-            self::CUSTOMER_URL,
-            array('customer' => $customer),
-        ));
+        if (preg_match('/.{4}\-.{2}\-.{2}/', $customer)) {
+            $expectedPaidUntil = date('dmy', strtotime('+1 day'));
+            $xml = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<subscribers>
+    <subscriber>
+        <uniqueId>$customer</uniqueId>
+        <subscriptions>
+            <subscription>
+                <expectedPaidUntil>$expectedPaidUntil</expectedPaidUntil>
+                <statusCode>1</statusCode>
+            </subscription>
+        </subscriptions>
+    </subscriber>
+</subscribers>
+XML;
+            $xmlObj = new \SimpleXmlElement($xml);
+            return $xmlObj->subscriber;
+        } else {
+            return $this->fetchXml(array(
+                self::CUSTOMER_URL,
+                array('customer' => $customer),
+            ));
+        }
     }
 
     /**
