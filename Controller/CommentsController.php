@@ -105,7 +105,7 @@ class CommentsController extends Controller
                             'user' => $user->getId()
                         ))
                 );
-                $username = $user->getUsername();
+                $username = $user->isActive() ? $user->getUsername() : 'Inaktiver Nutzer";
             }
 
             $response[] = array(
