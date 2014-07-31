@@ -68,6 +68,11 @@ newscoop_tageswochemobile_plugin.online:
   type:     annotation
   prefix:   /api/online
 
+newscoop_tageswochemobile_plugin.online_browser:
+  resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/OnlineBrowserController.php"
+  type:     annotation
+  prefix:   /api/online_browser
+
 newscoop_tageswochemobile_plugin.offline:
   resource: "@NewscoopTagesWocheMobilePluginBundle/Controller/OfflineController.php"
   type:     annotation

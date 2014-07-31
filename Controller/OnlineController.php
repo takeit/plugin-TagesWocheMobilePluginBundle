@@ -106,6 +106,9 @@ class OnlineController extends Controller
                 return $apiHelperService->sendError('Secure connection required', 400);
             }
             $isSubscriber = $apiHelperService->isSubscriber($article);
+
+            // ladybug_dump($isSubscriber); exit;
+
             if (!$isSubscriber || ($isSubscriber instanceof JSONResponse)) {
                 if ($isSubscriber instanceof JSONResponse) {
                     return $isSubscriber;
@@ -135,7 +138,7 @@ class OnlineController extends Controller
      * @param Newscoop\Entity\Article $issue
      * @return array
      */
-    private function formatIndexIssue(Article $issue)
+    protected function formatIndexIssue(Article $issue)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
@@ -158,7 +161,7 @@ class OnlineController extends Controller
      * @param Newscoop\Entity\Article $issue
      * @return array
      */
-    private function formatTocIssue(Article $issue)
+    protected function formatTocIssue(Article $issue)
     {
         $mobileService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue');
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
