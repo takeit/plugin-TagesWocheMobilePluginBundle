@@ -1,7 +1,8 @@
 <?php
 /**
- * @package Newscoop
+ * @package Newscoop\TagesWocheMobilePluginBundle
  * @author  Mischa Gorinskat <mischa.gorinskat@sourcefabric.org>
+ * @author  Rafał Muszyński <rafal.muszynski@sourcefabric.org>
  * @copyright 2014 Sourcefabric o.p.s.
  */
 
@@ -23,7 +24,7 @@ class VerlagsManagerService
     const CID = 'customer_id';
     const CUSTOMER_URL = 'https://www.tageswoche.ch/ftp/subscriptions/{customer}.xml';
     const SUBSCRIBER_URL = 'https://abo.tageswoche.ch/dmpro/ws/subscriber/NMBA/{subscriber}{?userkey}';
-    const TEST_URL = 'https://www.tageswoche.ch/ftp/subscriptions/demo/{customer}.xml';
+    const TEST_URL = 'https://www.tageswoche.ch/ftp/subscriptions';
 
     /**
      * @var bool
@@ -65,10 +66,15 @@ class VerlagsManagerService
             $view->master_id = (string) $subscriber->uniqueId;
         }
 
-        $validUntil = $this->getMax($subscriber);
+        $activeSubscription = $this->getMax($subscriber);
+        $validUntil = $activeSubscription['paidUntil'];
+        $name = $activeSubscription['name'];
+        $print = (int) $activeSubscription['print'];
         if ($validUntil) {
-            $view->print_subscription = true;
+            $view->print_subscription = true; // will need to depracate this one, stays to not break BC for the app
             $view->print_subscription_valid_until = $validUntil;
+            $view->print = $print >= 1 ? true : false;
+            $view->subscription_name = $name;
         }
 
         return $view;
@@ -83,11 +89,16 @@ class VerlagsManagerService
     public function isCustomer($cid)
     {
         $subscriber = $this->findByCustomer($cid);
-        return isset($subscriber) && $this->getMax($subscriber) !== null;
+        $activeSubscription = null;
+        if ($subscriber) {
+            $activeSubscription = $this->getMax($subscriber);
+        }
+
+        return isset($subscriber) && $activeSubscription !== null;
     }
 
     /**
-     * Find max valid time from active subscriptions
+     * Find subscription data by max valid time from active subscriptions
      *
      * @param SimpleXmlElement $subscriber
      * @return DateTime
@@ -101,20 +112,30 @@ class VerlagsManagerService
             return in_array((int) $subscription->statusCode, $statusCodes);
         });
 
-        $dates = array_map(function ($subscription) {
+        $data = array_map(function ($subscription) {
             $paidUntil = $subscription->xpath('expectedPaidUntil');
+            $name = $subscription->xpath('validMonths');
+            $quantity = $subscription->xpath('quantity');
 
             if (empty($paidUntil)) {
                 $paidUntil = $subscription->paidUntil;
+                $name = $subscription->validMonths;
+                $quantity = $subscription->quantity;
             } else {
                 $paidUntil = array_pop($paidUntil);
+                $name = array_pop($name);
+                $quantity = array_pop($quantity);
             }
 
-            return DateTime::createFromFormat('dmy', $paidUntil)->format('Y-m-d');
+            return array(
+                'paidUntil' => \DateTime::createFromFormat('dmy', $paidUntil)->format('Y-m-d'),
+                'name' => (string) $name,
+                'print' => (string) $quantity,
+            );
         }, $activeSubscriptions);
 
-        if (!empty($dates)) {
-            return DateTime::createFromFormat('Y-m-d', max($dates));
+        if (!empty($data)) {
+            return max($data);
         }
     }
 

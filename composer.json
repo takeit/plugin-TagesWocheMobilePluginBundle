@@ -2,7 +2,7 @@
     "name": "newscoop/tw-mobile-plugin-bundle",
     "description": "TagesWoche mobile API and mobile subscriptions for Newscoop",
     "keywords": ["newscoop", "cms", "integration", "tageswoche", "mobile"],
-    "version": "0.5",
+    "version": "0.6",
     "type": "newscoop-plugin",
     "authors": [
         {
