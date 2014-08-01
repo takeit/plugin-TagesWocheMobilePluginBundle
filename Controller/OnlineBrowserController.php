@@ -1,7 +1,8 @@
 <?php
 /**
- * @package Newscoop
- * @copyright 2012 Sourcefabric o.p.s.
+ * @package Newscoop\TagesWocheMobilePluginBundle
+ * @author Mischa Gorinskat <mischa.gorinskat@sourcefabric.org>
+ * @copyright 2014 Sourcefabric z.ú.
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  */
 
@@ -27,8 +28,16 @@ use Newscoop\TagesWocheMobilePluginBundle\Mobile\IssueFacade;
  */
 class OnlineBrowserController extends OnlineController
 {
+    /**
+     * @var integer
+     */
     private $rank = 0;
 
+    /**
+     * Contains the article number for the current issue
+     *
+     * @var mixed
+     */
     private $currentIssueId = null;
 
     /**
@@ -97,28 +106,6 @@ class OnlineBrowserController extends OnlineController
         $response->headers->set('Content-Type', 'text/html');
         $response->setContent($templatesService->fetchTemplate("_views/online_article.tpl"));
         return $response;
-    }
-
-    /**
-     * Format issue for list
-     *
-     * @param Newscoop\Entity\Article $issue
-     * @return array
-     */
-    protected function formatIndexIssue(Article $issue)
-    {
-        $formattedIssue = parent::formatIndexIssue($issue);
-        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
-
-        $formattedIssue['url'] = $apiHelperService->serverUrl('api/online_browser/' . $issue->getNumber());
-
-        if ($formattedIssue['issue_id'] == $this->currentIssueId)  {
-            $formattedIssue['current'] = true;
-        } else {
-            $formattedIssue['current'] = false;
-        }
-
-        return $formattedIssue;
     }
 
     /**
