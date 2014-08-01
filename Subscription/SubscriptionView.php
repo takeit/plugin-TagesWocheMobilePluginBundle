@@ -48,6 +48,16 @@ class SubscriptionView extends View
     public $print_subscription_valid_until;
 
     /**
+     * @var string
+     */
+    public $subscription_name;
+
+    /**
+     * @var bool
+     */
+    public $print;
+
+    /**
      * @var array
      */
     public $subcodes = array();
