@@ -125,6 +125,7 @@ class OnlineController extends Controller
         $smarty->assign('gimme', $gimme);
         $smarty->assign('width', $apiHelperService->getClientWidth());
         $smarty->assign('height', $apiHelperService->getClientHeight());
+        $smarty->assign('browser_version', false);
 
         $response = new Response();
         $response->headers->set('Content-Type', 'text/html');

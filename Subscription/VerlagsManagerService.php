@@ -98,6 +98,28 @@ class VerlagsManagerService
     }
 
     /**
+     * Check if the user has a valid subscription of any type
+     *
+     * @param  Newscoop\Entity\User  $user User object
+     *
+     * @return boolean
+     */
+    public function hasValidSubscription($user)
+    {
+        $subscription = $this->findSubscriber($user);
+        if ($subscription === null) {
+            return false;
+        }
+
+        $activeSubscription = $this->getMax($subscription);
+        if ($activeSubscription === null) {
+            return false;
+        }
+
+        return ($activeSubscription['paiduntil'] >= date('Y-m-d'));
+    }
+
+    /**
      * Find subscription data by max valid time from active subscriptions
      *
      * @param SimpleXmlElement $subscriber

@@ -32,25 +32,6 @@ class OnlineBrowserController extends OnlineController
     private $currentIssueId = null;
 
     /**
-     * @Route("/")
-     */
-    public function issuesAction()
-    {
-        $mobileService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue');
-
-        $issues = $mobileService->findAll();
-        $issues = array_map(
-            array($this, 'formatIndexIssue'),
-            $issues
-        );
-
-        return new JsonResponse(array(
-            'additional_data' => $this->getAdditionalData(),
-            'mapi' => $issues
-        ));
-    }
-
-    /**
      * @Route("/{issue_id}")
      */
     public function tocAction($issue_id, Request $request)
@@ -181,36 +162,19 @@ class OnlineBrowserController extends OnlineController
      */
     private function getAdditionalData()
     {
-        $user = $this->getCurrentUser();
+        $browserHelper = $this->container->get('newscoop_tageswochemobile_plugin.online.browser');
+        $user = $browserHelper->getCurrentUser();
         $user_id = null;
         $subscription = null;
 
         if ($user instanceof User) {
             $user_id = $user->getId();
-            $subscription = $this->getSubscription($user);
+            $subscription = $browserHelper->getSubscription($user);
         }
 
         return array(
             'user_id' => $user_id,
             'subscription' => $subscription,
         );
-    }
-
-    /**
-     * Get current logged in user via userservice
-     *
-     * @return mixed Returns user object or null
-     */
-    private function getCurrentUser()
-    {
-        return $this->container->get('user')->getCurrentUser();
-    }
-
-    /**
-     * Get subscription data
-     */
-    private function getSubscription($user)
-    {
-        return $this->container->get('newscoop_tageswochemobile_plugin.verlags_manager_service')->findSubscriber($user);
     }
 }
