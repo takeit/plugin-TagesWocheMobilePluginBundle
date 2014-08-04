@@ -117,8 +117,15 @@ class OnlineBrowserController extends OnlineController
      */
     protected function formatTocIssue(Article $issue)
     {
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $formattedIssue = parent::formatTocIssue($issue);
 
+        $image = $issue->getFirstImage($issue);
+        if ($image) {
+            $formattedIssue['cover_url'] = $apiHelperService->serverUrl(
+                $apiHelperService->getLocalImageUrl($image, array(650, 901), array(650, 901))
+            );
+        }
         unset($formattedIssue['offline_url']);
 
         return $formattedIssue;
