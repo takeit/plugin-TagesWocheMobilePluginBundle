@@ -176,6 +176,11 @@ class OnlineBrowserController extends OnlineController
         $formattedArticle = parent::formatArticle($article);
 
         $formattedArticle['url'] = $apiHelperService->serverUrl('api/online_browser/articles/' . $formattedArticle['article_id']);
+        $formattedArticle['backside_url'] = $this->generateUrl(
+            'newscoop_tageswochemobileplugin_onlinebrowser_articlesback',
+            array('article_id' => $formattedArticle['article_id']),
+            true
+        );
 
         if (is_array($formattedArticle['slideshow_images']) && !empty($formattedArticle['slideshow_images'])) {
             $formattedArticle['slideshow_images'] = array_map(function($data) {
