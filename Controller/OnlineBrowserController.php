@@ -24,7 +24,8 @@ use Newscoop\TagesWocheMobilePluginBundle\Mobile\IssueFacade;
 /**
  * Route('/online_browser')
  *
- * Issues Service
+ * Online issue service. Please check class agesWocheMobilePluginBundle\EventListener\ApiHelperRequestListener
+ * when making changes to the namespace of this file.
  */
 class OnlineBrowserController extends OnlineController
 {
@@ -105,6 +106,37 @@ class OnlineBrowserController extends OnlineController
         $response = new Response();
         $response->headers->set('Content-Type', 'text/html');
         $response->setContent($templatesService->fetchTemplate("_views/online_article.tpl"));
+        return $response;
+    }
+
+    /**
+     * @Route("/articles/{article_id}/back")
+     */
+    public function articlesBackAction($article_id, Request $request)
+    {
+        // This code is duplicated from ArticlesControler::itemAction
+        // Please check changes here and there
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+        $em = $this->container->get('em');
+
+        $article = $em
+            ->getRepository('Newscoop\Entity\Article')
+            ->findOneByNumber($article_id);
+        if (!$article || (!$article->isPublished() && !$allowUnpublished)) {
+            return $apiHelperService->sendError("Article not found", 404);
+        }
+
+        $metaArticle = new \MetaArticle($article->getLanguageId(), $article->getNumber());
+        $templatesService = $this->container->get('newscoop.templates.service');
+        $smarty = $templatesService->getSmarty();
+        $context = $smarty->context();
+        $context->article = $metaArticle;
+        $smarty->assign('webcode', ($article->hasWebcode()) ? $apiHelperService->fixWebcode($article->getWebcode()) : null);
+        $smarty->assign('browser_version', true);
+
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/html');
+        $response->setContent($templatesService->fetchTemplate('_mobile/articles_backside.tpl'));
         return $response;
     }
 
