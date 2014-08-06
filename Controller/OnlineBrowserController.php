@@ -144,7 +144,17 @@ class OnlineBrowserController extends OnlineController
         $formattedArticle = parent::formatArticle($article);
 
         $formattedArticle['url'] = $apiHelperService->serverUrl('api/online_browser/articles/' . $formattedArticle['article_id']);
-        $formattedArticle['backside_url'] = $apiHelperService->serverUrl('api/online_browser/articles/' . $formattedArticle['article_id'] .'?side=back');
+
+        if (is_array($formattedArticle['slideshow_images']) && !empty($formattedArticle['slideshow_images'])) {
+            $formattedArticle['slideshow_images'] = array_map(function($data) {
+                if ($data['type'] == 'video') {
+                    $queryString = parse_url($data['url'], PHP_URL_QUERY);
+                    parse_str($queryString, $queryBag);
+                    $data['url'] = $queryBag['video'];
+                }
+                return $data;
+            }, $formattedArticle['slideshow_images']);
+        }
 
         return $formattedArticle;
     }
