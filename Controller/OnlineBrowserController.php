@@ -53,6 +53,22 @@ class OnlineBrowserController extends OnlineController
             return $apiHelperService->sendError('Missing id', 400);
         }
 
+        if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->getCurrentIssueId() == $issue_id) {
+
+            $user = $this->getUser();
+
+            if (!$user instanceof User) {
+                return $apiHelperService->sendError('User not logged in.', 401);
+            }
+
+            $subscription = $this->getSubscription($user);
+
+            // Check if user has a subscription
+            if (!$subscription) {
+                return $apiHelperService->sendError('Invalid or no subscription.', 401);
+            }
+        }
+
         $this->issue = $mobileService->find($issue_id);
         if (empty($this->issue)) {
             return $apiHelperService->sendError('Issue not found.', 404);
