@@ -107,16 +107,18 @@ class VerlagsManagerService
     public function hasValidSubscription($user)
     {
         $subscription = $this->findSubscriber($user);
+
         if ($subscription === null) {
             return false;
         }
 
         $activeSubscription = $this->getMax($subscription);
+
         if ($activeSubscription === null) {
             return false;
         }
 
-        return ($activeSubscription['paiduntil'] >= date('Y-m-d'));
+        return ($activeSubscription['paidUntil'] >= date('Y-m-d'));
     }
 
     /**
