@@ -24,7 +24,8 @@ use Newscoop\TagesWocheMobilePluginBundle\Mobile\IssueFacade;
 /**
  * Route('/online_browser')
  *
- * Issues Service
+ * Online issue service. Please check class agesWocheMobilePluginBundle\EventListener\ApiHelperRequestListener
+ * when making changes to the namespace of this file.
  */
 class OnlineBrowserController extends OnlineController
 {
@@ -50,6 +51,22 @@ class OnlineBrowserController extends OnlineController
 
         if (!$issue_id) {
             return $apiHelperService->sendError('Missing id', 400);
+        }
+
+        if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->getCurrentIssueId() == $issue_id) {
+
+            $user = $this->getUser();
+
+            if (!$user instanceof User) {
+                return $apiHelperService->sendError('User not logged in.', 401);
+            }
+
+            $subscription = $this->getSubscription($user);
+
+            // Check if user has a subscription
+            if (!$subscription) {
+                return $apiHelperService->sendError('Invalid or no subscription.', 401);
+            }
         }
 
         $this->issue = $mobileService->find($issue_id);
@@ -109,6 +126,37 @@ class OnlineBrowserController extends OnlineController
     }
 
     /**
+     * @Route("/articles/{article_id}/back")
+     */
+    public function articlesBackAction($article_id, Request $request)
+    {
+        // This code is duplicated from ArticlesControler::itemAction
+        // Please check changes here and there
+        $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+        $em = $this->container->get('em');
+
+        $article = $em
+            ->getRepository('Newscoop\Entity\Article')
+            ->findOneByNumber($article_id);
+        if (!$article || (!$article->isPublished() && !$allowUnpublished)) {
+            return $apiHelperService->sendError("Article not found", 404);
+        }
+
+        $metaArticle = new \MetaArticle($article->getLanguageId(), $article->getNumber());
+        $templatesService = $this->container->get('newscoop.templates.service');
+        $smarty = $templatesService->getSmarty();
+        $context = $smarty->context();
+        $context->article = $metaArticle;
+        $smarty->assign('webcode', ($article->hasWebcode()) ? $apiHelperService->fixWebcode($article->getWebcode()) : null);
+        $smarty->assign('browser_version', true);
+
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/html');
+        $response->setContent($templatesService->fetchTemplate('_mobile/articles_backside.tpl'));
+        return $response;
+    }
+
+    /**
      * Format toc issue
      *
      * @param Newscoop\Entity\Article $issue
@@ -144,7 +192,22 @@ class OnlineBrowserController extends OnlineController
         $formattedArticle = parent::formatArticle($article);
 
         $formattedArticle['url'] = $apiHelperService->serverUrl('api/online_browser/articles/' . $formattedArticle['article_id']);
-        $formattedArticle['backside_url'] = $apiHelperService->serverUrl('api/online_browser/articles/' . $formattedArticle['article_id'] .'?side=back');
+        $formattedArticle['backside_url'] = $this->generateUrl(
+            'newscoop_tageswochemobileplugin_onlinebrowser_articlesback',
+            array('article_id' => $formattedArticle['article_id']),
+            true
+        );
+
+        if (is_array($formattedArticle['slideshow_images']) && !empty($formattedArticle['slideshow_images'])) {
+            $formattedArticle['slideshow_images'] = array_map(function($data) {
+                if ($data['type'] == 'video') {
+                    $queryString = parse_url($data['url'], PHP_URL_QUERY);
+                    parse_str($queryString, $queryBag);
+                    $data['url'] = $queryBag['video'];
+                }
+                return $data;
+            }, $formattedArticle['slideshow_images']);
+        }
 
         return $formattedArticle;
     }

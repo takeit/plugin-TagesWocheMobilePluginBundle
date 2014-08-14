@@ -129,6 +129,8 @@ class ArticlesController extends Controller
      */
     public function itemAction(Request $request)
     {
+        // On making changes for the back section of an article also check
+        // OnlineBrowserController::articlesBackAction
         $id = $request->get('article_id');
         $allowUnpublished = false;
 

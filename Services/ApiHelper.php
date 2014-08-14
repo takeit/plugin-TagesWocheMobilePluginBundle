@@ -229,6 +229,11 @@ class ApiHelper
             if ($this->container->get('newscoop_tageswochemobile_plugin.subscription.device')->hasDeviceUpgrade($user, $this->_getParam('device_id'))) {
                 return true;
             }
+
+            // Add people with a normal subscription
+            if ($this->container->get('newscoop_tageswochemobile_plugin.verlags_manager_service')->hasValidSubscription($user)) {
+                return true;
+            }
         }
 
         // reqeusted article is in the current issue or is requesting an ad
