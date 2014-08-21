@@ -137,7 +137,7 @@ class VerlagsManagerService
         });
 
         $data = array_map(function ($subscription) {
-            $paidUntil = $subscription->xpath('expectedPaidUntil');
+            $paidUntil = $subscription->xpath('expectedPaidUntilFormated');
             $name = $subscription->xpath('validMonths');
             $quantity = $subscription->xpath('quantity');
 
@@ -152,7 +152,7 @@ class VerlagsManagerService
             }
 
             return array(
-                'paidUntil' => \DateTime::createFromFormat('dmy', $paidUntil)->format('Y-m-d'),
+                'paidUntil' => \DateTime::createFromFormat('Y-m-d', $paidUntil)->format('Y-m-d'),
                 'name' => (string) $name,
                 'print' => (string) $quantity,
             );
