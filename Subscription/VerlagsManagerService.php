@@ -188,6 +188,7 @@ class VerlagsManagerService
     {
         if (preg_match('/.{4}\-.{2}\-.{2}/', $customer)) {
             $expectedPaidUntil = date('dmy', strtotime('+1 day'));
+            $expectedPaidUntilFormated = date('Y-m-d', strtotime('+1 day'));
             $xml = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <subscribers>
@@ -196,6 +197,7 @@ class VerlagsManagerService
         <subscriptions>
             <subscription>
                 <expectedPaidUntil>$expectedPaidUntil</expectedPaidUntil>
+                <expectedPaidUntilFormated>$expectedPaidUntilFormated</expectedPaidUntilFormated>
                 <statusCode>1</statusCode>
             </subscription>
         </subscriptions>

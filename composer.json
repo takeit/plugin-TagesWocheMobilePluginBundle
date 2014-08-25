@@ -2,7 +2,7 @@
     "name": "newscoop/tw-mobile-plugin-bundle",
     "description": "TagesWoche mobile API and mobile subscriptions for Newscoop",
     "keywords": ["newscoop", "cms", "integration", "tageswoche", "mobile"],
-    "version": "0.6",
+    "version": "1.0",
     "type": "newscoop-plugin",
     "license": "GPL-3.0",
     "authors": [
@@ -10,7 +10,7 @@
             "name": "Mischa Gorinskat",
             "email": "mischa.gorinskat@sourcefabric.org"
         },
-	{
+	    {
             "name": "Mark Lewis",
             "email": "mark.lewis@sourcefabric.org"
         }
