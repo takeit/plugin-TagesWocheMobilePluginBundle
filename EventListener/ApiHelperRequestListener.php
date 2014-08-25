@@ -43,6 +43,11 @@ class ApiHelperRequestListener
             return;
         }
 
-        $this->apiHelperService->setRequest($event->getRequest());
+        $request = $event->getRequest();
+        if (strpos($request->attributes->get('_controller'), 'OnlineBrowserController') !== false) {
+            $request->query->set('client', 'ipad_retina');
+        }
+
+        $this->apiHelperService->setRequest($request);
     }
 }

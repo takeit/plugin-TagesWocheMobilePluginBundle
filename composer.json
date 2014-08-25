@@ -4,6 +4,7 @@
     "keywords": ["newscoop", "cms", "integration", "tageswoche", "mobile"],
     "version": "0.6",
     "type": "newscoop-plugin",
+    "license": "GPL-3.0",
     "authors": [
         {
             "name": "Mischa Gorinskat",

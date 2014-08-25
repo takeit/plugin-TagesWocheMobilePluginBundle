@@ -126,3 +126,9 @@ services:
         arguments:
             - @newscoop_tageswochemobile_plugin.client_factory
             - @service_container
+
+    newscoop_tageswochemobile_plugin.online.browser:
+        class: Newscoop\TagesWocheMobilePluginBundle\Services\OnlineBrowserHelper
+        arguments:
+            - @user
+            - @newscoop_tageswochemobile_plugin.verlags_manager_service

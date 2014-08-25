@@ -106,6 +106,9 @@ class OnlineController extends Controller
                 return $apiHelperService->sendError('Secure connection required', 400);
             }
             $isSubscriber = $apiHelperService->isSubscriber($article);
+
+            // ladybug_dump($isSubscriber); exit;
+
             if (!$isSubscriber || ($isSubscriber instanceof JSONResponse)) {
                 if ($isSubscriber instanceof JSONResponse) {
                     return $isSubscriber;
@@ -122,6 +125,7 @@ class OnlineController extends Controller
         $smarty->assign('gimme', $gimme);
         $smarty->assign('width', $apiHelperService->getClientWidth());
         $smarty->assign('height', $apiHelperService->getClientHeight());
+        $smarty->assign('browser_version', false);
 
         $response = new Response();
         $response->headers->set('Content-Type', 'text/html');
@@ -135,7 +139,7 @@ class OnlineController extends Controller
      * @param Newscoop\Entity\Article $issue
      * @return array
      */
-    private function formatIndexIssue(Article $issue)
+    protected function formatIndexIssue(Article $issue)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
 
@@ -158,7 +162,7 @@ class OnlineController extends Controller
      * @param Newscoop\Entity\Article $issue
      * @return array
      */
-    private function formatTocIssue(Article $issue)
+    protected function formatTocIssue(Article $issue)
     {
         $mobileService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue');
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');

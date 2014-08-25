@@ -24,7 +24,7 @@ class VerlagsManagerService
     const CID = 'customer_id';
     const CUSTOMER_URL = 'https://www.tageswoche.ch/ftp/subscriptions/{customer}.xml';
     const SUBSCRIBER_URL = 'https://abo.tageswoche.ch/dmpro/ws/subscriber/NMBA/{subscriber}{?userkey}';
-    const TEST_URL = 'https://www.tageswoche.ch/ftp/subscriptions';
+    const TEST_URL = 'https://www.tageswoche.ch/ftp/subscriptions/zm-je-jf.xml';
 
     /**
      * @var bool
@@ -98,6 +98,30 @@ class VerlagsManagerService
     }
 
     /**
+     * Check if the user has a valid subscription of any type
+     *
+     * @param  Newscoop\Entity\User  $user User object
+     *
+     * @return boolean
+     */
+    public function hasValidSubscription($user)
+    {
+        $subscription = $this->findSubscriber($user);
+
+        if ($subscription === null) {
+            return false;
+        }
+
+        $activeSubscription = $this->getMax($subscription);
+
+        if ($activeSubscription === null) {
+            return false;
+        }
+
+        return ($activeSubscription['paidUntil'] >= date('Y-m-d'));
+    }
+
+    /**
      * Find subscription data by max valid time from active subscriptions
      *
      * @param SimpleXmlElement $subscriber
@@ -113,7 +137,7 @@ class VerlagsManagerService
         });
 
         $data = array_map(function ($subscription) {
-            $paidUntil = $subscription->xpath('expectedPaidUntil');
+            $paidUntil = $subscription->xpath('expectedPaidUntilFormated');
             $name = $subscription->xpath('validMonths');
             $quantity = $subscription->xpath('quantity');
 
@@ -128,7 +152,7 @@ class VerlagsManagerService
             }
 
             return array(
-                'paidUntil' => \DateTime::createFromFormat('dmy', $paidUntil)->format('Y-m-d'),
+                'paidUntil' => \DateTime::createFromFormat('Y-m-d', $paidUntil)->format('Y-m-d'),
                 'name' => (string) $name,
                 'print' => (string) $quantity,
             );
