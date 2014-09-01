@@ -231,7 +231,7 @@ class ApiHelper
             }
 
             // Add people with a normal subscription
-            if ($this->container->get('newscoop_tageswochemobile_plugin.verlags_manager_service')->hasValidSubscription($user)) {
+            if ($this->container->get('newscoop_tageswochemobile_plugin.verlags_manager_service')->hasValidSubscription($user, true)) {
                 return true;
             }
         }

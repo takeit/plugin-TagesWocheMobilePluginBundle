@@ -95,7 +95,7 @@ class SubscriptionFacade
             throw new SubscriptionNotFoundException();
         }
 
-        $this->digitalUpgradeService->upgrade($user, $customerView->print_subscription_valid_until);
+        $this->digitalUpgradeService->upgrade($user, new \DateTime($customerView->print_subscription_valid_until));
     }
 
     /**

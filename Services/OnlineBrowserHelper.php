@@ -75,7 +75,7 @@ class OnlineBrowserHelper
         $hasValidSubscription = false;
         $user = $this->getCurrentUser();
         if ($user) {
-            $hasValidSubscription = $this->subscriptionService->hasValidSubscription($user);
+            $hasValidSubscription = $this->subscriptionService->hasValidSubscription($user, true);
         }
         return $hasValidSubscription;
     }

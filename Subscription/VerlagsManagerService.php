@@ -67,7 +67,7 @@ class VerlagsManagerService
         }
 
         $activeSubscription = $this->getMax($subscriber);
-        $validUntil = $activeSubscription['paidUntil'];
+        $validUntil = $activeSubscription['paidUntil']->format('Y-m-d');
         $name = $activeSubscription['name'];
         $print = (int) $activeSubscription['print'];
         if ($validUntil) {
@@ -104,7 +104,7 @@ class VerlagsManagerService
      *
      * @return boolean
      */
-    public function hasValidSubscription($user)
+    public function hasValidSubscription($user, $checkForPrint=false)
     {
         $subscription = $this->findSubscriber($user);
 
@@ -118,7 +118,13 @@ class VerlagsManagerService
             return false;
         }
 
-        return ($activeSubscription['paidUntil'] >= date('Y-m-d'));
+        if ($checkForPrint) {
+            if (!$activeSubscription['print']) {
+                return false;
+            }
+        }
+
+        return ($activeSubscription['paidUntil'] >= new \DateTime());
     }
 
     /**
@@ -152,7 +158,7 @@ class VerlagsManagerService
             }
 
             return array(
-                'paidUntil' => \DateTime::createFromFormat('Y-m-d', $paidUntil)->format('Y-m-d'),
+                'paidUntil' => \DateTime::createFromFormat('Y-m-d', $paidUntil),
                 'name' => (string) $name,
                 'print' => (string) $quantity,
             );
