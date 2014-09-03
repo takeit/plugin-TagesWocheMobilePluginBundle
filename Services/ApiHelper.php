@@ -507,10 +507,7 @@ class ApiHelper
      */
     public function getImageUrlHelper($item, $max = 2048)
     {
-        $orig = $item->getImage()->isLocal()
-            ? $this->serverUrl($item->getImage()->getPath())
-            : $item->getImage()->getPath();
-
+        $orig = $item->getImage()->getPath();
         $src = $this->container->get('image')->getSrc($orig, $max, $max, 'fit');
 
         return $this->serverUrl(
