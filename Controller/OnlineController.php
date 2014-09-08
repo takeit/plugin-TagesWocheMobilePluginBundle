@@ -107,8 +107,6 @@ class OnlineController extends Controller
             }
             $isSubscriber = $apiHelperService->isSubscriber($article);
 
-            // ladybug_dump($isSubscriber); exit;
-
             if (!$isSubscriber || ($isSubscriber instanceof JSONResponse)) {
                 if ($isSubscriber instanceof JSONResponse) {
                     return $isSubscriber;

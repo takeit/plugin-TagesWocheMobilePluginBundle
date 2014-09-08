@@ -134,6 +134,11 @@ class TopicsController extends Controller
         foreach ($this->container->get('user.topic')->getTopics($user) as $topic) {
             $topicArticlesQuery = $em->getRepository('Newscoop\Entity\Article')->getArticlesForTopic(self::PUBLICATION, $topic->getTopicId())->setMaxResults(3);
             foreach ($topicArticlesQuery->getResult() as $article) {
+
+                if (!$article->isPublished()) {
+                    continue;
+                }
+
                 $articles->add(array_merge($apiHelperService->formatArticle($article), array(
                     'topic_id' => (int) $topic->getTopicId(),
                     'topic_name' => $topic->getName(),

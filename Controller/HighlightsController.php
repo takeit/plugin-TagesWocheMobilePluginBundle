@@ -82,7 +82,7 @@ class HighlightsController extends Controller
             $playlist = $playlistRepository->findOneBy(array('id' => $sectionId));
             if ($playlist) {
 
-                $articleArray = $playlistRepository->articles($playlist, null, false, ($limit+2), null, true, $articlesInResponse);
+                $articleArray = $playlistRepository->articles($playlist, null, false, ($limit+2), null, true, false);
                 $rank = 1;
                 foreach ($articleArray as $articleItem) {
                     // inject newshighlight ad

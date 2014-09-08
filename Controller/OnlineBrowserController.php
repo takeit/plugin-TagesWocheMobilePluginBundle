@@ -48,6 +48,7 @@ class OnlineBrowserController extends OnlineController
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
         $mobileService = $this->container->get('newscoop_tageswochemobile_plugin.mobile.issue');
+        $browserHelper = $this->container->get('newscoop_tageswochemobile_plugin.online.browser');
 
         if (!$issue_id) {
             return $apiHelperService->sendError('Missing id', 400);
@@ -55,16 +56,14 @@ class OnlineBrowserController extends OnlineController
 
         if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->getCurrentIssueId() == $issue_id) {
 
-            $user = $this->getUser();
+            $user = $browserHelper->getCurrentUser();
 
             if (!$user instanceof User) {
                 return $apiHelperService->sendError('User not logged in.', 401);
             }
 
-            $subscription = $this->getSubscription($user);
-
             // Check if user has a subscription
-            if (!$subscription) {
+            if (!$browserHelper->hasValidSubscription()) {
                 return $apiHelperService->sendError('Invalid or no subscription.', 401);
             }
         }
@@ -86,6 +85,7 @@ class OnlineBrowserController extends OnlineController
     public function articlesAction($article_id, Request $request)
     {
         $apiHelperService = $this->container->get('newscoop_tageswochemobile_plugin.api_helper');
+        $browserHelper = $this->container->get('newscoop_tageswochemobile_plugin.online.browser');
 
         $article = $this->container->get('em')
             ->getRepository('Newscoop\Entity\Article')
@@ -96,16 +96,14 @@ class OnlineBrowserController extends OnlineController
 
         if ($this->container->get('newscoop_tageswochemobile_plugin.mobile.issue')->isInCurrentIssue($article)) {
 
-            $user = $this->getUser();
+            $user = $browserHelper->getCurrentUser();
 
             if (!$user instanceof User) {
                 return $apiHelperService->sendError('User not logged in.', 401);
             }
 
-            $subscription = $this->getSubscription($user);
-
             // Check if user has a subscription
-            if (!$subscription) {
+            if (!$browserHelperService->hasValidSubscription()) {
                 return $apiHelperService->sendError('Invalid or no subscription.', 401);
             }
         }

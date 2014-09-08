@@ -72,7 +72,7 @@ class VerlagsManagerService
         $print = (int) $activeSubscription['print'];
         if ($validUntil) {
             $view->print_subscription = true; // will need to depracate this one, stays to not break BC for the app
-            $view->print_subscription_valid_until = $validUntil;
+            $view->print_subscription_valid_until = $validUntil->format('Y-m-d');
             $view->print = $print >= 1 ? true : false;
             $view->subscription_name = $name;
         }
@@ -104,7 +104,7 @@ class VerlagsManagerService
      *
      * @return boolean
      */
-    public function hasValidSubscription($user)
+    public function hasValidSubscription($user, $checkForPrint = false)
     {
         $subscription = $this->findSubscriber($user);
 
@@ -118,7 +118,13 @@ class VerlagsManagerService
             return false;
         }
 
-        return ($activeSubscription['paidUntil'] >= date('Y-m-d'));
+        if ($checkForPrint) {
+            if (!$activeSubscription['print']) {
+                return false;
+            }
+        }
+
+        return ($activeSubscription['paidUntil'] >= new \DateTime());
     }
 
     /**
@@ -152,7 +158,7 @@ class VerlagsManagerService
             }
 
             return array(
-                'paidUntil' => \DateTime::createFromFormat('Y-m-d', $paidUntil)->format('Y-m-d'),
+                'paidUntil' => \DateTime::createFromFormat('Y-m-d', $paidUntil),
                 'name' => (string) $name,
                 'print' => (string) $quantity,
             );
