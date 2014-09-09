@@ -103,7 +103,7 @@ class OnlineBrowserController extends OnlineController
             }
 
             // Check if user has a subscription
-            if (!$browserHelperService->hasValidSubscription()) {
+            if (!$browserHelper->hasValidSubscription()) {
                 return $apiHelperService->sendError('Invalid or no subscription.', 401);
             }
         }
